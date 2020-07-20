@@ -1,3 +1,3 @@
 function mySpace(){
-  console.log(           "laura");
+  console.log(          "laura");
 }
