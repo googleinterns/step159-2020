@@ -33,12 +33,12 @@ public class LoginServlet extends HttpServlet {
     boolean loginStatus = userService.isUserLoggedIn();
     String urlToRedirect = "/index.html";
 
-    ArrayList<String> arrStrings = new ArrayList();
+    ArrayList<String> userDetails = new ArrayList();
     if (loginStatus) {
-      arrStrings.add("true");
+      userDetails.add("true");
       String userEmail = userService.getCurrentUser().getEmail();
       String logoutURL = userService.createLogoutURL(urlToRedirect);
-      arrStrings.add(
+      userDetails.add(
           "<p>Hello, "
               + userEmail
               + "! You are logged in.</p>"
@@ -46,13 +46,13 @@ public class LoginServlet extends HttpServlet {
               + logoutURL
               + "\">Click here to log out.</a></p>");
     } else {
-      arrStrings.add("false");
+      userDetails.add("false");
       String loginURL = userService.createLoginURL(urlToRedirect);
-      arrStrings.add("<p><a href=\"" + loginURL + "\"> Login Here </a></p>");
+      userDetails.add("<p><a href=\"" + loginURL + "\"> Login Here </a></p>");
     }
 
     Gson gson = new Gson();
     response.setContentType("text/json;");
-    response.getWriter().println(gson.toJson(arrStrings));
+    response.getWriter().println(gson.toJson(userDetails));
   }
 }
