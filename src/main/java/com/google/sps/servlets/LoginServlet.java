@@ -16,7 +16,9 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,22 +29,30 @@ public class LoginServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
-
     UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
+    boolean loginStatus = userService.isUserLoggedIn();
+    String urlToRedirect = "/index.html";
+
+    ArrayList<String> arrStrings = new ArrayList();
+    if (loginStatus) {
+      arrStrings.add("true");
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/login";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-
-      response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
+      String logoutURL = userService.createLogoutURL(urlToRedirect);
+      arrStrings.add(
+          "<p>Hello, "
+              + userEmail
+              + "! You are logged in.</p>"
+              + "<p><a href=\""
+              + logoutURL
+              + "\">Click here to log out.</a></p>");
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/index.html";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-
-      response.getWriter().println("<p>Hello stranger.</p>");
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      arrStrings.add("false");
+      String loginURL = userService.createLoginURL(urlToRedirect);
+      arrStrings.add("<p><a href=\"" + loginURL + "\"> Login Here </a></p>");
     }
+
+    Gson gson = new Gson();
+    response.setContentType("text/json;");
+    response.getWriter().println(gson.toJson(arrStrings));
   }
 }
