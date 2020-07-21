@@ -3,7 +3,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
@@ -23,17 +23,15 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-
   private final List<Object> json = new ArrayList<>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comments").addSort("score-class", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results =
-        datastore.prepare(query).asList(FetchOptions.Builder.withLimit(quantity));
+    PreparedQuery results = datastore.prepare(query);
 
-    for (Entity entity : results) {
+    for (Entity entity : results.asIterable()) {
       String comment = (String) entity.getProperty("comments-class");
       json.add(comment);
     }
@@ -66,23 +64,20 @@ public class DataServlet extends HttpServlet {
       String translatedProfessorFeedback = translationProfessorFeedback.getTranslatedText();
     }
 
-    Document doc =
-        Document.newBuilder()
-            .setContent(translatedClassFeedback)
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
+    Document docClass =
+        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
     LanguageServiceClient languageService = LanguageServiceClient.create();
-    Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+    Sentiment sentiment = languageService.analyzeSentiment(docClass).getDocumentSentiment();
     float scoreClass = sentiment.getScore();
     languageService.close();
 
-    Document doc =
+    Document docProfessor =
         Document.newBuilder()
             .setContent(translatedProfessorFeedback)
             .setType(Document.Type.PLAIN_TEXT)
             .build();
     LanguageServiceClient languageService = LanguageServiceClient.create();
-    Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+    Sentiment sentiment = languageService.analyzeSentiment(docProfessor).getDocumentSentiment();
     float scoreProfessor = sentiment.getScore();
     languageService.close();
 
