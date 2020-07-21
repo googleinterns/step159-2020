@@ -4,22 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntryObject {
-  List<Integer> hourList = new ArrayList<>();
-  List<Integer> difficultyList = new ArrayList<>();
+  List<Object> hourList = new ArrayList<>();
+  List<Object> difficultyList = new ArrayList<>();
+  List<String> container = new ArrayList();
+
+  public EntryObject(String hourTitle, String diffTitle) {
+    List<String> container = new ArrayList();
+    container.add(hourTitle);
+    hourList.add(container);
+
+    container.removeAll(container);
+    container.add(hourTitle);
+    difficultyList.add(container);
+  }
+
+  public void addTitle(String title) {
+    List<String> container = new ArrayList();
+    container.add(title);
+    hourList.add(container);
+  }
 
   public void addHour(String newHour) {
-    hourList.add(Integer.parseInt(newHour));
+    List<Integer> container = new ArrayList();
+    container.add(Integer.parseInt(newHour));
+    hourList.add(container);
   }
 
   public void addDifficulty(String newDifficulty) {
-    difficultyList.add(Integer.parseInt(newDifficulty));
+    List<Integer> container = new ArrayList();
+    container.add(Integer.parseInt(newDifficulty));
+    difficultyList.add(container);
   }
 
-  public List<Integer> getHours() {
+  public List<Object> getHours() {
     return hourList;
   }
 
-  public List<Integer> getDifficulty() {
+  public List<Object> getDifficulty() {
     return difficultyList;
   }
 }
