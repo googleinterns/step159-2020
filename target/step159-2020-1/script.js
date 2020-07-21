@@ -1,5 +1,4 @@
 function loadBody() {
-  console.log("Verifying login...");
   verifyLogin();
 }
 
@@ -21,11 +20,8 @@ function verifyLogin() {
       const school = arrStrings[1].slice(start + 1, end);
       schoolName.innerHTML += 'You go to the following school:';
       schoolName.innerHTML +=  school;
-      console.log(school);
       }
     }
-    console.log("Displaying login status");
     loginElement.innerHTML += arrStrings[1];
-    
   });
 }
