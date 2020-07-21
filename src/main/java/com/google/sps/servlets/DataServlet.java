@@ -52,10 +52,25 @@ public class DataServlet extends HttpServlet {
     // Get class/professor ratings.
     String ratingClass = request.getParameter("rating-class");
     String ratingProfessor = request.getParameter("rating-professor");
-    String language = request.getParameter("languages");
+    Boolean translateEnglish = Boolean.parseBoolean(getParameter(request, "languages", "false"));
+
+    if (translateEnglish) {
+      Translate translate = TranslateOptions.getDefaultInstance().getService();
+      Translation translationClassFeedback =
+          translate.translate(
+              classFeedback, Translate.TranslateOption.targetLanguage(languageCode));
+      Translation translationProfessorFeedback =
+          translate.translate(
+              professorFeedback, Translate.TranslateOption.targetLanguage(languageCode));
+      String translatedClassFeedback = translationClassFeedback.getTranslatedText();
+      String translatedProfessorFeedback = translationProfessorFeedback.getTranslatedText();
+    }
 
     Document doc =
-        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
+        Document.newBuilder()
+            .setContent(translatedClassFeedback)
+            .setType(Document.Type.PLAIN_TEXT)
+            .build();
     LanguageServiceClient languageService = LanguageServiceClient.create();
     Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
     float scoreClass = sentiment.getScore();
@@ -63,7 +78,7 @@ public class DataServlet extends HttpServlet {
 
     Document doc =
         Document.newBuilder()
-            .setContent(professorFeedback)
+            .setContent(translatedProfessorFeedback)
             .setType(Document.Type.PLAIN_TEXT)
             .build();
     LanguageServiceClient languageService = LanguageServiceClient.create();
@@ -72,13 +87,13 @@ public class DataServlet extends HttpServlet {
     languageService.close();
 
     Entity professorEntity = new Entity("Professor");
-    taskEntity.setProperty("comments-professor", professorFeedback);
+    taskEntity.setProperty("comments-professor", translatedProfessorFeedback);
     taskEntity.setProperty("score-professor", scoreProfessor);
     taskEntity.setProperty("perception", ratingProfessor);
 
     Entity commentsEntity = new Entity("Comments");
     taskEntity.setProperty("perception", ratingClass);
-    taskEntity.setProperty("comments-class", classFeedback);
+    taskEntity.setProperty("comments-class", translatedClassFeedback);
     taskEntity.setProperty("score-class", scoreClass);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
