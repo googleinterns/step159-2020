@@ -1,13 +1,13 @@
 google.charts.load("current", {packages:["corechart"]});
 google.charts.setOnLoadCallback(makeGraph);
 function makeGraph() {
-  fetch('/graph')
+  fetch("/graph")
     .then((response) => response.json())
     .then((data) => {
       const hourData = new google.visualization.arrayToDataTable(data.hours);
       const hourOptions = {
           title: "Hours Spent per Week",
-          legend: { position: 'none' },
+          legend: { position: "none" },
           vAxis: {title: "# Students"},
           hAxis: {title: "Hours"},
           histogram: {
@@ -20,7 +20,7 @@ function makeGraph() {
       const difficultyData = new google.visualization.arrayToDataTable(data.difficulty);
       const diffOptions = {
           title: "Diffculty of Class",
-          legend: { position: 'none' },
+          legend: { position: "none" },
           vAxis: {title: "# Students"},
           hAxis: {title: "Difficulty"},
           histogram: {

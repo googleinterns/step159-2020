@@ -18,21 +18,21 @@ public class ChartsServlet extends HttpServlet {
 
   @Override
   public void init() {
-    Scanner scanner = new Scanner(getServletContext().getResourceAsStream("/hours.csv"));
+    Scanner scannerHours = new Scanner(getServletContext().getResourceAsStream("/hours.csv"));
     Scanner scannerDifficulty =
         new Scanner(getServletContext().getResourceAsStream("/difficulty.csv"));
 
-    while (scanner.hasNextLine()) {
-      String line = scanner.nextLine();
+    while (scannerHours.hasNextLine()) {
+      String line = scannerHours.nextLine();
       newEntry.addHour(line);
     }
-    scanner.close();
+    scannerHours.close();
 
     while (scannerDifficulty.hasNextLine()) {
       String line = scannerDifficulty.nextLine();
       newEntry.addDifficulty(line);
     }
-    scanner.close();
+    scannerDifficulty.close();
   }
 
   @Override

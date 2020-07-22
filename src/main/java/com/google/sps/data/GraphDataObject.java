@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GraphDataObject {
@@ -8,25 +9,24 @@ public class GraphDataObject {
   List<Object> difficultyList = new ArrayList<>();
 
   public GraphDataObject(String hourTitle, String diffTitle) {
-    List<String> titleContainer = new ArrayList();
-    titleContainer.add(hourTitle);
-    hourList.add(titleContainer);
-
-    titleContainer.removeAll(titleContainer);
-    titleContainer.add(diffTitle);
-    difficultyList.add(titleContainer);
+    hourList.add(Arrays.asList(hourTitle));
+    difficultyList.add(Arrays.asList(diffTitle));
   }
 
   public void addHour(String newHour) {
-    List<Integer> hourContainer = new ArrayList();
-    hourContainer.add(Integer.parseInt(newHour));
-    hourList.add(hourContainer);
+    try {
+      hourList.add(Arrays.asList(Integer.parseInt(newHour)));
+    } catch (NumberFormatException e) {
+      System.out.println("An Integer Was Not Passed: " + newHour);
+    }
   }
 
   public void addDifficulty(String newDifficulty) {
-    List<Integer> difficultyContainer = new ArrayList();
-    difficultyContainer.add(Integer.parseInt(newDifficulty));
-    difficultyList.add(difficultyContainer);
+    try {
+      difficultyList.add(Arrays.asList(Integer.parseInt(newDifficulty)));
+    } catch (NumberFormatException e) {
+      System.out.println("An Integer Was Not Passed: " + newDifficulty);
+    }
   }
 
   public List<Object> getHours() {
