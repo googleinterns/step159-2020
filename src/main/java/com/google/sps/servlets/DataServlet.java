@@ -9,6 +9,9 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,45 +54,61 @@ public class DataServlet extends HttpServlet {
     String ratingClass = request.getParameter("rating-class");
     String ratingProfessor = request.getParameter("rating-professor");
     Boolean translateEnglish = Boolean.parseBoolean(getParameter(request, "languages", "false"));
+    // Initializing entities.
+    Entity professorEntity = new Entity("Professor");
+    Entity commentsEntity = new Entity("Comments");
 
     if (translateEnglish) {
       Translate translate = TranslateOptions.getDefaultInstance().getService();
       Translation translationClassFeedback =
-          translate.translate(
-              classFeedback, Translate.TranslateOption.targetLanguage(languageCode));
+          translate.translate(classFeedback, Translate.TranslateOption.targetLanguage("en"));
       Translation translationProfessorFeedback =
-          translate.translate(
-              professorFeedback, Translate.TranslateOption.targetLanguage(languageCode));
+          translate.translate(professorFeedback, Translate.TranslateOption.targetLanguage("en"));
       String translatedClassFeedback = translationClassFeedback.getTranslatedText();
       String translatedProfessorFeedback = translationProfessorFeedback.getTranslatedText();
+
+      Document docClass =
+          Document.newBuilder()
+              .setContent(translatedClassFeedback)
+              .setType(Document.Type.PLAIN_TEXT)
+              .build();
+      Document docProfessor =
+          Document.newBuilder()
+              .setContent(translatedProfessorFeedback)
+              .setType(Document.Type.PLAIN_TEXT)
+              .build();
+
+      professorEntity.setProperty("comments-professor", translatedProfessorFeedback);
+      commentsEntity.setProperty("comments-class", translatedClassFeedback);
+    } else {
+      Document docClass =
+          Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
+      Document docProfessor =
+          Document.newBuilder()
+              .setContent(professorFeedback)
+              .setType(Document.Type.PLAIN_TEXT)
+              .build();
+
+      professorEntity.setProperty("comments-professor", professorFeedback);
+      commentsEntity.setProperty("comments-class", classFeedback);
     }
 
-    Document docClass =
-        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
-    LanguageServiceClient languageService = LanguageServiceClient.create();
-    Sentiment sentiment = languageService.analyzeSentiment(docClass).getDocumentSentiment();
-    float scoreClass = sentiment.getScore();
-    languageService.close();
+    LanguageServiceClient languageServiceForClass = LanguageServiceClient.create();
+    Sentiment sentimentForClass =
+        languageServiceForClass.analyzeSentiment(docClass).getDocumentSentiment();
+    float scoreClass = sentimentForClass.getScore();
+    languageServiceForClass.close();
 
-    Document docProfessor =
-        Document.newBuilder()
-            .setContent(translatedProfessorFeedback)
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
-    LanguageServiceClient languageService = LanguageServiceClient.create();
-    Sentiment sentiment = languageService.analyzeSentiment(docProfessor).getDocumentSentiment();
-    float scoreProfessor = sentiment.getScore();
-    languageService.close();
+    LanguageServiceClient languageServiceForProf = LanguageServiceClient.create();
+    Sentiment sentimentForProf =
+        languageServiceForProf.analyzeSentiment(docProfessor).getDocumentSentiment();
+    float scoreProfessor = sentimentForProf.getScore();
+    languageServiceForProf.close();
 
-    Entity professorEntity = new Entity("Professor");
-    taskEntity.setProperty("comments-professor", translatedProfessorFeedback);
-    taskEntity.setProperty("score-professor", scoreProfessor);
-    taskEntity.setProperty("perception", ratingProfessor);
-
-    Entity commentsEntity = new Entity("Comments");
-    taskEntity.setProperty("perception", ratingClass);
-    taskEntity.setProperty("comments-class", translatedClassFeedback);
-    taskEntity.setProperty("score-class", scoreClass);
+    professorEntity.setProperty("score-professor", scoreProfessor);
+    professorEntity.setProperty("perception", ratingProfessor);
+    commentsEntity.setProperty("score-class", scoreClass);
+    commentsEntity.setProperty("perception", ratingClass);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
