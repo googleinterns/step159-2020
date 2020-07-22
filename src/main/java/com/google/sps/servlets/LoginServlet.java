@@ -16,13 +16,12 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -31,28 +30,30 @@ public class LoginServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     boolean loginStatus = userService.isUserLoggedIn();
-    String urlToRedirect = "/index.html";
+    String urlToRedirect = "/search.html";
 
-    ArrayList<String> userDetails = new ArrayList();
+    JSONObject userDetails = new JSONObject();
     if (loginStatus) {
-      userDetails.add("true");
+      userDetails.put("userIsLoggedIn", "true");
       String userEmail = userService.getCurrentUser().getEmail();
+      userDetails.put("userEmail", userEmail);
       String logoutURL = userService.createLogoutURL(urlToRedirect);
-      userDetails.add(
-          "<p>Hello, "
-              + userEmail
-              + "! You are logged in.</p>"
-              + "<p><a href=\""
-              + logoutURL
-              + "\">Click here to log out.</a></p>");
+      userDetails.put("url", logoutURL);
+      int start = userEmail.indexOf('@');
+      int end = userEmail.indexOf('.');
+      String schoolName;
+      if (start == -1 || end == -1) { // This means that @ or . are not in userEmail.
+        schoolName = "Sorry, you have entered an invalid email.";
+      } else {
+        schoolName = userEmail.substring(start + 1, end);
+      }
+      userDetails.put("schoolName", schoolName);
     } else {
-      userDetails.add("false");
+      userDetails.put("userIsLoggedIn", "false");
       String loginURL = userService.createLoginURL(urlToRedirect);
-      userDetails.add("<p><a href=\"" + loginURL + "\"> Login Here </a></p>");
+      userDetails.put("url", loginURL);
     }
-
-    Gson gson = new Gson();
-    response.setContentType("text/json;");
-    response.getWriter().println(gson.toJson(userDetails));
+    response.setContentType("application/json;");
+    response.getWriter().println(userDetails);
   }
 }
