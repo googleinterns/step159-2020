@@ -7,7 +7,7 @@ function verifyLogin() {
   fetch('/login').then(response => response.json()).then((userDetails => {
     const loginElement = document.getElementById("login-box");
     const schoolName = document.getElementById("school-name");
-    if (userDetails.userIsLoggedIn == "false") {
+    if (!userDetails.loggedIn) {
       schoolName.style.display = "none";
       loginElement.innerHTML += "<p><a href=\"" + userDetails.url + "\"> Click here to log in! </a></p>";
     } else {

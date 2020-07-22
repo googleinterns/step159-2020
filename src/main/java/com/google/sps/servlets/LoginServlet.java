@@ -29,12 +29,12 @@ public class LoginServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-    boolean loginStatus = userService.isUserLoggedIn();
+    boolean loggedIn = userService.isUserLoggedIn();
     String urlToRedirect = "/search.html";
 
     JSONObject userDetails = new JSONObject();
-    if (loginStatus) {
-      userDetails.put("userIsLoggedIn", "true");
+    userDetails.put("loggedIn", loggedIn);
+    if (loggedIn) {
       String userEmail = userService.getCurrentUser().getEmail();
       userDetails.put("userEmail", userEmail);
       String logoutURL = userService.createLogoutURL(urlToRedirect);
@@ -49,7 +49,6 @@ public class LoginServlet extends HttpServlet {
       }
       userDetails.put("schoolName", schoolName);
     } else {
-      userDetails.put("userIsLoggedIn", "false");
       String loginURL = userService.createLoginURL(urlToRedirect);
       userDetails.put("url", loginURL);
     }
