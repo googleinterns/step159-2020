@@ -53,10 +53,7 @@ public class DataServlet extends HttpServlet {
     // Get class/professor ratings.
     String ratingClass = request.getParameter("rating-class");
     String ratingProfessor = request.getParameter("rating-professor");
-    Boolean translateEnglish = Boolean.parseBoolean(getParameter(request, "languages", "false"));
-    // Initializing entities.
-    Entity professorEntity = new Entity("Professor");
-    Entity commentsEntity = new Entity("Comments");
+    boolean translateEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateEnglish) {
       Translate translate = TranslateOptions.getDefaultInstance().getService();
@@ -66,32 +63,17 @@ public class DataServlet extends HttpServlet {
           translate.translate(professorFeedback, Translate.TranslateOption.targetLanguage("en"));
       String translatedClassFeedback = translationClassFeedback.getTranslatedText();
       String translatedProfessorFeedback = translationProfessorFeedback.getTranslatedText();
-
-      Document docClass =
-          Document.newBuilder()
-              .setContent(translatedClassFeedback)
-              .setType(Document.Type.PLAIN_TEXT)
-              .build();
-      Document docProfessor =
-          Document.newBuilder()
-              .setContent(translatedProfessorFeedback)
-              .setType(Document.Type.PLAIN_TEXT)
-              .build();
-
-      professorEntity.setProperty("comments-professor", translatedProfessorFeedback);
-      commentsEntity.setProperty("comments-class", translatedClassFeedback);
-    } else {
-      Document docClass =
-          Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
-      Document docProfessor =
-          Document.newBuilder()
-              .setContent(professorFeedback)
-              .setType(Document.Type.PLAIN_TEXT)
-              .build();
-
-      professorEntity.setProperty("comments-professor", professorFeedback);
-      commentsEntity.setProperty("comments-class", classFeedback);
+      classFeedback = translatedClassFeedback;
+      professorFeedback = translatedProfessorFeedback;
     }
+
+    Document docClass =
+        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
+    Document docProfessor =
+        Document.newBuilder()
+            .setContent(professorFeedback)
+            .setType(Document.Type.PLAIN_TEXT)
+            .build();
 
     LanguageServiceClient languageServiceForClass = LanguageServiceClient.create();
     Sentiment sentimentForClass =
@@ -105,6 +87,10 @@ public class DataServlet extends HttpServlet {
     float scoreProfessor = sentimentForProf.getScore();
     languageServiceForProf.close();
 
+    Entity professorEntity = new Entity("Professor");
+    Entity commentsEntity = new Entity("Comments");
+    professorEntity.setProperty("comments-professor", professorFeedback);
+    commentsEntity.setProperty("comments-class", classFeedback);
     professorEntity.setProperty("score-professor", scoreProfessor);
     professorEntity.setProperty("perception", ratingProfessor);
     commentsEntity.setProperty("score-class", scoreClass);
