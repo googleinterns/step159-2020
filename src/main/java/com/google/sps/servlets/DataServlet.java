@@ -88,11 +88,12 @@ public class DataServlet extends HttpServlet {
     languageServiceForProf.close();
 
     Entity professorEntity = new Entity("Professor");
-    Entity commentsEntity = new Entity("Comments");
     professorEntity.setProperty("comments-professor", professorFeedback);
-    commentsEntity.setProperty("comments-class", classFeedback);
     professorEntity.setProperty("score-professor", scoreProfessor);
     professorEntity.setProperty("perception", ratingProfessor);
+    
+    Entity commentsEntity = new Entity("Comments");
+    commentsEntity.setProperty("comments-class", classFeedback);
     commentsEntity.setProperty("score-class", scoreClass);
     commentsEntity.setProperty("perception", ratingClass);
 
