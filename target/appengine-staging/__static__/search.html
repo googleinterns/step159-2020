@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Search Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body onload = "loadBody()">
+      <div id="school-name"></div>
+      <div id="login-box"></div>
+      <form id="class-form" method="POST" enctype="multipart/form-data">
+        <p>Enter class info:</p>
+        <textarea name="class-name">Class Name</textarea>
+        <br/>
+        <textarea name="prof-name">Professor Name</textarea>
+        <br/><br/>
+        <input type="submit"/>
+      </form>
+      <div id="class-search">
+      <p>What class are you searching for?</p>
+      <textarea name="class-name">Class Name</textarea>
+      <br/><br/>
+      <button onclick="showClasses()">
+      <div id="search-results"></div>
+  </body>
+</html>

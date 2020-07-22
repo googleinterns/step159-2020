@@ -20,15 +20,17 @@ function verifyLogin() {
 
 function showClasses() {
   const classes = document.getElementById("search-results");
+  const profName = document.getElementById("search-prof").value;
   classes.innerHTML = "";
-  fetch('/search')
+  const url = new URL("/search", window.location.origin);
+  url.searchParams.set("profName", profName);
+  fetch(url)
   .then(response => response.json())
   .then((response) => {
     return JSON.parse(response.classNames);
   })
   .then((classNames) => {
-    console.log(classNames);
-    classNames.forEach(name => createListElement(name));
+    classNames.forEach(name => classes.appendChild(createListElement(name)));
   });
 }
 

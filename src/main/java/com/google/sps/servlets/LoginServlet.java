@@ -39,6 +39,7 @@ public class LoginServlet extends HttpServlet {
       userDetails.put("userEmail", userEmail);
       String logoutURL = userService.createLogoutURL(urlToRedirect);
       userDetails.put("url", logoutURL);
+      // TODO: Make email checking more robust.
       int start = userEmail.indexOf('@');
       int end = userEmail.indexOf('.');
       String schoolName;
