@@ -1,7 +1,7 @@
 package com.google.sps.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.sps.data.EntryObject;
+import com.google.sps.data.GraphDataObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/graph")
 public class ChartsServlet extends HttpServlet {
   private List<Object> entryList = new ArrayList<>();
-  EntryObject newEntry = new EntryObject("Hours", "Difficulty");
+  GraphDataObject newEntry = new GraphDataObject("Hours", "Difficulty");
 
   @Override
   public void init() {

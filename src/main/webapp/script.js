@@ -4,7 +4,6 @@ function makeGraph() {
   fetch('/graph')
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
       const hourData = new google.visualization.arrayToDataTable(data.hours);
       const hourOptions = {
           title: "Hours Spent per Week",
@@ -15,9 +14,8 @@ function makeGraph() {
             hideBucketItems: true
           }
         };
-        const hourChart = new google.visualization.Histogram(document.getElementById('chart_div'));
+        const hourChart = new google.visualization.Histogram(document.getElementById("hours-chart"));
         hourChart.draw(hourData, hourOptions);
-
 
       const difficultyData = new google.visualization.arrayToDataTable(data.difficulty);
       const diffOptions = {
@@ -29,7 +27,7 @@ function makeGraph() {
             hideBucketItems: true,
           }
         };
-        const diffChart = new google.visualization.Histogram(document.getElementById('chart_div2'));
+        const diffChart = new google.visualization.Histogram(document.getElementById("difficulty-chart"));
         diffChart.draw(difficultyData, diffOptions);
     });
 }
