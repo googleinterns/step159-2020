@@ -51,50 +51,51 @@ public class DataServlet extends HttpServlet {
     String classFeedback = request.getParameter("class-input");
     String professorFeedback = request.getParameter("prof-input");
     // Get class/professor ratings.
-    String ratingClass = request.getParameter("rating-class");
-    String ratingProfessor = request.getParameter("rating-professor");
-    boolean translateEnglish = Boolean.parseBoolean(request.getParameter("languages"));
+    String classRating = request.getParameter("rating-class");
+    String professorRating = request.getParameter("rating-professor");
+    boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
-    if (translateEnglish) {
-      Translate translate = TranslateOptions.getDefaultInstance().getService();
+    if (translateToEnglish) {
+      Translate translateService = TranslateOptions.getDefaultInstance().getService();
       Translation translationClassFeedback =
-          translate.translate(classFeedback, Translate.TranslateOption.targetLanguage("en"));
+          translateService.translate(classFeedback, Translate.TranslateOption.targetLanguage("en"));
       Translation translationProfessorFeedback =
-          translate.translate(professorFeedback, Translate.TranslateOption.targetLanguage("en"));
+          translateService.translate(professorFeedback, Translate.TranslateOption.targetLanguage("en"));
       String translatedClassFeedback = translationClassFeedback.getTranslatedText();
       String translatedProfessorFeedback = translationProfessorFeedback.getTranslatedText();
       classFeedback = translatedClassFeedback;
       professorFeedback = translatedProfessorFeedback;
     }
 
-    Document docClass =
-        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
-    Document docProfessor =
+    Document classFeedbackDoc =
+        Document.newBuilder().setContent(classFeedbackDoc).setType(Document.Type.PLAIN_TEXT).build();
+    Document professorFeedbackDoc =
         Document.newBuilder()
             .setContent(professorFeedback)
             .setType(Document.Type.PLAIN_TEXT)
             .build();
 
-    LanguageServiceClient languageServiceForClass = LanguageServiceClient.create();
-    Sentiment sentimentForClass =
-        languageServiceForClass.analyzeSentiment(docClass).getDocumentSentiment();
-    float scoreClass = sentimentForClass.getScore();
-    languageServiceForClass.close();
+    LanguageServiceClient classLanguageService = LanguageServiceClient.create();
+    Sentiment classSentiment =
+        classLanguageService.analyzeSentiment(classFeedbackDoc).getDocumentSentiment();
+    float classScore = classSentiment.getScore();
+    classLanguageService.close();
 
-    LanguageServiceClient languageServiceForProf = LanguageServiceClient.create();
-    Sentiment sentimentForProf =
-        languageServiceForProf.analyzeSentiment(docProfessor).getDocumentSentiment();
-    float scoreProfessor = sentimentForProf.getScore();
-    languageServiceForProf.close();
+    LanguageServiceClient profLanguageService = LanguageServiceClient.create();
+    Sentiment professorSentiment =
+        profLanguageService.analyzeSentiment(professorFeedbackDoc).getDocumentSentiment();
+    float professorScore = professorSentiment.getScore();
+    profLanguageService.close();
 
     Entity professorEntity = new Entity("Professor");
-    Entity commentsEntity = new Entity("Comments");
     professorEntity.setProperty("comments-professor", professorFeedback);
+    professorEntity.setProperty("score-professor", professorScore);
+    professorEntity.setProperty("perception", professorRating);
+    
+    Entity commentsEntity = new Entity("Comments");
     commentsEntity.setProperty("comments-class", classFeedback);
-    professorEntity.setProperty("score-professor", scoreProfessor);
-    professorEntity.setProperty("perception", ratingProfessor);
-    commentsEntity.setProperty("score-class", scoreClass);
-    commentsEntity.setProperty("perception", ratingClass);
+    commentsEntity.setProperty("score-class", classScore);
+    commentsEntity.setProperty("perception", classRating);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
@@ -103,14 +104,5 @@ public class DataServlet extends HttpServlet {
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/index.html");
-  }
-
-  /**
-   * @return the request parameter, or the default value if the parameter was not specified by the
-   *     client
-   */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    return value != null ? value : defaultValue;
   }
 }
