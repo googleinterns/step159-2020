@@ -46,18 +46,14 @@ public class SearchServlet extends HttpServlet {
     Filter propertyFilter = new FilterPredicate("Professor", FilterOperator.EQUAL, profName);
     Query q = new Query("Class").setFilter(propertyFilter);
     List<Entity> classes = datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    System.out.println(classes);
     for (Entity entity : classes) {
       String name = (String) entity.getProperty("Name");
       classNames.add(name);
       String professor = (String) entity.getProperty("Professor");
       professorNames.add(professor);
     }
-
-    System.out.println(classNames);
     String classNameJson = new Gson().toJson(classNames);
     String profNameJson = new Gson().toJson(professorNames);
-
     JSONObject obj = new JSONObject();
     obj.put("classNames", classNameJson);
     obj.put("profNames", profNameJson);
