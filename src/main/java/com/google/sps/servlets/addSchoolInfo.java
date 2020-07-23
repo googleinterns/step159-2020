@@ -16,22 +16,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/database-make")
-public class databaseTest extends HttpServlet {
+@WebServlet("/add-info")
+public class addSchoolInfo extends HttpServlet {
 
   private Key existingSchoolKey;
   private Key existingCourseKey;
   private Key existingProfessorKey;
 
-  private Key newSchoolKey = null;
-  private Key newCourseKey = null;
-  private Key newProfessorKey = null;
-  private Key newTermKey = null;
-
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String hey = "hello";
-  }
+  private Key newSchoolKey;
+  private Key newCourseKey;
+  private Key newProfessorKey;
+  private Key newTermKey;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -42,14 +37,10 @@ public class databaseTest extends HttpServlet {
     String profName = request.getParameter("professor-name");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    // sees if school exists if it does grabs key, else makes one
     Filter schoolFilter = new FilterPredicate("school-name", FilterOperator.EQUAL, schoolName);
     Query schoolQ = new Query("School").setFilter(schoolFilter);
     List<Entity> schoolQuery =
         datastore.prepare(schoolQ).asList(FetchOptions.Builder.withDefaults());
-
-    System.out.println(schoolQuery);
-    System.out.println(schoolQuery.size());
 
     if (schoolQuery.size() == 0) {
       Entity newSchool = new Entity("School");
@@ -62,47 +53,32 @@ public class databaseTest extends HttpServlet {
       newSchoolKey = null;
     }
 
-    System.out.println(newSchoolKey);
-
-    // new school so everything is new
     if (newSchoolKey != null) {
-
-      System.out.println("NEW EVEYTHING");
-
       Entity newCourse = new Entity("Course", newSchoolKey);
       newCourse.setProperty("course-name", courseName);
       newCourse.setProperty("Units", units);
       newCourseKey = newCourse.getKey();
       datastore.put(newCourse);
 
-      Entity newTerm = new Entity("Term", newCourseKey);
-      newTerm.setProperty("term", term);
-      newTerm.setProperty("instructor", profName);
-      newTermKey = newTerm.getKey();
-      datastore.put(newTerm);
-
-      Entity newProfessor = new Entity("Professor", newSchoolKey);
-      newProfessor.setProperty("name", profName);
-      newProfessor.setProperty("courses", newCourseKey);
-      newProfessor.setProperty("course-list", (courseName + ", " + term));
+      Entity newProfessor;
+      newProfessor = new Entity("Professor", existingSchoolKey);
+      newProfessor.setProperty("professor-name", profName);
+      newProfessorKey = newProfessor.getKey();
       datastore.put(newProfessor);
 
-    } else {
-      System.out.println("Old School");
+      Entity newTerm = new Entity("Term", newCourseKey);
+      newTerm.setProperty("term", term);
+      newTerm.setProperty("Professor", newProfessorKey);
+      datastore.put(newTerm);
 
-      // existing school so now we check if this is a new course
+    } else {
       Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
       Query courseQ = new Query("Course").setAncestor(existingSchoolKey).setFilter(courseFilter);
       List<Entity> courseQuery =
           datastore.prepare(courseQ).asList(FetchOptions.Builder.withDefaults());
 
-      System.out.println("THIS SHOULD PRINT AFTER OLD SHCOOL IS FOUND");
-      System.out.println(courseQuery);
-
+      // existing school --> new course
       if (courseQuery.size() == 0) {
-
-        System.out.println("Old School NEW COURSE");
-        // new course
         Entity newCourse;
         if (existingSchoolKey != null) {
           newCourse = new Entity("Course", existingSchoolKey);
@@ -114,14 +90,9 @@ public class databaseTest extends HttpServlet {
         newCourse.setProperty("Units", units);
         datastore.put(newCourse);
 
-        // there should never be duplicate terms so no need to check
         Entity newTerm = new Entity("Term", newCourseKey);
         newTerm.setProperty("term", term);
-        newTerm.setProperty("instructor", profName);
-        newTermKey = newTerm.getKey();
-        datastore.put(newTerm);
 
-        // professor are tied to terms so we should check them last
         Filter professorFilter =
             new FilterPredicate("professor-name", FilterOperator.EQUAL, profName);
         Query professorQ =
@@ -129,34 +100,34 @@ public class databaseTest extends HttpServlet {
         List<Entity> professorQuery =
             datastore.prepare(professorQ).asList(FetchOptions.Builder.withDefaults());
 
-        // this is a new professor
+        // existing school --> new course --> new professor
         if (professorQuery.size() == 0) {
           System.out.println("OLD SCHOOL NEW COURSE NEW PROFESSOR");
           Entity newProfessor;
           newProfessor = new Entity("Professor", existingSchoolKey);
           newProfessor.setProperty("professor-name", profName);
-          newProfessor.setProperty("school", schoolName);
-          newProfessor.setProperty("teaches", newTermKey);
           newProfessorKey = newProfessor.getKey();
           datastore.put(newProfessor);
+
+          newTerm.setProperty("Professor", newProfessorKey);
+          datastore.put(newTerm);
+
         } else {
-          System.out.println("OLD SCHOOL NEW COURSE OLD PROFESSOR");
-          System.out.println("OLD PROFESSOR");
+          // existing school --> new course --> existing professor
+          Entity existingProfessor = professorQuery.get(0);
+          existingProfessorKey = existingProfessor.getKey();
+
+          newTerm.setProperty("Professor", newProfessorKey);
+          datastore.put(newTerm);
         }
       } else {
-
-        System.out.println("Old School OLD COURSE");
-        // no new course only new term
+        // existing school --> existing course --> existing professor
         Entity existingCourse = courseQuery.get(0);
         existingCourseKey = existingCourse.getKey();
 
         Entity newTerm = new Entity("Term", existingCourseKey);
         newTerm.setProperty("term", term);
-        newTerm.setProperty("instructor", profName);
-        newTermKey = newTerm.getKey();
-        datastore.put(newTerm);
 
-        // professor are tied to terms so we should check them last
         Filter professorFilter =
             new FilterPredicate("professor-name", FilterOperator.EQUAL, profName);
         Query professorQ =
@@ -164,24 +135,31 @@ public class databaseTest extends HttpServlet {
         List<Entity> professorQuery =
             datastore.prepare(professorQ).asList(FetchOptions.Builder.withDefaults());
 
-        // this is a new professor
+        // existing school --> existing course --> new professor
         if (professorQuery.size() == 0) {
-          System.out.println("OLD SCHOOL OLD COURSE NEW PROFESSOR");
           Entity newProfessor;
           newProfessor = new Entity("Professor", existingSchoolKey);
           newProfessor.setProperty("professor-name", profName);
-          newProfessor.setProperty("school", schoolName);
-          newProfessor.setProperty("teaches", newTermKey);
           newProfessorKey = newProfessor.getKey();
           datastore.put(newProfessor);
+
+          newTerm.setProperty("Professor", newProfessorKey);
+          datastore.put(newTerm);
+
         } else {
-          System.out.println("OLD SCHOOL OLD COURSE OLD PROFESSOR");
-          System.out.println("OLD PROFESSOR");
+          // existing school --> existing course --> existing professor
+          Entity existingProfessor = professorQuery.get(0);
+          existingProfessorKey = existingProfessor.getKey();
+          newTerm.setProperty("Professor", existingProfessorKey);
+          datastore.put(newTerm);
         }
       }
     }
-  }
 
+    response.setContentType("text/html; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.sendRedirect("/addSchoolInfo.html");
+  }
   /**
    * @return the request parameter, or the default value if the parameter was not specified by the
    *     client
