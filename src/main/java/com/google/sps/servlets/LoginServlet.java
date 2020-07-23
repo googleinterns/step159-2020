@@ -38,19 +38,17 @@ public class LoginServlet extends HttpServlet {
       String userEmail = userService.getCurrentUser().getEmail();
       userDetails.put("userEmail", userEmail);
       String logoutURL = userService.createLogoutURL(urlToRedirect);
-      userDetails.put("url", logoutURL);
+      userDetails.put("logoutURL", logoutURL);
       int start = userEmail.indexOf('@');
       int end = userEmail.indexOf('.');
-      String schoolName;
-      if (start == -1 || end == -1) { // This means that @ or . are not in userEmail.
-        schoolName = "Sorry, you have entered an invalid email.";
-      } else {
-        schoolName = userEmail.substring(start + 1, end);
+      if (start != -1 && end != -1) {
+        String schoolName = userEmail.substring(start + 1, end);
+        userDetails.put("schoolName", schoolName);
       }
-      userDetails.put("schoolName", schoolName);
+
     } else {
       String loginURL = userService.createLoginURL(urlToRedirect);
-      userDetails.put("url", loginURL);
+      userDetails.put("loginURL", loginURL);
     }
     response.setContentType("application/json;");
     response.getWriter().println(userDetails);
