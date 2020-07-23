@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private final List<Object> json = new ArrayList<>();
+  private final List<Object> listofComments = new ArrayList<>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -36,13 +36,13 @@ public class DataServlet extends HttpServlet {
 
     for (Entity entity : results.asIterable()) {
       String comment = (String) entity.getProperty("comments-class");
-      json.add(comment);
+      listofComments.add(comment);
     }
 
     // Send JSON string.
-    String jsonVersion = new Gson().toJson(json);
+    String jsonVersionListOfComments = new Gson().toJson(listofComments);
     response.setContentType("application/json;");
-    response.getWriter().println(jsonVersion);
+    response.getWriter().println(jsonVersionListOfComments);
   }
 
   @Override
