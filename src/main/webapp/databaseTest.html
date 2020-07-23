@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>School Form</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <p>Add Class</p>
+    <form action="/database-make" method="POST">
+        <p>School Name</p>
+        <textarea name="school-name">SchoolName</textarea>
+        <br><br>
+        <p>Course Name</p>
+        <textarea name="course-name">CoureName</textarea>
+        <br><br>
+        <p>Term</p>
+        <textarea name="term">Term</textarea>
+        <br><br>
+        <p>Unit</p>
+        <textarea name="units">Units</textarea>
+        <br><br>
+        <p>Professor Name</p>
+        <textarea name="professor-name">ProfessorName</textarea>
+    <input type="submit" />
+    </form>
+    <ul id="log"></ul>
+  </body>
+</html>
