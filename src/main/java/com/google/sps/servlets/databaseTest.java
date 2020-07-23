@@ -85,6 +85,7 @@ public class databaseTest extends HttpServlet {
       newProfessor.setProperty("name", profName);
       newProfessor.setProperty("courses", newCourseKey);
       newProfessor.setProperty("course-list", (courseName + ", " + term));
+      datastore.put(newProfessor);
 
     } else {
       System.out.println("Old School");
