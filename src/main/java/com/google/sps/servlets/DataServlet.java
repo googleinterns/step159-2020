@@ -41,6 +41,7 @@ public class DataServlet extends HttpServlet {
 
     // Send JSON string.
     String jsonVersionCommentsList = new Gson().toJson(commentsList);
+    commentsList.clear();
     response.setContentType("application/json;");
     response.getWriter().println(jsonVersionCommentsList);
   }
