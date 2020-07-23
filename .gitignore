@@ -1,2 +1,2 @@
 # Excludes libraries when commiting. 
-/target
+target/
