@@ -47,6 +47,17 @@
       <input type="radio" id="terrible" name="rating-class" value="terrible" />
       <label for="terrible">Terrible.</label>
 
+      <p>How many hours per week did you spend on this class?</p>
+      <input type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
+      <label for="hoursOfWork">Hours (include in-class time)</label>
+
+      <br /><br />
+      <p>How difficult did you find this class?</p>
+      <input type="number" id="difficulty" name="difficulty" min="0" max="5" />
+      <label for="difficulty"
+        >Difficulty (From 0 = Very Easy to 5 = Very Hard)</label
+      >
+
       <br /><br />
       <textarea name="prof-input">Write opinion on professor here.</textarea>
       <br /><br />
@@ -87,6 +98,7 @@
         value="terrible"
       />
       <label for="terrible">Terrible.</label>
+      <br /><br />
 
       <p>Do you wish to translate your comments to English?</p>
       <input type="radio" id="yes" name="languages" value="true" />

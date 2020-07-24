@@ -3,8 +3,12 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
@@ -50,9 +54,10 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     String classFeedback = request.getParameter("class-input");
-    String professorFeedback = request.getParameter("prof-input");
-    // Get class/professor ratings.
     String classRating = request.getParameter("rating-class");
+    Int hoursOfWork = request.getParameter("hoursOfWork");
+    Int difficulty = request.getParameter("difficulty");
+    String professorFeedback = request.getParameter("prof-input");
     String professorRating = request.getParameter("rating-professor");
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
@@ -92,19 +97,67 @@ public class DataServlet extends HttpServlet {
     float professorScore = professorSentiment.getScore();
     profLanguageService.close();
 
-    Entity professorEntity = new Entity("Professor");
-    professorEntity.setProperty("comments-professor", professorFeedback);
-    professorEntity.setProperty("score-professor", professorScore);
-    professorEntity.setProperty("perception", professorRating);
+    // Gets user email.
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail();
 
-    Entity commentsEntity = new Entity("Comments");
-    commentsEntity.setProperty("comments-class", classFeedback);
-    commentsEntity.setProperty("score-class", classScore);
-    commentsEntity.setProperty("perception", classRating);
+    // Check whether user has reviewer ID in system.
+    Filter userFilter = new FilterPredicate("user-email", FilterOperator.EQUAL, userEmail);
+    Query userQuery = new Query("User").setFilter(userFilter);
+    List<Entity> userQueryList =
+        datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
+
+    // User has not reviewed any rating.
+    if (userQueryList.size() == 0) {
+      Entity newReviewer = new Entity("User");
+      newReviewer.setProperty("user-email", userEmail);
+      Entity userID = newReviewer;
+    } else {
+      Entity userID = userQueryList.get(0);
+    }
+
+    // We would query with both professor/term filer and property filter
+    // so we would search specifically whether a rating with such reviewer-id
+    // exists.
+    Query<Entity> reviewerQuery =
+        Query.newEntityQueryBuilder()
+            .setKind("Rating")
+            .setFilter(CompositeFilter.and(PropertyFilter.eq("reviewer-id", userID.getKey())))
+            .build();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(commentsEntity);
-    datastore.put(professorEntity);
+    if (reviewerQuery != null) {
+      // Need existing rankingKey.
+      Entity rankingEntity = datastore.get(rankingKey);
+      Entity rankingEntity =
+          Entity.newBuilder(datastore.get(rankingKey))
+              .set("comments-professor", professorFeedback)
+              .set("score-professor", professorScore)
+              .set("perception", professorRating)
+              .set("difficulty", difficulty)
+              .set("hours", hoursOfWork)
+              .build();
+      datastore.update(rankingEntity);
+    } else {
+      Entity professorRatingEntity = new Entity("Rating");
+      professorRatingEntity.setProperty("comments-professor", professorFeedback);
+      professorRatingEntity.setProperty("reviewer-id", userID.getKey());
+      professorRatingEntity.setProperty("score-professor", professorScore);
+      professorRatingEntity.setProperty("perception", professorRating);
+      professorRatingEntity.setProperty("hours", hoursOfWork);
+      professorRatingEntity.setProperty("difficulty", difficulty);
+
+      Entity classRatingEntity = new Entity("Rating");
+      classRatingEntity.setProperty("comments-class", classFeedback);
+      classRatingEntity.setProperty("reviewer-id", userID.getKey());
+      classRatingEntity.setProperty("score-class", classScore);
+      classRatingEntity.setProperty("perception", classRating);
+      classRatingEntity.setProperty("hours", hoursOfWork);
+      classRatingEntity.setProperty("difficulty", difficulty);
+
+      datastore.put(classRatingEntity);
+      datastore.put(professorRatingEntity);
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
