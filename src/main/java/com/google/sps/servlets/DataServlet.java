@@ -55,7 +55,7 @@ public class DataServlet extends HttpServlet {
     // Get written feedback.
     String classFeedback = request.getParameter("class-input");
     String classRating = request.getParameter("rating-class");
-    Int hoursOfWork = request.getParameter("hoursOfWork");
+    Int workHours = request.getParameter("hoursOfWork");
     Int difficulty = request.getParameter("difficulty");
     String professorFeedback = request.getParameter("prof-input");
     String professorRating = request.getParameter("rating-professor");
@@ -106,7 +106,8 @@ public class DataServlet extends HttpServlet {
     Query userQuery = new Query("User").setFilter(userFilter);
     List<Entity> userQueryList =
         datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
-
+    Entity userID = new Entity("User");
+    
     // User has not reviewed any rating.
     if (userQueryList.size() == 0) {
       Entity newReviewer = new Entity("User");
@@ -126,7 +127,9 @@ public class DataServlet extends HttpServlet {
             .build();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    if (reviewerQuery != null) {
+    List<Entity> reviewerQueryList = datastore.prepare(reviewerQuery);
+    
+    if (reviewerQueryList.size() == 0) {
       // Need existing rankingKey.
       Entity rankingEntity = datastore.get(rankingKey);
       Entity rankingEntity =
@@ -135,7 +138,7 @@ public class DataServlet extends HttpServlet {
               .set("score-professor", professorScore)
               .set("perception", professorRating)
               .set("difficulty", difficulty)
-              .set("hours", hoursOfWork)
+              .set("hours", workHours)
               .build();
       datastore.update(rankingEntity);
     } else {
@@ -144,7 +147,7 @@ public class DataServlet extends HttpServlet {
       professorRatingEntity.setProperty("reviewer-id", userID.getKey());
       professorRatingEntity.setProperty("score-professor", professorScore);
       professorRatingEntity.setProperty("perception", professorRating);
-      professorRatingEntity.setProperty("hours", hoursOfWork);
+      professorRatingEntity.setProperty("hours", workHours);
       professorRatingEntity.setProperty("difficulty", difficulty);
 
       Entity classRatingEntity = new Entity("Rating");
@@ -152,7 +155,7 @@ public class DataServlet extends HttpServlet {
       classRatingEntity.setProperty("reviewer-id", userID.getKey());
       classRatingEntity.setProperty("score-class", classScore);
       classRatingEntity.setProperty("perception", classRating);
-      classRatingEntity.setProperty("hours", hoursOfWork);
+      classRatingEntity.setProperty("hours", workHours);
       classRatingEntity.setProperty("difficulty", difficulty);
 
       datastore.put(classRatingEntity);
