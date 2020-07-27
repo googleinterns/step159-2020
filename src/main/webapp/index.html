@@ -26,26 +26,9 @@
       <br /><br />
 
       <p>How would you rate this class?</p>
-      <input
-        type="radio"
-        id="excellent"
-        name="rating-class"
-        value="excellent"
-      />
-      <label for="excellent">Excellent.</label>
-      <input
-        type="radio"
-        id="acceptable"
-        name="rating-class"
-        value="acceptable"
-      />
-      <label for="acceptable">Acceptable.</label>
-      <input type="radio" id="neutral" name="rating-class" value="neutral" />
-      <label for="neutral">Neutral.</label>
-      <input type="radio" id="not-good" name="rating-class" value="not-good" />
-      <label for="not-good">Not good.</label>
-      <input type="radio" id="terrible" name="rating-class" value="terrible" />
-      <label for="terrible">Terrible.</label>
+      <input type="rating-class" id="rating-class" name="rating-class" min="0" max="5" />
+      <label for="rating-class">Class Rating (From 0 = Terrible to 5 = Excellent)</label>
+      <br><br>
 
       <p>How many hours per week did you spend on this class?</p>
       <input type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
@@ -63,42 +46,9 @@
       <br /><br />
 
       <p>How would you rate the professor?</p>
-      <input
-        type="radio"
-        id="excellent"
-        name="rating-professor"
-        value="excellent"
-      />
-      <label for="excellent">Excellent.</label>
-      <input
-        type="radio"
-        id="acceptable"
-        name="rating-professor"
-        value="acceptable"
-      />
-      <label for="acceptable">Acceptable.</label>
-      <input
-        type="radio"
-        id="neutral"
-        name="rating-professor"
-        value="neutral"
-      />
-      <label for="neutral">Neutral.</label>
-      <input
-        type="radio"
-        id="not-good"
-        name="rating-professor"
-        value="not-good"
-      />
-      <label for="not-good">Not good.</label>
-      <input
-        type="radio"
-        id="terrible"
-        name="rating-professor"
-        value="terrible"
-      />
-      <label for="terrible">Terrible.</label>
-      <br /><br />
+      <input type="rating-prof" id="rating-prof" name="rating-prof" min="0" max="5" />
+      <label for="rating-prof">Professor Rating (From 0 = Terrible to 5 = Excellent)</label>
+      <br><br>
 
       <p>Do you wish to translate your comments to English?</p>
       <input type="radio" id="yes" name="languages" value="true" />
