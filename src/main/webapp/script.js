@@ -1,23 +1,3 @@
-function loadBody() {
-  verifyLogin();
-}
-
-/** Contacts Login servlet to verify if user is logged in. */
-function verifyLogin() {
-  fetch('/login').then(response => response.json()).then((userDetails => {
-    const loginElement = document.getElementById("login-box");
-    const schoolName = document.getElementById("school-name");
-    if (!userDetails.loggedIn) {
-      schoolName.style.display = "none";
-      loginElement.innerHTML += "<p><a href=\"" + userDetails.url + "\"> Click here to log in! </a></p>";
-    } else {
-      schoolName.style.display = "block";
-      schoolName.innerHTML += userDetails.schoolName;
-      loginElement.innerHTML += "<p><a href=\"" + userDetails.url + "\"> Click here to log out! </a></p>";
-    }
-  }));
-}
-
 function countUnits(){
   const inputElems = document.getElementsByName("search-units");
   const arr = []
