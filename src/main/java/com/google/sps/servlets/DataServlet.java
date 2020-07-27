@@ -4,12 +4,15 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
@@ -24,7 +27,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.appengine.api.datastore.Key;
 
 /** An item on a todo list. */
 
@@ -33,7 +35,7 @@ import com.google.appengine.api.datastore.Key;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key existingTermRatingKey;
-  private Key existingProfRatingKey;
+  private Key currentProfKey;
   private Key currentTermKey;
 
   @Override
@@ -58,11 +60,11 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     String classFeedback = request.getParameter("class-input");
-    Int classRating = request.getParameter("rating-class");
-    Int workHours = request.getParameter("hoursOfWork");
-    Int difficulty = request.getParameter("difficulty");
+    int classRating = Integer.parseInt(request.getParameter("rating-class"));
+    int workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
+    int difficulty = Integer.parseInt(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
-    Int professorRating = request.getParameter("rating-professor");
+    int professorRating = Integer.parseInt(request.getParameter("rating-professor"));
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
@@ -79,10 +81,7 @@ public class DataServlet extends HttpServlet {
     }
 
     Document classFeedbackDoc =
-        Document.newBuilder()
-            .setContent(classFeedbackDoc)
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
+        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
     Document professorFeedbackDoc =
         Document.newBuilder()
             .setContent(professorFeedback)
@@ -112,50 +111,50 @@ public class DataServlet extends HttpServlet {
     List<Entity> userQueryList =
         datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
     Entity userID = new Entity("User");
-    
+
     // User has not reviewed any rating.
     if (userQueryList.size() == 0) {
       Entity newReviewer = new Entity("User");
       newReviewer.setProperty("user-email", userEmail);
-      Entity userID = newReviewer;
+      userID = newReviewer;
     } else {
-      Entity userID = userQueryList.get(0);
+      userID = userQueryList.get(0);
     }
-    
+
     currentTermKey = request.getParameter("term");
     Entity currentTerm = datastore.get(currentTermKey);
     currentProfKey = currentTerm.getProperty("Professor");
-    
-    // Checks for term rating, only need to query one as prof and term get reviewed simultaneously. 
-    Filter reviewerFilter = new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userID.getKey());
+
+    // Checks for term rating, only need to query one as prof and term get reviewed simultaneously.
+    Filter reviewerFilter =
+        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userID.getKey());
     Query ratingQuery = new Query("Rating").setAncestor(currentTermKey).setFilter(reviewerFilter);
     List<Entity> ratingQueryList =
-          datastore.prepare(ratingQuery).asList(FetchOptions.Builder.withDefaults());
+        datastore.prepare(ratingQuery).asList(FetchOptions.Builder.withDefaults());
 
     if (ratingQueryList.size() != 0) {
       // A rating from this user for this term and professor has been found.
       Entity existingTermRatingEntity = ratingQueryList.get(0);
       existingTermRatingKey = existingTermRatingEntity.getKey();
-      Entity updatedProfRatingEntity =
-          Entity.newBuilder(datastore.get(currentProfKey))
-              .set("comments-professor", professorFeedback)
-              .set("score-professor", professorScore)
-              .set("perception", professorRating)
-              .set("difficulty", difficulty)
-              .set("hours", workHours)
-              .build();
-      Entity updatedTermRatingEntity =
-          Entity.newBuilder(datastore.get(existingTermRatingKey))
-              .set("comments-class", classFeedback)
-              .set("score-class", classScore)
-              .set("perception", classRating)
-              .set("difficulty", difficulty)
-              .set("hours", workHours)
-              .build();      
-      datastore.update(updatedTermRatingEntity);
-      datastore.update(updatedProfRatingEntity);
+
+      Entity updatedProfRatingEntity = datastore.get(currentProfKey);
+      updatedProfRatingEntity.setProperty("comments-professor", professorFeedback);
+      updatedProfRatingEntity.setProperty("score-professor", professorScore);
+      updatedProfRatingEntity.setProperty("perception", professorRating);
+      updatedProfRatingEntity.setProperty("difficulty", difficulty);
+      updatedProfRatingEntity.setProperty("hours", workHours);
+
+      Entity updatedTermRatingEntity = datastore.get(existingTermRatingKey);
+      updatedTermRatingEntity.setProperty("comments-class", classFeedback);
+      updatedTermRatingEntity.setProperty("score-class", classScore);
+      updatedTermRatingEntity.setProperty("perception", classRating);
+      updatedTermRatingEntity.setProperty("difficulty", difficulty);
+      updatedTermRatingEntity.setProperty("hours", workHours);
+
+      datastore.put(updatedTermRatingEntity);
+      datastore.put(updatedProfRatingEntity);
     } else {
-      // A rating from this user has not been found, will be created. 
+      // A rating from this user has not been found, will be created.
       Entity professorRatingEntity = new Entity("Rating", currentProfKey);
       professorRatingEntity.setProperty("comments-professor", professorFeedback);
       professorRatingEntity.setProperty("reviewer-id", userID.getKey());
