@@ -1,6 +1,2 @@
-<<<<<<< HEAD
-target/
-=======
 # Excludes libraries when commiting. 
 target/
->>>>>>> a18dee48c295115865c85e4418dfb57c05a27f4f
