@@ -5,10 +5,14 @@
     <title>Search Page</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com">
+
   </head>
-  <body onload="loadBody()">
+  <body>
+    <div class="g-signin2" id="login-button" data-onsuccess="onSignIn"></div>
+    <div class="hidden" id="logged-in" >
       <div id="school-name"></div>
-      <div id="login-box"></div>
       <form id="class-form" method="POST" action="/search">
         <p>Enter class info:</p>
         <textarea name="class-name">Class Name</textarea>
@@ -24,5 +28,10 @@
       <br/><br/>
       <button onclick="showClasses()">See classes!</button>
       <div id="search-results"></div>
+      </div>
+      <button id="logout-button" onclick="signOut()">Sign out</button>
+    </div>
+    
   </body>
+  
 </html>
