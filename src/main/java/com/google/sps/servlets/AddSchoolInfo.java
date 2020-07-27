@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/add-info")
-public class addSchoolInfo extends HttpServlet {
+public class AddSchoolInfo extends HttpServlet {
 
   private Key existingSchoolKey;
   private Key existingCourseKey;
