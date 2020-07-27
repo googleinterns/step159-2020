@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.sps.data.PostRequestObject;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -30,11 +31,14 @@ public class addSchoolInfo extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String schoolName = request.getParameter("school-name");
-    String courseName = request.getParameter("course-name");
-    String term = request.getParameter("term");
-    String units = request.getParameter("units");
-    String profName = request.getParameter("professor-name");
+
+    PostRequestObject postRequestData = processPostRequest(request);
+    String schoolName = postRequestData.getSchool();
+    String courseName = postRequestData.getCourse();
+    String term = postRequestData.getTerm();
+    String units = postRequestData.getUnits();
+    String profName = postRequestData.getProf();
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Filter schoolFilter = new FilterPredicate("school-name", FilterOperator.EQUAL, schoolName);
@@ -61,7 +65,7 @@ public class addSchoolInfo extends HttpServlet {
       datastore.put(newCourse);
 
       Entity newProfessor;
-      newProfessor = new Entity("Professor", existingSchoolKey);
+      newProfessor = new Entity("Professor", newSchoolKey);
       newProfessor.setProperty("professor-name", profName);
       newProfessorKey = newProfessor.getKey();
       datastore.put(newProfessor);
@@ -160,12 +164,16 @@ public class addSchoolInfo extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/addSchoolInfo.html");
   }
-  /**
-   * @return the request parameter, or the default value if the parameter was not specified by the
-   *     client
-   */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    return value != null ? value : defaultValue;
+
+  public PostRequestObject processPostRequest(HttpServletRequest request) {
+    String schoolName = request.getParameter("school-name");
+    String courseName = request.getParameter("course-name");
+    String term = request.getParameter("term");
+    String units = request.getParameter("units");
+    String profName = request.getParameter("professor-name");
+
+    PostRequestObject newPost =
+        new PostRequestObject(schoolName, courseName, term, units, profName);
+    return newPost;
   }
 }
