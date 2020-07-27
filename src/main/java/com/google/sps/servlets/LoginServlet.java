@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet {
       userDetails.put("logoutURL", logoutURL);
       // TODO: Implement OAuth for more robust email checking.
       int start = userEmail.indexOf('@');
-      int end = userEmail.LastIndexOf('.');
+      int end = userEmail.lastIndexOf('.');
       if (start != -1 && end != -1) {
         String schoolName = userEmail.substring(start + 1, end);
         userDetails.put("schoolName", schoolName);
