@@ -1,0 +1,11 @@
+/* #logged-in {
+    display: none;
+}
+
+#school-name {
+    display: none;
+} */
+
+.hidden {
+    display:none;
+}
