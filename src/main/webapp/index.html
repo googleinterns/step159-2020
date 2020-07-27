@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Capstone</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <p>Hello</p>
+    <div id="hours-chart" style="width: 900px; height: 500px"></div>
+    <div id="difficulty-chart" style="width: 900px; height: 500px"></div>
+
+    <p>Rate your classes and professors!</p>
+    <form action="/data" method="POST">
+      <p>Rate your class:</p>
+      <div id="class-id"></div>
+      <button onclick="getClassID()">Get class ID</button>
+      <br /><br />
+
+      <textarea name="class-input">Write opinion on class here.</textarea>
+      <br /><br />
+
+      <p>How would you rate this class?</p>
+      <input
+        type="radio"
+        id="excellent"
+        name="rating-class"
+        value="excellent"
+      />
+      <label for="excellent">Excellent.</label>
+      <input
+        type="radio"
+        id="acceptable"
+        name="rating-class"
+        value="acceptable"
+      />
+      <label for="acceptable">Acceptable.</label>
+      <input type="radio" id="neutral" name="rating-class" value="neutral" />
+      <label for="neutral">Neutral.</label>
+      <input type="radio" id="not-good" name="rating-class" value="not-good" />
+      <label for="not-good">Not good.</label>
+      <input type="radio" id="terrible" name="rating-class" value="terrible" />
+      <label for="terrible">Terrible.</label>
+
+      <br /><br />
+      <textarea name="prof-input">Write opinion on professor here.</textarea>
+      <br /><br />
+
+      <p>How would you rate the professor?</p>
+      <input
+        type="radio"
+        id="excellent"
+        name="rating-professor"
+        value="excellent"
+      />
+      <label for="excellent">Excellent.</label>
+      <input
+        type="radio"
+        id="acceptable"
+        name="rating-professor"
+        value="acceptable"
+      />
+      <label for="acceptable">Acceptable.</label>
+      <input
+        type="radio"
+        id="neutral"
+        name="rating-professor"
+        value="neutral"
+      />
+      <label for="neutral">Neutral.</label>
+      <input
+        type="radio"
+        id="not-good"
+        name="rating-professor"
+        value="not-good"
+      />
+      <label for="not-good">Not good.</label>
+      <input
+        type="radio"
+        id="terrible"
+        name="rating-professor"
+        value="terrible"
+      />
+      <label for="terrible">Terrible.</label>
+
+      <p>Do you wish to translate your comments to English?</p>
+      <input type="radio" id="yes" name="languages" value="true" />
+      <label for="yes">Yes.</label>
+      <input type="radio" id="no" name="languages" value="false" />
+      <label for="no">No.</label>
+
+      <input type="submit" />
+    </form>
+    <ul id="log"></ul>
+  </body>
+</html>
