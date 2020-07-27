@@ -58,11 +58,11 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     String classFeedback = request.getParameter("class-input");
-    String classRating = request.getParameter("rating-class");
+    Int classRating = request.getParameter("rating-class");
     Int workHours = request.getParameter("hoursOfWork");
     Int difficulty = request.getParameter("difficulty");
     String professorFeedback = request.getParameter("prof-input");
-    String professorRating = request.getParameter("rating-professor");
+    Int professorRating = request.getParameter("rating-professor");
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
