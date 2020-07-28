@@ -135,7 +135,7 @@ public class AddSchoolInfo extends HttpServlet {
             datastore.prepare(professorQ).asList(FetchOptions.Builder.withDefaults());
 
         // existing school --> existing course --> new professor
-        if (professorQuery.size() == 0) {
+        if (professorQuery.isEmpty()) {
           Entity newProfessor = new Entity("professor", existingSchoolKey);
           newProfessor.setProperty("professor-name", profName);
           newProfessorKey = newProfessor.getKey();
