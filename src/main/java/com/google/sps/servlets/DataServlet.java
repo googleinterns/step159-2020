@@ -113,7 +113,7 @@ public class DataServlet extends HttpServlet {
     Entity userID = new Entity("User");
 
     // User has not reviewed any rating.
-    if (userQueryList.size() == 0) {
+    if (userQueryList.isEmpty()) {
       Entity newReviewer = new Entity("User");
       newReviewer.setProperty("user-email", userEmail);
       userID = newReviewer;
@@ -132,7 +132,7 @@ public class DataServlet extends HttpServlet {
     List<Entity> ratingQueryList =
         datastore.prepare(ratingQuery).asList(FetchOptions.Builder.withDefaults());
 
-    if (ratingQueryList.size() != 0) {
+    if (!ratingQueryList.isEmpty()) {
       // A rating from this user for this term and professor has been found.
       Entity existingTermRatingEntity = ratingQueryList.get(0);
       existingTermRatingKey = existingTermRatingEntity.getKey();
