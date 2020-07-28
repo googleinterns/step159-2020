@@ -54,6 +54,15 @@
       <artifactId>appengine-testing</artifactId>
       <version>1.4.0</version>
       <scope>test</scope>
+    <dependency>
+	    <groupId>com.googlecode.json-simple</groupId>
+	    <artifactId>json-simple</artifactId>
+	    <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-translate</artifactId>
+      <version>1.95.0</version>
     </dependency>
   </dependencies>
 
@@ -67,7 +76,7 @@
         <version>2.2.0</version>
         <configuration>
           <!-- TODO: set project ID. -->
-          <deploy.projectId>dagmawi-step-2020</deploy.projectId>
+          <deploy.projectId>nina-laura-dagm-step-2020</deploy.projectId>
           <deploy.version>1</deploy.version>
         </configuration>
       </plugin>
