@@ -114,7 +114,7 @@ public class DataServlet extends HttpServlet {
     Entity userID = new Entity("User");
 
     // User has not reviewed any rating.
-    if (userQueryList.size() == 0) {
+    if (userQueryList.isEmpty()) {
       Entity newReviewer = new Entity("User");
       newReviewer.setProperty("user-email", userEmail);
       userID = newReviewer;
