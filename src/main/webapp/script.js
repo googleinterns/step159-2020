@@ -96,33 +96,39 @@ function getClassID() {
   document.getElementById("class-id").innerHTML = classId;
 }
 
-function setParam(name, value) {
-  var currentUrl = window.location;
-  var parameters = {};
-  var symbols = /(?:\??)([^=&?]+)=?([^&?]*)/g;
-  var queryString = currentUrl.search;
+// function setParam(name, value) {
+//   var currentUrl = window.location;
+//   var parameters = {};
+//   var symbols = /(?:\??)([^=&?]+)=?([^&?]*)/g;
+//   var queryString = currentUrl.search;
 
-  // Goes through all matches between symbols and the queryString.
-  for (var i = symbols.exec(queryString); i; i = symbols.exec(queryString)) {
-    // Decodes URL.
-    i[1] = decodeURIComponent(i[1]);
-    if (!i[2]) {
-      i[2] = "%%";
-    }
-    parameters[i[1]] = i[2];
-  }
-  parameters[name] = encodeURIComponent(value);
-  var search = [];
-  for (var j in parameters) {
-    var encodedElement = encodeURIComponent(j);
-    var symbol = parameters[j];
-    if (symbol != "%%") {
-      encodedElement += "=" + symbol;
-    }
-    search.push(encodedElement);
-  }
-  search = search.join("&");
-  currentUrl.search = search;
+//   // Goes through all matches between symbols and the queryString.
+//   for (var i = symbols.exec(queryString); i; i = symbols.exec(queryString)) {
+//     // Decodes URL.
+//     i[1] = decodeURIComponent(i[1]);
+//     if (!i[2]) {
+//       i[2] = "%%";
+//     }
+//     parameters[i[1]] = i[2];
+//   }
+//   parameters[name] = encodeURIComponent(value);
+//   var search = [];
+//   for (var j in parameters) {
+//     var encodedElement = encodeURIComponent(j);
+//     var symbol = parameters[j];
+//     if (symbol != "%%") {
+//       encodedElement += "=" + symbol;
+//     }
+//     search.push(encodedElement);
+//   }
+//   search = search.join("&");
+//   currentUrl.search = search;
+// }
+
+function setParam(name, value) {
+  var currentUrl = new URL(window.location);
+  currentUrl.searchParams.set(name, value);
+  window.location = currentUrl;
 }
 
 function setAllParams() {

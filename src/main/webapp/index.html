@@ -18,8 +18,6 @@
     <p>Rate your classes and professors!</p>
     <form action="/data" method="POST">
       <p>Rate your class:</p>
-      <div id="class-id"></div>
-      <button onclick="getClassID()">Get class ID</button>
       <br /><br />
 
       <textarea name="class-input" maxlength="1500">
@@ -78,7 +76,8 @@ Write opinion on professor here.</textarea
 
       <input type="submit" />
     </form>
-
+    <div id="class-id"></div>
+    <button onclick="setParam('term', 'Spring 2020')">Add parameter</button>
     <ul id="log"></ul>
   </body>
 </html>
