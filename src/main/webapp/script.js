@@ -1,7 +1,7 @@
 function countUnits(){
   const inputElems = document.getElementsByName("search-units");
   const arr = []
-  for (let i=0; i<inputElems.length; i++) {       
+  for (let i = 0; i < inputElems.length; i++) {       
     if (inputElems[i].checked){
       arr.push(inputElems[i].value);
     }
@@ -10,22 +10,20 @@ function countUnits(){
 }
 
 function showClasses() {
-  const classes = document.getElementById("search-results");
+  const classResults = document.getElementById("search-results");
   const className = document.getElementById("search-class").value;
   const profName = document.getElementById("search-prof").value;
   const units = countUnits();
-  classes.innerHTML = "";
+  classResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("className", className);
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
   fetch(url)
   .then(response => response.json())
-  .then((response) => {
-    return JSON.parse(response.classNames);
-  })
-  .then((classNames) => {
-    classNames.forEach(name => classes.appendChild(createListElement(name)));
+  .then((classes) => {
+    console.log(classes);
+    classes.forEach(currClass => classResults.appendChild(createListElement(currClass.name)));
   });
 }
 

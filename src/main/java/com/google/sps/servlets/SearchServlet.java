@@ -32,7 +32,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONObject;
 
 /** Servlet that stores and shows images and comments. */
 @WebServlet("/search")
@@ -41,8 +40,7 @@ public class SearchServlet extends HttpServlet {
   @Override
   /* Show classes. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<String> classNames = new ArrayList<>();
-    List<String> professorNames = new ArrayList<>();
+    List<ClassObject> classes = new ArrayList<>();
     List<Filter> filters = new ArrayList<>();
     if (!request.getParameter("className").isEmpty()) {
       String className = request.getParameter("className");
@@ -60,41 +58,39 @@ public class SearchServlet extends HttpServlet {
       for (String number : strUnits) {
         units.add(Integer.valueOf(number));
       }
-      if (units.size() != 0) {
+      if (!units.isEmpty()) {
         Filter unitsFilter = new FilterPredicate("Units", FilterOperator.IN, units);
         filters.add(unitsFilter);
       }
     }
 
-    Query q = new Query("Class");
-    // Add filters depending on number of fields specified
-    if (filters.size() == 1) {
-      q.setFilter(filters.get(0));
-    } else if (filters.size() == 2) {
-      q.setFilter(CompositeFilterOperator.and(filters.get(0), filters.get(1)));
-    } else if (filters.size() == 3) {
-      q.setFilter(
-          CompositeFilterOperator.and(
-              CompositeFilterOperator.and(filters.get(0), filters.get(1), filters.get(2))));
+    Query classQuery = new Query("Class");
+    if (!filters.isEmpty()) {
+      if (filters.size() == 1) {
+        classQuery.setFilter(filters.get(0));
+      } else {
+        classQuery.setFilter(CompositeFilterOperator.and(filters));
+      }
     }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> classes = datastore.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    for (Entity entity : classes) {
+    List<Entity> results =
+        datastore.prepare(classQuery).asList(FetchOptions.Builder.withDefaults());
+    for (Entity entity : results) {
+      ClassObject curr = new ClassObject();
       String name = (String) entity.getProperty("Name");
-      classNames.add(name);
+      curr.name = name;
       String professor = (String) entity.getProperty("Professor");
-      professorNames.add(professor);
+      curr.professor = professor;
+      Long numUnits = (Long) entity.getProperty("Units");
+      curr.units = numUnits;
+      classes.add(curr);
+      System.out.println(curr);
     }
 
-    // Generate links for class pages and send them back - set variables in URL
-    String classNameJson = new Gson().toJson(classNames);
-    String profNameJson = new Gson().toJson(professorNames);
-    JSONObject obj = new JSONObject();
-    obj.put("classNames", classNameJson);
-    obj.put("profNames", profNameJson);
+    String classesJson = new Gson().toJson(classes);
     response.setContentType("application/json;");
-    response.getWriter().println(obj);
+    response.getWriter().println(classesJson);
   }
 
   /* Store class. */
@@ -102,7 +98,7 @@ public class SearchServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("class-name");
     String prof = request.getParameter("prof-name");
-    Integer units = Integer.valueOf(request.getParameter("num-units"));
+    Integer units = Integer.parseInt(request.getParameter("num-units"));
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity newClass = new Entity("Class");
