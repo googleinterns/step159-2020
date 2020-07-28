@@ -1,6 +1,6 @@
 function onSignIn(googleUser) {
   const profile = googleUser.getBasicProfile();
-  document.getElementById("logged-in").classList.remove("hidden");
+  document.getElementById("class-info").classList.remove("hidden");
   document.getElementById("login-button").classList.add("hidden");
   document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
   const url = new URL("/authentication", window.location.origin);
@@ -16,7 +16,7 @@ function signOut() {
   const profile = auth2.currentUser.get().getBasicProfile();
   auth2.signOut();
   const email = profile.getEmail();
-  document.getElementById("logged-in").classList.add("hidden");
+  document.getElementById("class-info").classList.add("hidden");
   document.getElementById("login-button").classList.remove("hidden");
   const url = new URL("/authentication", window.location.origin);
   url.searchParams.set("email", email);
