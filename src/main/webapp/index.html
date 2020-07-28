@@ -22,13 +22,23 @@
       <button onclick="getClassID()">Get class ID</button>
       <br /><br />
 
-      <textarea name="class-input" maxlength="1500">Write opinion on class here.</textarea>
+      <textarea name="class-input" maxlength="1500">
+Write opinion on class here.</textarea
+      >
       <br /><br />
 
       <p>How would you rate this class?</p>
-      <input type="rating-class" id="rating-class" name="rating-class" min="0" max="5" />
-      <label for="rating-class">Class Rating (From 0 = Terrible to 5 = Excellent)</label>
-      <br><br>
+      <input
+        type="rating-class"
+        id="rating-class"
+        name="rating-class"
+        min="0"
+        max="5"
+      />
+      <label for="rating-class"
+        >Class Rating (From 0 = Terrible to 5 = Excellent)</label
+      >
+      <br /><br />
 
       <p>How many hours per week did you spend on this class?</p>
       <input type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
@@ -42,13 +52,23 @@
       >
 
       <br /><br />
-      <textarea name="prof-input" maxlength="1500">Write opinion on professor here.</textarea>
+      <textarea name="prof-input" maxlength="1500">
+Write opinion on professor here.</textarea
+      >
       <br /><br />
 
       <p>How would you rate the professor?</p>
-      <input type="rating-prof" id="rating-prof" name="rating-prof" min="0" max="5" />
-      <label for="rating-prof">Professor Rating (From 0 = Terrible to 5 = Excellent)</label>
-      <br><br>
+      <input
+        type="rating-prof"
+        id="rating-prof"
+        name="rating-prof"
+        min="0"
+        max="5"
+      />
+      <label for="rating-prof"
+        >Professor Rating (From 0 = Terrible to 5 = Excellent)</label
+      >
+      <br /><br />
 
       <p>Do you wish to translate your comments to English?</p>
       <input type="radio" id="yes" name="languages" value="true" />
@@ -58,6 +78,7 @@
 
       <input type="submit" />
     </form>
+
     <ul id="log"></ul>
   </body>
 </html>
