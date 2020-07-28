@@ -35,13 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key existingTermRatingKey;
-  private Key currentProfKey;
   private Key currentTermKey;
-  private Key currentSchoolKey;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comments").addSort("score-class", SortDirection.ASCENDING);
+    Query query = new Query("Rating Term").addSort("score-class", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
@@ -124,9 +122,7 @@ public class DataServlet extends HttpServlet {
 
     // Has to be added to URL.
     currentTermKey = request.getParameter("term");
-    currentSchoolKey = request.getParameter("school");
     Entity currentTerm = datastore.get(currentTermKey);
-    currentProfKey = currentTerm.getProperty("professor");
 
     // Checks for term rating by reviewer.
     Filter termReviewerFilter =
@@ -136,14 +132,6 @@ public class DataServlet extends HttpServlet {
     List<Entity> termRatingQueryList =
         datastore.prepare(termRatingQuery).asList(FetchOptions.Builder.withDefaults());
 
-    // Checks for professor rating by reviewer.
-    Filter profReviewerFilter =
-        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userEntity.getKey());
-    Query profRatingQuery =
-        new Query("Rating Professor").setAncestor(currentSchoolKey).setFilter(profReviewerFilter);
-    List<Entity> profRatingQueryList =
-        datastore.prepare(profRatingQuery).asList(FetchOptions.Builder.withDefaults());
-
     if (termRatingQueryList.isEmpty()) {
       Entity classRatingEntity = new Entity("Rating Term", currentTermKey);
       classRatingEntity.setProperty("comments-class", classFeedback);
@@ -152,6 +140,9 @@ public class DataServlet extends HttpServlet {
       classRatingEntity.setProperty("perception", classRating);
       classRatingEntity.setProperty("hours", workHours);
       classRatingEntity.setProperty("difficulty", difficulty);
+      classRatingEntity.setProperty("comments-professor", professorFeedback);
+      classRatingEntity.setProperty("score-professor", professorScore);
+      classRatingEntity.setProperty("perception", professorRating);
       datastore.put(classRatingEntity);
     } else {
       Entity updatedTermRatingEntity = termRatingQueryList.get(0);
@@ -161,22 +152,10 @@ public class DataServlet extends HttpServlet {
       updatedTermRatingEntity.setProperty("perception", classRating);
       updatedTermRatingEntity.setProperty("difficulty", difficulty);
       updatedTermRatingEntity.setProperty("hours", workHours);
+      updatedTermRatingEntity.setProperty("comments-professor", professorFeedback);
+      updatedTermRatingEntity.setProperty("score-professor", professorScore);
+      updatedTermRatingEntity.setProperty("perception", professorRating);
       datastore.put(updatedTermRatingEntity);
-    }
-    if (profRatingQueryList.isEmpty()) {
-      Entity professorRatingEntity = new Entity("Rating Professor", currentProfKey);
-      professorRatingEntity.setProperty("comments-professor", professorFeedback);
-      professorRatingEntity.setProperty("reviewer-id", userEntity.getKey());
-      professorRatingEntity.setProperty("score-professor", professorScore);
-      professorRatingEntity.setProperty("perception", professorRating);
-      datastore.put(professorRatingEntity);
-    } else {
-      Entity updatedProfRatingEntity = profRatingQueryList.get(0);
-      updatedProfRatingEntity.setProperty("comments-professor", professorFeedback);
-      updatedProfRatingEntity.setProperty("reviewer-idFuser", userEntity.getKey());
-      updatedProfRatingEntity.setProperty("score-professor", professorScore);
-      updatedProfRatingEntity.setProperty("perception", professorRating);
-      datastore.put(updatedProfRatingEntity);
     }
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
