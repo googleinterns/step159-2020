@@ -111,15 +111,15 @@ public class DataServlet extends HttpServlet {
     Query userQuery = new Query("User").setFilter(userFilter);
     List<Entity> userQueryList =
         datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
-    Entity userID = new Entity("User");
+    Entity userEntity = new Entity("User");
 
     // User has not reviewed any rating.
     if (userQueryList.isEmpty()) {
       Entity newReviewer = new Entity("User");
       newReviewer.setProperty("user-email", userEmail);
-      userID = newReviewer;
+      userEntity = newReviewer;
     } else {
-      userID = userQueryList.get(0);
+      userEntity = userQueryList.get(0);
     }
 
     // Has to be added to URL.
@@ -130,7 +130,7 @@ public class DataServlet extends HttpServlet {
 
     // Checks for term rating by reviewer.
     Filter termReviewerFilter =
-        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userID.getKey());
+        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userEntity.getKey());
     Query termRatingQuery =
         new Query("Rating Term").setAncestor(currentTermKey).setFilter(termReviewerFilter);
     List<Entity> termRatingQueryList =
@@ -138,7 +138,7 @@ public class DataServlet extends HttpServlet {
 
     // Checks for professor rating by reviewer.
     Filter profReviewerFilter =
-        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userID.getKey());
+        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userEntity.getKey());
     Query profRatingQuery =
         new Query("Rating Professor").setAncestor(currentSchoolKey).setFilter(profReviewerFilter);
     List<Entity> profRatingQueryList =
@@ -147,7 +147,7 @@ public class DataServlet extends HttpServlet {
     if (termRatingQueryList.isEmpty()) {
       Entity classRatingEntity = new Entity("Rating Term", currentTermKey);
       classRatingEntity.setProperty("comments-class", classFeedback);
-      classRatingEntity.setProperty("reviewer-id", userID.getKey());
+      classRatingEntity.setProperty("reviewer-id", userEntity.getKey());
       classRatingEntity.setProperty("score-class", classScore);
       classRatingEntity.setProperty("perception", classRating);
       classRatingEntity.setProperty("hours", workHours);
@@ -156,24 +156,24 @@ public class DataServlet extends HttpServlet {
     } else {
       Entity updatedTermRatingEntity = termRatingQueryList.get(0);
       updatedTermRatingEntity.setProperty("comments-class", classFeedback);
+      updatedTermRatingEntity.setProperty("reviewer-id", userEntity.getKey());
       updatedTermRatingEntity.setProperty("score-class", classScore);
       updatedTermRatingEntity.setProperty("perception", classRating);
       updatedTermRatingEntity.setProperty("difficulty", difficulty);
       updatedTermRatingEntity.setProperty("hours", workHours);
       datastore.put(updatedTermRatingEntity);
     }
-
     if (profRatingQueryList.isEmpty()) {
       Entity professorRatingEntity = new Entity("Rating Professor", currentProfKey);
       professorRatingEntity.setProperty("comments-professor", professorFeedback);
-      professorRatingEntity.setProperty("reviewer-id", userID.getKey());
+      professorRatingEntity.setProperty("reviewer-id", userEntity.getKey());
       professorRatingEntity.setProperty("score-professor", professorScore);
       professorRatingEntity.setProperty("perception", professorRating);
       datastore.put(professorRatingEntity);
     } else {
       Entity updatedProfRatingEntity = profRatingQueryList.get(0);
       updatedProfRatingEntity.setProperty("comments-professor", professorFeedback);
-      updatedProfRatingEntity.setProperty("reviewer-id", userID.getKey());
+      updatedProfRatingEntity.setProperty("reviewer-idFuser", userEntity.getKey());
       updatedProfRatingEntity.setProperty("score-professor", professorScore);
       updatedProfRatingEntity.setProperty("perception", professorRating);
       datastore.put(updatedProfRatingEntity);
