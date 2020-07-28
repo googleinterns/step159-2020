@@ -11,9 +11,11 @@
     <div id="login-box"></div>
     <form id="class-form" method="POST" action="/search">
       <p>Enter class info:</p>
-      <textarea name="class-name">Class Name</textarea>
+      <label for="class-name">Class Name:</label>
+      <textarea name="class-name" id="class-name"></textarea>
       <br/>
-      <textarea name="prof-name">Professor Name</textarea>
+      <label for="prof-name">Professor Name:</label>
+      <textarea name="prof-name" id="prof-name"></textarea>
       <br/>
       <fieldset>      
       <legend>How many units?</legend>      
@@ -26,8 +28,10 @@
     </form>
     <div id="class-search">
       <p>What class are you searching for?</p>
-      <textarea id="search-class">Class Name</textarea>
-      <textarea id="search-prof">Prof Name</textarea>
+      <label for="search-class">Class Name:</label>
+      <textarea id="search-class"></textarea>
+      <label for="search-prof">Prof Name:</label>
+      <textarea id="search-prof"></textarea>
       <br/><br/>
       <fieldset>      
         <legend>How many units?</legend>      

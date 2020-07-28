@@ -85,9 +85,7 @@ public class SearchServlet extends HttpServlet {
       Long numUnits = (Long) entity.getProperty("Units");
       curr.units = numUnits;
       classes.add(curr);
-      System.out.println(curr);
     }
-
     String classesJson = new Gson().toJson(classes);
     response.setContentType("application/json;");
     response.getWriter().println(classesJson);
