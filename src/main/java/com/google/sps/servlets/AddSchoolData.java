@@ -34,64 +34,63 @@ public class AddSchoolData extends HttpServlet {
     addSchoolData(db, request);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
-    response.sendRedirect("/addSchoolInfo.html");
+    response.sendRedirect("/AddSchoolData.html");
   }
 
   public List<Entity> findQueryMatch(
-      DatastoreService db, String entityType, String entityProperty, String propertyValue) {
+      String entityType, String entityProperty, String propertyValue) {
     Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
     Query q = new Query(entityType).setFilter(filter);
     List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
     return result;
   }
 
-  public void isNewFlagSwitcher(
-      DatastoreService db, String schoolName, String courseName, String profName) {
-    List<Entity> querySchool = findQueryMatch(db, "school", "school-name", schoolName);
+  public void isNewEntityDetector(String schoolName, String courseName, String profName) {
+    List<Entity> querySchool = findQueryMatch("School", "school-name", schoolName);
     if (!querySchool.isEmpty()) {
       existingSchoolKey = querySchool.get(0).getKey();
       isNewSchool = false;
     }
 
-    List<Entity> queryCourse = findQueryMatch(db, "course", "course-name", courseName);
+    List<Entity> queryCourse = findQueryMatch("Course", "course-name", courseName);
     if (!queryCourse.isEmpty()) {
       existingSchoolKey = queryCourse.get(0).getKey();
       isNewCourse = false;
     }
 
-    List<Entity> queryProfessor = findQueryMatch(db, "professor", "professor-name", profName);
+    List<Entity> queryProfessor = findQueryMatch("Professor", "professor-name", profName);
     if (!queryProfessor.isEmpty()) {
       existingSchoolKey = queryProfessor.get(0).getKey();
       isNewProfessor = false;
     }
   }
 
-  public Entity createSchool(DatastoreService db, String schoolName) {
-    Entity newSchool = new Entity("school");
+  public Entity createSchool(String schoolName) {
+    Entity newSchool = new Entity("School");
     newSchool.setProperty("school-name", schoolName);
     db.put(newSchool);
     return newSchool;
   }
 
-  public Entity createCouse(DatastoreService db, String name, Long units, Key parent) {
-    Entity newCourse = new Entity("course", parent);
+  public Entity createCourse(String name, Long units, Key parent) {
+    Entity newCourse = new Entity("Course", parent);
     newCourse.setProperty("course-name", name);
     newCourse.setProperty("units", units);
     db.put(newCourse);
     return newCourse;
   }
 
-  public Entity createProfessor(DatastoreService db, String name, Key parent) {
-    Entity newProfessor = new Entity("professor", parent);
+  public Entity createProfessor(String name, Key parent) {
+    Entity newProfessor = new Entity("Professor", parent);
     newProfessor.setProperty("professor-name", name);
     db.put(newProfessor);
     return newProfessor;
   }
 
-  public Entity createTerm(DatastoreService db, String term, Key professor, Key parent) {
-    Entity newTerm = new Entity("term", parent);
+  public Entity createTerm(String term, Key professor, Key parent) {
+    Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
-    newTerm.setProperty("professor", professor);
+    newTerm.setProperty("professorKey", professor);
     db.put(newTerm);
     return newTerm;
   }
@@ -100,32 +99,32 @@ public class AddSchoolData extends HttpServlet {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
-    Long units = Long.parseLong(request.getParameter("units"));
     String profName = request.getParameter("professor-name");
+    Long units = Long.parseLong(request.getParameter("units"));
 
-    isNewFlagSwitcher(db, schoolName, courseName, profName);
+    isNewEntityDetector(schoolName, courseName, profName);
 
     if (isNewSchool) {
-      Entity school = createSchool(db, schoolName);
-      Entity course = createCouse(db, courseName, units, school.getKey());
-      Entity professor = createProfessor(db, profName, school.getKey());
-      Entity term = createTerm(db, termName, professor.getKey(), course.getKey());
+      Entity school = createSchool(schoolName);
+      Entity course = createCourse(courseName, units, school.getKey());
+      Entity professor = createProfessor(profName, school.getKey());
+      Entity term = createTerm(termName, professor.getKey(), course.getKey());
     } else {
       if (isNewCourse) {
         if (isNewProfessor) {
-          Entity course = createCouse(db, courseName, units, existingSchoolKey);
-          Entity professor = createProfessor(db, profName, existingSchoolKey);
-          Entity term = createTerm(db, termName, professor.getKey(), course.getKey());
+          Entity course = createCourse(courseName, units, existingSchoolKey);
+          Entity professor = createProfessor(profName, existingSchoolKey);
+          Entity term = createTerm(termName, professor.getKey(), course.getKey());
         } else {
-          Entity course = createCouse(db, courseName, units, existingSchoolKey);
-          Entity term = createTerm(db, termName, existingProfessorKey, course.getKey());
+          Entity course = createCourse(courseName, units, existingSchoolKey);
+          Entity term = createTerm(termName, existingProfessorKey, course.getKey());
         }
       } else {
         if (isNewProfessor) {
-          Entity professor = createProfessor(db, profName, existingSchoolKey);
-          Entity term = createTerm(db, termName, professor.getKey(), existingCourseKey);
+          Entity professor = createProfessor(profName, existingSchoolKey);
+          Entity term = createTerm(termName, professor.getKey(), existingCourseKey);
         } else {
-          Entity term = createTerm(db, termName, existingProfessorKey, existingCourseKey);
+          Entity term = createTerm(termName, existingProfessorKey, existingCourseKey);
         }
       }
     }

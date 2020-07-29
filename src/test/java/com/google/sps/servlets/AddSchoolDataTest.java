@@ -72,32 +72,32 @@ public final class AddSchoolDataTest {
     newSchoolObject.addSchoolData(db, request);
 
     Entity schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), false)
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), false)
             .get(0);
-    Entity expectedSchoolEntity = new Entity("school");
+    Entity expectedSchoolEntity = new Entity("School");
     expectedSchoolEntity.setProperty("school-name", "MIT");
     assertEquals(
         expectedSchoolEntity.getProperty("school-name"), schoolQuery.getProperty("school-name"));
 
     Entity courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), false)
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), false)
             .get(0);
-    Entity expectedCourseEntity = new Entity("course");
+    Entity expectedCourseEntity = new Entity("Course");
     expectedCourseEntity.setProperty("course-name", "6.006");
     assertEquals(
         expectedCourseEntity.getProperty("course-name"), courseQuery.getProperty("course-name"));
 
     Entity termQuery =
-        findQueryMatch(db, "term", "term", request.getParameter("term"), false).get(0);
-    Entity expectedTermEntity = new Entity("term");
+        findQueryMatch(db, "Term", "term", request.getParameter("term"), false).get(0);
+    Entity expectedTermEntity = new Entity("Term");
     expectedTermEntity.setProperty("term", "Spring 2020");
     assertEquals(expectedTermEntity.getProperty("term"), termQuery.getProperty("term"));
 
     Entity profQuery =
         findQueryMatch(
-                db, "professor", "professor-name", request.getParameter("professor-name"), false)
+                db, "Professor", "professor-name", request.getParameter("professor-name"), false)
             .get(0);
-    Entity expectedProfessorEntity = new Entity("professor");
+    Entity expectedProfessorEntity = new Entity("Professor");
     expectedProfessorEntity.setProperty("professor-name", "Jason Ku");
     assertEquals(
         expectedProfessorEntity.getProperty("professor-name"),
@@ -124,13 +124,13 @@ public final class AddSchoolDataTest {
     newSchoolObject.addSchoolData(db, requestB);
 
     List<Entity> schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), true);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
     List<Entity> courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "term", "term", request.getParameter("term"), true);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
+    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
     List<Entity> profQuery =
         findQueryMatch(
-            db, "professor", "professor-name", request.getParameter("professor-name"), true);
+            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
 
     int expectedSchoolResultLength = 2;
     int exceptedCourseResultLength = 2;
@@ -165,13 +165,13 @@ public final class AddSchoolDataTest {
     System.out.println(requestB);
 
     List<Entity> schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), true);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
     List<Entity> courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "term", "term", request.getParameter("term"), true);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
+    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
     List<Entity> profQuery =
         findQueryMatch(
-            db, "professor", "professor-name", request.getParameter("professor-name"), true);
+            db, "Professor", "Professor-name", request.getParameter("professor-name"), true);
 
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
@@ -204,13 +204,13 @@ public final class AddSchoolDataTest {
     newSchoolObject.addSchoolData(db, requestB);
 
     List<Entity> schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), true);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
     List<Entity> courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "term", "term", request.getParameter("term"), true);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
+    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
     List<Entity> profQuery =
         findQueryMatch(
-            db, "professor", "professor-name", request.getParameter("professor-name"), true);
+            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
 
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
@@ -243,13 +243,13 @@ public final class AddSchoolDataTest {
     newSchoolObject.addSchoolData(db, requestB);
 
     List<Entity> schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), true);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
     List<Entity> courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "term", "term", request.getParameter("term"), true);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
+    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
     List<Entity> profQuery =
         findQueryMatch(
-            db, "professor", "professor-name", request.getParameter("professor-name"), true);
+            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
 
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
@@ -282,13 +282,13 @@ public final class AddSchoolDataTest {
     newSchoolObject.addSchoolData(db, requestB);
 
     List<Entity> schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), true);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
     List<Entity> courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "term", "term", request.getParameter("term"), true);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
+    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
     List<Entity> profQuery =
         findQueryMatch(
-            db, "professor", "professor-name", request.getParameter("professor-name"), true);
+            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
 
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 1;
@@ -321,13 +321,13 @@ public final class AddSchoolDataTest {
     newSchoolObject.addSchoolData(db, requestB);
 
     List<Entity> schoolQuery =
-        findQueryMatch(db, "school", "school-name", request.getParameter("school-name"), true);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
     List<Entity> courseQuery =
-        findQueryMatch(db, "course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "term", "term", request.getParameter("term"), true);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
+    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
     List<Entity> profQuery =
         findQueryMatch(
-            db, "professor", "professor-name", request.getParameter("professor-name"), true);
+            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
 
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 1;
