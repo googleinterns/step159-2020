@@ -38,20 +38,29 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchServlet extends HttpServlet {
 
   @Override
-  /* Show classes. */
+  /* Show courses. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<ClassObject> classes = new ArrayList<>();
+    List<Course> courses = new ArrayList<>();
     List<Filter> filters = new ArrayList<>();
-    if (!request.getParameter("className").isEmpty()) {
-      String className = request.getParameter("className");
-      Filter classFilter = new FilterPredicate("Name", FilterOperator.EQUAL, className);
-      filters.add(classFilter);
+
+    if (!request.getParameter("courseName").isEmpty()) {
+      String name = request.getParameter("courseName");
+      Filter nameFilter = new FilterPredicate("Name", FilterOperator.EQUAL, name);
+      filters.add(nameFilter);
     }
+
     if (!request.getParameter("profName").isEmpty()) {
       String profName = request.getParameter("profName");
       Filter profFilter = new FilterPredicate("Professor", FilterOperator.EQUAL, profName);
       filters.add(profFilter);
     }
+
+    if (!request.getParameter("term").equals("select")) {
+      String term = request.getParameter("term");
+      Filter termFilter = new FilterPredicate("Term", FilterOperator.EQUAL, term);
+      filters.add(termFilter);
+    }
+
     List<Integer> units = new ArrayList<>();
     if (!request.getParameter("units").isEmpty()) {
       List<String> strUnits = Arrays.asList(request.getParameter("units").split(","));
@@ -64,46 +73,46 @@ public class SearchServlet extends HttpServlet {
       }
     }
 
-    Query classQuery = new Query("Class");
+    Query courseQuery = new Query("Course");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
-        classQuery.setFilter(filters.get(0));
+        courseQuery.setFilter(filters.get(0));
       } else {
-        classQuery.setFilter(CompositeFilterOperator.and(filters));
+        courseQuery.setFilter(CompositeFilterOperator.and(filters));
       }
     }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     List<Entity> results =
-        datastore.prepare(classQuery).asList(FetchOptions.Builder.withDefaults());
+        datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
     for (Entity entity : results) {
-      ClassObject curr = new ClassObject();
       String name = (String) entity.getProperty("Name");
-      curr.name = name;
       String professor = (String) entity.getProperty("Professor");
-      curr.professor = professor;
       Long numUnits = (Long) entity.getProperty("Units");
-      curr.units = numUnits;
-      classes.add(curr);
+      String term = (String) entity.getProperty("Term");
+      Course course = new Course(name, professor, numUnits, term);
+      courses.add(course);
     }
-    String classesJson = new Gson().toJson(classes);
+    String coursesJson = new Gson().toJson(courses);
     response.setContentType("application/json;");
-    response.getWriter().println(classesJson);
+    response.getWriter().println(coursesJson);
   }
 
-  /* Store class. */
+  /* Store course. */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String name = request.getParameter("class-name");
+    String name = request.getParameter("course-name");
     String prof = request.getParameter("prof-name");
     Integer units = Integer.parseInt(request.getParameter("num-units"));
+    String term = request.getParameter("term-name");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity newClass = new Entity("Class");
-    newClass.setProperty("Name", name);
-    newClass.setProperty("Professor", prof);
-    newClass.setProperty("Units", units);
-    datastore.put(newClass);
+    Entity newCourse = new Entity("Course");
+    newCourse.setProperty("Name", name);
+    newCourse.setProperty("Professor", prof);
+    newCourse.setProperty("Units", units);
+    newCourse.setProperty("Term", term);
+    datastore.put(newCourse);
     response.sendRedirect("/search.html");
   }
 }

@@ -9,21 +9,22 @@ function countUnits(){
   return arr;
 }
 
-function showClasses() {
-  const classResults = document.getElementById("search-results");
-  const className = document.getElementById("search-class").value;
+function showCourses() {
+  const courseResults = document.getElementById("search-results");
+  const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
+  const termName = document.getElementById("search-term").value;
   const units = countUnits();
-  classResults.innerHTML = "";
+  courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
-  url.searchParams.set("className", className);
+  url.searchParams.set("courseName", courseName);
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
+  url.searchParams.set("term", termName);
   fetch(url)
   .then(response => response.json())
-  .then((classes) => {
-    console.log(classes);
-    classes.forEach(currClass => classResults.appendChild(createListElement(currClass.name)));
+  .then((courses) => {
+    courses.forEach(course => courseResults.appendChild(createListElement(course.name)));
   });
 }
 

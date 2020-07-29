@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>Search Page</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="searchScript.js"></script>
   </head>
   <body>
     <div id="school-name"></div>
     <div id="login-box"></div>
-    <form id="class-form" method="POST" action="/search">
-      <p>Enter class info:</p>
-      <label for="class-name">Class Name:</label>
-      <textarea name="class-name" id="class-name" maxlength=1500></textarea>
+    <form id="course-form" method="POST" action="/search">
+      <p>Enter course info:</p>
+      <label for="course-name">Class Name:</label>
+      <textarea name="course-name" id="class-name" maxlength=1500></textarea>
       <br/>
       <label for="prof-name">Professor Name:</label>
       <textarea name="prof-name" id="prof-name" maxlength=1500></textarea>
@@ -24,22 +24,37 @@
       <input type="radio" name="num-units" value="3">3<br>      
       </fieldset> 
       <br/><br/>
+      <label for="term-name">Term:</label>
+      <select id="term-name" name="term-name">
+        <option value="Spring 2020">Spring 2020</option>
+        <option value="Fall 2019">Fall 2019</option>
+        <option value="Spring 2019">Spring 2019</option>
+        <option value="Fall 2018">Fall 2018</option>
+      </select>
       <input type="submit"/>
     </form>
-    <div id="class-search">
-      <p>What class are you searching for?</p>
-      <label for="search-class">Class Name:</label>
-      <textarea id="search-class" maxlength=1500></textarea>
+    <div id="course-search">
+      <p>What course are you searching for?</p>
+      <label for="search-course">Class Name:</label>
+      <textarea id="search-course" maxlength=1500></textarea>
       <label for="search-prof">Prof Name:</label>
       <textarea id="search-prof" maxlength=1500></textarea>
       <br/><br/>
+      <label for="search-term">Term:</label>
+      <select id="search-term">
+        <option value="select"></option>
+        <option value="Spring 2020">Spring 2020</option>
+        <option value="Fall 2019">Fall 2019</option>
+        <option value="Spring 2019">Spring 2019</option>
+        <option value="Fall 2018">Fall 2018</option>
+      </select>
       <fieldset>      
         <legend>How many units?</legend>      
         <input type="checkbox" name="search-units" value="1">1<br>      
         <input type="checkbox" name="search-units" value="2">2<br>      
         <input type="checkbox" name="search-units" value="3">3<br>      
       </fieldset>      
-      <button onclick="showClasses()">See classes!</button>
+      <button onclick="showCourses()">See courses!</button>
       <div id=search-results></div>
     </div>
   </body>
