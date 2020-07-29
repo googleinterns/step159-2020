@@ -47,21 +47,21 @@ public class AddSchoolData extends HttpServlet {
 
   public void isNewFlagSwitcher(
       DatastoreService db, String schoolName, String courseName, String profName) {
-    List<Entity> qS = findQueryMatch(db, "school", "school-name", schoolName);
-    if (!qS.isEmpty()) {
-      existingSchoolKey = qS.get(0).getKey();
+    List<Entity> querySchool = findQueryMatch(db, "school", "school-name", schoolName);
+    if (!querySchool.isEmpty()) {
+      existingSchoolKey = querySchool.get(0).getKey();
       isNewSchool = false;
     }
 
-    List<Entity> qC = findQueryMatch(db, "course", "course-name", courseName);
-    if (!qC.isEmpty()) {
-      existingSchoolKey = qC.get(0).getKey();
+    List<Entity> queryCourse = findQueryMatch(db, "course", "course-name", courseName);
+    if (!queryCourse.isEmpty()) {
+      existingSchoolKey = queryCourse.get(0).getKey();
       isNewCourse = false;
     }
 
-    List<Entity> qP = findQueryMatch(db, "professor", "professor-name", profName);
-    if (!qP.isEmpty()) {
-      existingSchoolKey = qP.get(0).getKey();
+    List<Entity> queryProfessor = findQueryMatch(db, "professor", "professor-name", profName);
+    if (!queryProfessor.isEmpty()) {
+      existingSchoolKey = queryProfessor.get(0).getKey();
       isNewProfessor = false;
     }
   }
