@@ -61,8 +61,8 @@ public class SearchServlet extends HttpServlet {
       filters.add(termFilter);
     }
 
-    List<Integer> units = new ArrayList<>();
     if (!request.getParameter("units").isEmpty()) {
+      List<Integer> units = new ArrayList<>();
       List<String> strUnits = Arrays.asList(request.getParameter("units").split(","));
       for (String number : strUnits) {
         units.add(Integer.valueOf(number));
@@ -103,7 +103,7 @@ public class SearchServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("course-name");
     String prof = request.getParameter("prof-name");
-    Integer units = Integer.parseInt(request.getParameter("num-units"));
+    Long units = Long.parseLong(request.getParameter("num-units"));
     String term = request.getParameter("term-name");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
