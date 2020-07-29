@@ -14,6 +14,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <failOnMissingWebXml>false</failOnMissingWebXml>
+    <testSourceDirectory>src/test/java/com/google/sps/</testSourceDirectory>
   </properties>
 
   <dependencies>
@@ -44,29 +45,46 @@
       <version>1.100.0</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.4.2</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>5.4.2</version>
+        <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-testing</artifactId>
-      <version>1.4.0</version>
+      <version>1.9.80</version>
+      <scope>test</scope>
+    </dependency> 
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>3.4.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-labs</artifactId>
+      <version>1.9.60</version>
       <scope>test</scope>
     </dependency>
-    <dependency>        
-      <groupId>org.junit.jupiter</groupId>        
-      <artifactId>junit-jupiter-api</artifactId>        
-      <version>5.4.2</version>        
-      <scope>test</scope>    
-    </dependency>    
-    <dependency>       
-      <groupId>org.junit.jupiter</groupId>        
-      <artifactId>junit-jupiter-engine</artifactId>        
-      <version>5.4.2</version>        
-      <scope>test</scope> 
-    </dependency>   
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-stubs</artifactId>
+      <version>1.9.60</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-tools-sdk</artifactId>
+      <version>1.9.60</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -109,7 +127,7 @@
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-surefire-plugin</artifactId>
       <version>2.22.1</version>
-      </plugin>
+    </plugin>
     </plugins>
   </build>
 </project>
