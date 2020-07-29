@@ -37,7 +37,7 @@ public class AuthenticationServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String email = request.getParameter("email");
     String status = request.getParameter("status");
-    Filter emailFilter = new FilterPredicate("Email", FilterOperator.EQUAL, email);
+    Filter emailFilter = new FilterPredicate("email", FilterOperator.EQUAL, email);
     Query userQuery = new Query("User");
     userQuery.setFilter(emailFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -48,19 +48,19 @@ public class AuthenticationServlet extends HttpServlet {
       String id = request.getParameter("id");
       if (results.isEmpty()) {
         Entity newUser = new Entity("User");
-        newUser.setProperty("Name", name);
-        newUser.setProperty("Email", email);
-        newUser.setProperty("ID", id);
-        newUser.setProperty("Status", status);
+        newUser.setProperty("name", name);
+        newUser.setProperty("email", email);
+        newUser.setProperty("id", id);
+        newUser.setProperty("status", status);
         datastore.put(newUser);
       } else {
         Entity existingUser = results.get(0);
-        existingUser.setProperty("Status", status);
+        existingUser.setProperty("status", status);
         datastore.put(existingUser);
       }
     } else if (status.equals("logged-out")) {
       Entity loggingOutUser = results.get(0);
-      loggingOutUser.setProperty("Status", status);
+      loggingOutUser.setProperty("status", status);
       datastore.put(loggingOutUser);
     }
     response.sendRedirect("/search.html");
