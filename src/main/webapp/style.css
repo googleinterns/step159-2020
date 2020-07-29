@@ -1,3 +1,7 @@
 .hidden {
     display: none;
 }
+
+label, select {
+    margin-bottom: 20px;
+}
