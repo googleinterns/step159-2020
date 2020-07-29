@@ -11,8 +11,6 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
@@ -100,33 +98,22 @@ public class DataServlet extends HttpServlet {
     profLanguageService.close();
 
     // Gets user email.
-    UserService userService = UserServiceFactory.getUserService();
-    String userEmail = userService.getCurrentUser().getEmail();
+    String userId = request.getParameter("ID");
 
     // Check whether user has reviewer ID in system.
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Filter userFilter = new FilterPredicate("user-email", FilterOperator.EQUAL, userEmail);
+    Filter userFilter = new FilterPredicate("ID", FilterOperator.EQUAL, userId);
     Query userQuery = new Query("User").setFilter(userFilter);
+    // This is initialized when authentication happens, so should not be empty.
     List<Entity> userQueryList =
         datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
-    Entity userEntity = new Entity("User");
-
-    // User has not reviewed any rating.
-    if (userQueryList.isEmpty()) {
-      Entity newReviewer = new Entity("User");
-      newReviewer.setProperty("user-email", userEmail);
-      userEntity = newReviewer;
-    } else {
-      userEntity = userQueryList.get(0);
-    }
 
     // Has to be added to URL.
-    currentTermKey = request.getParameter("term");
+    currentTermKey = request.getParameter("term").getTerm();
     Entity currentTerm = datastore.get(currentTermKey);
 
     // Checks for term rating by reviewer.
-    Filter termReviewerFilter =
-        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userEntity.getKey());
+    Filter termReviewerFilter = new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userId);
     Query termRatingQuery =
         new Query("Rating Term").setAncestor(currentTermKey).setFilter(termReviewerFilter);
     List<Entity> termRatingQueryList =
@@ -138,7 +125,7 @@ public class DataServlet extends HttpServlet {
       Entity classRatingEntity = termRatingQueryList.get(0);
     }
     classRatingEntity.setProperty("comments-class", classFeedback);
-    classRatingEntity.setProperty("reviewer-id", userEntity.getKey());
+    classRatingEntity.setProperty("reviewer-id", userId);
     classRatingEntity.setProperty("score-class", classScore);
     classRatingEntity.setProperty("perception-class", classRating);
     classRatingEntity.setProperty("hours", workHours);
@@ -147,7 +134,7 @@ public class DataServlet extends HttpServlet {
     classRatingEntity.setProperty("score-professor", professorScore);
     classRatingEntity.setProperty("perception-professor", professorRating);
     datastore.put(classRatingEntity);
-    
+
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/index.html");
