@@ -45,19 +45,19 @@ public class SearchServlet extends HttpServlet {
 
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
-      Filter nameFilter = new FilterPredicate("Name", FilterOperator.EQUAL, name);
+      Filter nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
       filters.add(nameFilter);
     }
 
     if (!request.getParameter("profName").isEmpty()) {
       String profName = request.getParameter("profName");
-      Filter profFilter = new FilterPredicate("Professor", FilterOperator.EQUAL, profName);
+      Filter profFilter = new FilterPredicate("professor", FilterOperator.EQUAL, profName);
       filters.add(profFilter);
     }
 
     if (!request.getParameter("term").equals("select")) {
       String term = request.getParameter("term");
-      Filter termFilter = new FilterPredicate("Term", FilterOperator.EQUAL, term);
+      Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
       filters.add(termFilter);
     }
 
@@ -68,7 +68,7 @@ public class SearchServlet extends HttpServlet {
         units.add(Integer.valueOf(number));
       }
       if (!units.isEmpty()) {
-        Filter unitsFilter = new FilterPredicate("Units", FilterOperator.IN, units);
+        Filter unitsFilter = new FilterPredicate("units", FilterOperator.IN, units);
         filters.add(unitsFilter);
       }
     }
@@ -86,10 +86,10 @@ public class SearchServlet extends HttpServlet {
     List<Entity> results =
         datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
     for (Entity entity : results) {
-      String name = (String) entity.getProperty("Name");
-      String professor = (String) entity.getProperty("Professor");
-      Long numUnits = (Long) entity.getProperty("Units");
-      String term = (String) entity.getProperty("Term");
+      String name = (String) entity.getProperty("name");
+      String professor = (String) entity.getProperty("professor");
+      Long numUnits = (Long) entity.getProperty("units");
+      String term = (String) entity.getProperty("term");
       Course course = new Course(name, professor, numUnits, term);
       courses.add(course);
     }
@@ -108,10 +108,10 @@ public class SearchServlet extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity newCourse = new Entity("Course");
-    newCourse.setProperty("Name", name);
-    newCourse.setProperty("Professor", prof);
-    newCourse.setProperty("Units", units);
-    newCourse.setProperty("Term", term);
+    newCourse.setProperty("name", name);
+    newCourse.setProperty("professor", prof);
+    newCourse.setProperty("units", units);
+    newCourse.setProperty("term", term);
     datastore.put(newCourse);
     response.sendRedirect("/search.html");
   }
