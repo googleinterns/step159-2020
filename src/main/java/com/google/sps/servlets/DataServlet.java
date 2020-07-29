@@ -134,29 +134,20 @@ public class DataServlet extends HttpServlet {
 
     if (termRatingQueryList.isEmpty()) {
       Entity classRatingEntity = new Entity("Rating Term", currentTermKey);
-      classRatingEntity.setProperty("comments-class", classFeedback);
-      classRatingEntity.setProperty("reviewer-id", userEntity.getKey());
-      classRatingEntity.setProperty("score-class", classScore);
-      classRatingEntity.setProperty("perception-class", classRating);
-      classRatingEntity.setProperty("hours", workHours);
-      classRatingEntity.setProperty("difficulty", difficulty);
-      classRatingEntity.setProperty("comments-professor", professorFeedback);
-      classRatingEntity.setProperty("score-professor", professorScore);
-      classRatingEntity.setProperty("perception-professor", professorRating);
-      datastore.put(classRatingEntity);
     } else {
-      Entity updatedTermRatingEntity = termRatingQueryList.get(0);
-      updatedTermRatingEntity.setProperty("comments-class", classFeedback);
-      updatedTermRatingEntity.setProperty("reviewer-id", userEntity.getKey());
-      updatedTermRatingEntity.setProperty("score-class", classScore);
-      updatedTermRatingEntity.setProperty("perception-class", classRating);
-      updatedTermRatingEntity.setProperty("difficulty", difficulty);
-      updatedTermRatingEntity.setProperty("hours", workHours);
-      updatedTermRatingEntity.setProperty("comments-professor", professorFeedback);
-      updatedTermRatingEntity.setProperty("score-professor", professorScore);
-      updatedTermRatingEntity.setProperty("perception-professor", professorRating);
-      datastore.put(updatedTermRatingEntity);
+      Entity classRatingEntity = termRatingQueryList.get(0);
     }
+    classRatingEntity.setProperty("comments-class", classFeedback);
+    classRatingEntity.setProperty("reviewer-id", userEntity.getKey());
+    classRatingEntity.setProperty("score-class", classScore);
+    classRatingEntity.setProperty("perception-class", classRating);
+    classRatingEntity.setProperty("hours", workHours);
+    classRatingEntity.setProperty("difficulty", difficulty);
+    classRatingEntity.setProperty("comments-professor", professorFeedback);
+    classRatingEntity.setProperty("score-professor", professorScore);
+    classRatingEntity.setProperty("perception-professor", professorRating);
+    datastore.put(classRatingEntity);
+    
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/index.html");
