@@ -1,3 +1,7 @@
 target/*
+<<<<<<< HEAD
 node_modules/*
+=======
+node_modules*
+>>>>>>> 3b66b6cd026d40d48ff9dedbc7e1f5d270490ecf
 .pass.text
