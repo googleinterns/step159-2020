@@ -102,6 +102,12 @@ function setParam(name, value) {
   window.location = currentUrl;
 }
 
+function setUserID() {
+  const auth2 = gapi.auth2.getAuthInstance();
+  const profile = auth2.currentUser.get().getBasicProfile();
+  setParam("ID", profile.getID());
+}
+
 function setAllParams() {
   var schoolName = document.getElementById("school-name").value;
   var className = document.getElementById("class-name").value;

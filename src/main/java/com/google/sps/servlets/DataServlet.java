@@ -105,25 +105,14 @@
 //     profLanguageService.close();
 
 //     // Gets user email.
-//     UserService userService = UserServiceFactory.getUserService();
-//     String userEmail = userService.getCurrentUser().getEmail();
+//     String userId = request.getParameter("ID");
 
 //     // Check whether user has reviewer ID in system.
 //     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-//     Filter userFilter = new FilterPredicate("user-email", FilterOperator.EQUAL, userEmail);
+//     Filter userFilter = new FilterPredicate("ID", FilterOperator.EQUAL, userId);
 //     Query userQuery = new Query("User").setFilter(userFilter);
 //     List<Entity> userQueryList =
 //         datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
-//     Entity userID = new Entity("User");
-
-//     // User has not reviewed any rating.
-//     if (userQueryList.size() == 0) {
-//       Entity newReviewer = new Entity("User");
-//       newReviewer.setProperty("user-email", userEmail);
-//       userID = newReviewer;
-//     } else {
-//       userID = userQueryList.get(0);
-//     }
 
 //     currentTermKey = request.getParameter("term");
 //     Entity currentTerm = datastore.get(currentTermKey);
