@@ -18,11 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/add-info")
 public class AddSchoolData extends HttpServlet {
-
-  private Boolean isNewSchool = true;
-  private Boolean isNewCourse = true;
-  private Boolean isNewProfessor = true;
-
   private Key existingSchoolKey;
   private Key existingCourseKey;
   private Key existingProfessorKey;
@@ -37,64 +32,6 @@ public class AddSchoolData extends HttpServlet {
     response.sendRedirect("/AddSchoolData.html");
   }
 
-  public List<Entity> findQueryMatch(
-      String entityType, String entityProperty, String propertyValue) {
-    Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
-    Query q = new Query(entityType).setFilter(filter);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    return result;
-  }
-
-  public void isNewEntityDetector(String schoolName, String courseName, String profName) {
-    List<Entity> querySchool = findQueryMatch("School", "school-name", schoolName);
-    if (!querySchool.isEmpty()) {
-      existingSchoolKey = querySchool.get(0).getKey();
-      isNewSchool = false;
-    }
-
-    List<Entity> queryCourse = findQueryMatch("Course", "course-name", courseName);
-    if (!queryCourse.isEmpty()) {
-      existingSchoolKey = queryCourse.get(0).getKey();
-      isNewCourse = false;
-    }
-
-    List<Entity> queryProfessor = findQueryMatch("Professor", "professor-name", profName);
-    if (!queryProfessor.isEmpty()) {
-      existingSchoolKey = queryProfessor.get(0).getKey();
-      isNewProfessor = false;
-    }
-  }
-
-  public Entity createSchool(String schoolName) {
-    Entity newSchool = new Entity("School");
-    newSchool.setProperty("school-name", schoolName);
-    db.put(newSchool);
-    return newSchool;
-  }
-
-  public Entity createCourse(String name, Long units, Key parent) {
-    Entity newCourse = new Entity("Course", parent);
-    newCourse.setProperty("course-name", name);
-    newCourse.setProperty("units", units);
-    db.put(newCourse);
-    return newCourse;
-  }
-
-  public Entity createProfessor(String name, Key parent) {
-    Entity newProfessor = new Entity("Professor", parent);
-    newProfessor.setProperty("professor-name", name);
-    db.put(newProfessor);
-    return newProfessor;
-  }
-
-  public Entity createTerm(String term, Key professor, Key parent) {
-    Entity newTerm = new Entity("Term", parent);
-    newTerm.setProperty("term", term);
-    newTerm.setProperty("professorKey", professor);
-    db.put(newTerm);
-    return newTerm;
-  }
-
   public void addSchoolData(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
@@ -102,7 +39,9 @@ public class AddSchoolData extends HttpServlet {
     String profName = request.getParameter("professor-name");
     Long units = Long.parseLong(request.getParameter("units"));
 
-    isNewEntityDetector(schoolName, courseName, profName);
+    Boolean isNewSchool = isNewSchoolDetector(schoolName);
+    Boolean isNewCourse = isNewCourseDetector(courseName);
+    Boolean isNewProfessor = isNewProfessorDetector(profName);
 
     if (isNewSchool) {
       Entity school = createSchool(schoolName);
@@ -128,5 +67,73 @@ public class AddSchoolData extends HttpServlet {
         }
       }
     }
+  }
+
+  private List<Entity> findQueryMatch(
+      String entityType, String entityProperty, String propertyValue) {
+    Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
+    Query q = new Query(entityType).setFilter(filter);
+    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
+    return result;
+  }
+
+  private Boolean isNewSchoolDetector(String schoolName) {
+    List<Entity> querySchool = findQueryMatch("School", "school-name", schoolName);
+    if (!querySchool.isEmpty()) {
+      existingSchoolKey = querySchool.get(0).getKey();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  private Boolean isNewCourseDetector(String courseName) {
+    List<Entity> queryCourse = findQueryMatch("Course", "course-name", courseName);
+    if (!queryCourse.isEmpty()) {
+      existingSchoolKey = queryCourse.get(0).getKey();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  private Boolean isNewProfessorDetector(String profName) {
+    List<Entity> queryProfessor = findQueryMatch("Professor", "professor-name", profName);
+    if (!queryProfessor.isEmpty()) {
+      existingSchoolKey = queryProfessor.get(0).getKey();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  private Entity createSchool(String schoolName) {
+    Entity newSchool = new Entity("School");
+    newSchool.setProperty("school-name", schoolName);
+    db.put(newSchool);
+    return newSchool;
+  }
+
+  private Entity createCourse(String name, Long units, Key parent) {
+    Entity newCourse = new Entity("Course", parent);
+    newCourse.setProperty("course-name", name);
+    newCourse.setProperty("units", units);
+    db.put(newCourse);
+    return newCourse;
+  }
+
+  private Entity createProfessor(String name, Key parent) {
+    Entity newProfessor = new Entity("Professor", parent);
+    newProfessor.setProperty("professor-name", name);
+    db.put(newProfessor);
+    return newProfessor;
+  }
+
+  private Entity createTerm(String term, Key professor, Key parent) {
+    Entity newTerm = new Entity("Term", parent);
+    newTerm.setProperty("term", term);
+    newTerm.setProperty("professorKey", professor);
+    db.put(newTerm);
+    return newTerm;
   }
 }
