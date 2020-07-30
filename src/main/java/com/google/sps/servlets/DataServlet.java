@@ -33,7 +33,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comments").addSort("score-class", SortDirection.ASCENDING);
+    Query query = new Query("Rating").addSort("score-class", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
@@ -57,11 +57,16 @@ public class DataServlet extends HttpServlet {
     int workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
     int difficulty = Integer.parseInt(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
-    int professorRating = Integer.parseInt(request.getParameter("rating-professor"));
+    int professorRating = Integer.parseInt(request.getParameter("rating-prof"));
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
-      Translate translateService = TranslateOptions.getDefaultInstance().getService();
+      Translate translateService =
+          TranslateOptions.newBuilder()
+              .setProjectId("nina-laura-dagm-step-2020")
+              .setQuotaProjectId("nina-laura-dagm-step-2020")
+              .build()
+              .getService();
       Translation translationClassFeedback =
           translateService.translate(classFeedback, Translate.TranslateOption.targetLanguage("en"));
       Translation translationProfessorFeedback =
