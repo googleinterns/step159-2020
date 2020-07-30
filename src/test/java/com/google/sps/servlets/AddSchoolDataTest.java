@@ -347,7 +347,6 @@ public final class AddSchoolDataTest {
       String propertyValue,
       Boolean onlyType) {
     Query q;
-
     if (onlyType) {
       q = new Query(entityType);
     } else {

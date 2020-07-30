@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/add-info")
 public class AddSchoolData extends HttpServlet {
+  // these are not reset on post call
   private Key existingSchoolKey;
   private Key existingCourseKey;
   private Key existingProfessorKey;
@@ -33,6 +34,10 @@ public class AddSchoolData extends HttpServlet {
   }
 
   public void addSchoolData(DatastoreService db, HttpServletRequest request) {
+    existingCourseKey = null;
+    existingCourseKey = null;
+    existingProfessorKey = null;
+
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
@@ -53,22 +58,34 @@ public class AddSchoolData extends HttpServlet {
       course = createCourse(courseName, units, school.getKey());
       professor = createProfessor(profName, school.getKey());
       term = createTerm(termName, professor.getKey(), course.getKey());
+      db.put(school);
+      db.put(course);
+      db.put(professor);
+      db.put(term);
     } else {
       if (isNewCourse) {
         if (isNewProfessor) {
           course = createCourse(courseName, units, existingSchoolKey);
           professor = createProfessor(profName, existingSchoolKey);
           term = createTerm(termName, professor.getKey(), course.getKey());
+          db.put(course);
+          db.put(professor);
+          db.put(term);
         } else {
           course = createCourse(courseName, units, existingSchoolKey);
           term = createTerm(termName, existingProfessorKey, course.getKey());
+          db.put(course);
+          db.put(term);
         }
       } else {
         if (isNewProfessor) {
           professor = createProfessor(profName, existingSchoolKey);
           term = createTerm(termName, professor.getKey(), existingCourseKey);
+          db.put(professor);
+          db.put(term);
         } else {
           term = createTerm(termName, existingProfessorKey, existingCourseKey);
+          db.put(term);
         }
       }
     }
@@ -115,7 +132,6 @@ public class AddSchoolData extends HttpServlet {
   private Entity createSchool(String schoolName) {
     Entity newSchool = new Entity("School");
     newSchool.setProperty("school-name", schoolName);
-    db.put(newSchool);
     return newSchool;
   }
 
@@ -123,14 +139,12 @@ public class AddSchoolData extends HttpServlet {
     Entity newCourse = new Entity("Course", parent);
     newCourse.setProperty("course-name", name);
     newCourse.setProperty("units", units);
-    db.put(newCourse);
     return newCourse;
   }
 
   private Entity createProfessor(String name, Key parent) {
     Entity newProfessor = new Entity("Professor", parent);
     newProfessor.setProperty("professor-name", name);
-    db.put(newProfessor);
     return newProfessor;
   }
 
@@ -138,7 +152,6 @@ public class AddSchoolData extends HttpServlet {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
     newTerm.setProperty("professorKey", professor);
-    db.put(newTerm);
     return newTerm;
   }
 }
