@@ -34,7 +34,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Rating Term").addSort("score-class", SortDirection.ASCENDING);
+    Query query = new Query("Rating").addSort("score-class", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
@@ -62,11 +62,11 @@ public class DataServlet extends HttpServlet {
   public void addTermRating(HttpServletRequest request) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String classFeedback = request.getParameter("class-input");
-    int classRating = Integer.parseInt(request.getParameter("rating-class"));
-    int workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
-    int difficulty = Integer.parseInt(request.getParameter("difficulty"));
+    Long classRating = Integer.parseInt(request.getParameter("rating-class"));
+    Long workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
+    Long difficulty = Integer.parseInt(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
-    int professorRating = Integer.parseInt(request.getParameter("rating-professor"));
+    Long professorRating = Integer.parseInt(request.getParameter("rating-professor"));
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
@@ -84,11 +84,11 @@ public class DataServlet extends HttpServlet {
     Entity currentTerm = datastore.get(currentTermKey);
 
     // Check whether user has reviewed that term.
-    List<Entity> termRatingQueryList = queryEntities("Rating Term", "reviewer-id", userId);
+    List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
 
     Entity classRatingEntity =
         termRatingQueryList.isEmpty()
-            ? new Entity("Rating Term", currentTermKey)
+            ? new Entity("Rating", currentTermKey)
             : termRatingQueryList.get(0);
 
     classRatingEntity.setProperty("comments-class", classFeedback);
