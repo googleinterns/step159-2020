@@ -19,7 +19,7 @@
     <form action="/data" method="POST" autocomplete="on">
       <p>Rate your class:</p>
 
-      <textarea name="class-input" maxlength="1500">
+      <textarea name="class-input" maxlength="1500" autocomplete="on">
 Write opinion on class here.</textarea
       >
 
@@ -45,7 +45,7 @@ Write opinion on class here.</textarea
         >Difficulty (From 0 = Very Easy to 5 = Very Hard)</label
       >
 
-      <textarea name="prof-input" maxlength="1500">
+      <textarea name="prof-input" maxlength="1500" autocomplete="on">
 Write opinion on professor here.</textarea
       >
 
@@ -70,7 +70,6 @@ Write opinion on professor here.</textarea
       <input type="submit" />
     </form>
     <div id="class-id"></div>
-    <button onclick="setParam('term', 'Spring 2020')">Add parameter</button>
     <ul id="log"></ul>
   </body>
 </html>

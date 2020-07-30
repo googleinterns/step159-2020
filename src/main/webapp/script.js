@@ -89,13 +89,6 @@ function createListElement(text) {
   return liElement;
 }
 
-// This is a temporary function, once I connect with Nina will get
-// better way to create/access class ids.
-function getClassID() {
-  var classId = Math.floor(Math.random() * 101);
-  document.getElementById("class-id").innerHTML = classId;
-}
-
 function setParam(name, value) {
   var currentUrl = new URL(window.location);
   currentUrl.searchParams.set(name, value);
