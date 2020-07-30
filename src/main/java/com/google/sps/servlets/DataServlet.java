@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** An item on a todo list. */
-
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
@@ -62,6 +60,7 @@ public class DataServlet extends HttpServlet {
   }
 
   public void addTermRating(HttpServletRequest request) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String classFeedback = request.getParameter("class-input");
     int classRating = Integer.parseInt(request.getParameter("rating-class"));
     int workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
@@ -80,14 +79,14 @@ public class DataServlet extends HttpServlet {
 
     // Gets user email.
     String userId = request.getParameter("ID");
-    // Gets term key
-    Key currentTermKey = request.getParameter("CourseClass").getTerm();
+    // Gets term key from Course object.
+    Key currentTermKey = request.getParameter("Course").term;
     Entity currentTerm = datastore.get(currentTermKey);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating Term", "reviewer-id", userId);
 
-    classRatingEntity =
+    Entity classRatingEntity =
         termRatingQueryList.isEmpty()
             ? new Entity("Rating Term", currentTermKey)
             : termRatingQueryList.get(0);
@@ -104,7 +103,7 @@ public class DataServlet extends HttpServlet {
     datastore.put(classRatingEntity);
   }
 
-  public void translateFeedback(String feedback) {
+  private String translateFeedback(String feedback) {
     Translate translateService = TranslateOptions.getDefaultInstance().getService();
     Translation translationFeedback =
         translateService.translate(feedback, Translate.TranslateOption.targetLanguage("en"));
@@ -112,7 +111,7 @@ public class DataServlet extends HttpServlet {
     return translatedFeedback;
   }
 
-  public void getSentimentScore(String feedback) {
+  private float getSentimentScore(String feedback) {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
 
@@ -122,7 +121,7 @@ public class DataServlet extends HttpServlet {
     languageService.close();
   }
 
-  public void queryEntities(String entityName, String propertyName, String propertyValue) {
+  private List<Entity> queryEntities(String entityName, String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter filter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
     Query query = new Query(entityName).setFilter(filter);
