@@ -43,27 +43,32 @@ public class AddSchoolData extends HttpServlet {
     Boolean isNewCourse = isNewCourseDetector(courseName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
 
+    Entity school;
+    Entity course;
+    Entity professor;
+    Entity term;
+
     if (isNewSchool) {
-      Entity school = createSchool(schoolName);
-      Entity course = createCourse(courseName, units, school.getKey());
-      Entity professor = createProfessor(profName, school.getKey());
-      Entity term = createTerm(termName, professor.getKey(), course.getKey());
+      school = createSchool(schoolName);
+      course = createCourse(courseName, units, school.getKey());
+      professor = createProfessor(profName, school.getKey());
+      term = createTerm(termName, professor.getKey(), course.getKey());
     } else {
       if (isNewCourse) {
         if (isNewProfessor) {
-          Entity course = createCourse(courseName, units, existingSchoolKey);
-          Entity professor = createProfessor(profName, existingSchoolKey);
-          Entity term = createTerm(termName, professor.getKey(), course.getKey());
+          course = createCourse(courseName, units, existingSchoolKey);
+          professor = createProfessor(profName, existingSchoolKey);
+          term = createTerm(termName, professor.getKey(), course.getKey());
         } else {
-          Entity course = createCourse(courseName, units, existingSchoolKey);
-          Entity term = createTerm(termName, existingProfessorKey, course.getKey());
+          course = createCourse(courseName, units, existingSchoolKey);
+          term = createTerm(termName, existingProfessorKey, course.getKey());
         }
       } else {
         if (isNewProfessor) {
-          Entity professor = createProfessor(profName, existingSchoolKey);
-          Entity term = createTerm(termName, professor.getKey(), existingCourseKey);
+          professor = createProfessor(profName, existingSchoolKey);
+          term = createTerm(termName, professor.getKey(), existingCourseKey);
         } else {
-          Entity term = createTerm(termName, existingProfessorKey, existingCourseKey);
+          term = createTerm(termName, existingProfessorKey, existingCourseKey);
         }
       }
     }
@@ -90,7 +95,7 @@ public class AddSchoolData extends HttpServlet {
   private Boolean isNewCourseDetector(String courseName) {
     List<Entity> queryCourse = findQueryMatch("Course", "course-name", courseName);
     if (!queryCourse.isEmpty()) {
-      existingSchoolKey = queryCourse.get(0).getKey();
+      existingCourseKey = queryCourse.get(0).getKey();
       return false;
     } else {
       return true;
@@ -100,7 +105,7 @@ public class AddSchoolData extends HttpServlet {
   private Boolean isNewProfessorDetector(String profName) {
     List<Entity> queryProfessor = findQueryMatch("Professor", "professor-name", profName);
     if (!queryProfessor.isEmpty()) {
-      existingSchoolKey = queryProfessor.get(0).getKey();
+      existingProfessorKey = queryProfessor.get(0).getKey();
       return false;
     } else {
       return true;
