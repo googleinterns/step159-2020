@@ -62,31 +62,37 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingQuery =
-        queryEntities("Term Rating", reviewer - id, request.getParameter("reviewer-id")).get(0);
-    Entity expectedTermRatingEntity = new Entity("Term Rating");
+        queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
+    Entity expectedTermRatingEntity = new Entity("Rating");
     expectedTermRatingEntity.setProperty("comments-class", "I really like this.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-class"),
         termRatingQuery.getProperty("comments-class"));
+    
     expectedTermRatingEntity.setProperty("reviewer-id", "numberOneId");
     assertEquals(
         expectedTermRatingEntity.getProperty("reviewer-id"),
         termRatingQuery.getProperty("reviewer-id"));
+    
     expectedTermRatingEntity.setProperty("perception-class", 4);
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-class"),
         termRatingQuery.getProperty("perception-class"));
+    
     expectedTermRatingEntity.setProperty("hours", 8);
     assertEquals(
         expectedTermRatingEntity.getProperty("hours"), termRatingQuery.getProperty("hours"));
+    
     expectedTermRatingEntity.setProperty("difficulty", 4);
     assertEquals(
         expectedTermRatingEntity.getProperty("difficulty"),
         termRatingQuery.getProperty("difficulty"));
+    
     expectedTermRatingEntity.setProperty("comments-professor", "The professor was okay.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-professor"),
         termRatingQuery.getProperty("comments-professor"));
+    
     expectedTermRatingEntity.setProperty("perception-professor", 3);
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-professor"),
@@ -128,31 +134,37 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingQuery =
-        queryEntities("Term Rating", reviewer - id, request.getParameter("reviewer-id")).get(0);
-    Entity expectedTermRatingEntity = new Entity("Term Rating");
+        queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
+    Entity expectedTermRatingEntity = new Entity("Rating");
     expectedTermRatingEntity.setProperty("comments-class", "I really hate this class.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-class"),
         termRatingQuery.getProperty("comments-class"));
+    
     expectedTermRatingEntity.setProperty("reviewer-id", "numberOneId");
     assertEquals(
         expectedTermRatingEntity.getProperty("reviewer-id"),
         termRatingQuery.getProperty("reviewer-id"));
+    
     expectedTermRatingEntity.setProperty("perception-class", 1);
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-class"),
         termRatingQuery.getProperty("perception-class"));
+    
     expectedTermRatingEntity.setProperty("hours", 10);
     assertEquals(
         expectedTermRatingEntity.getProperty("hours"), termRatingQuery.getProperty("hours"));
+    
     expectedTermRatingEntity.setProperty("difficulty", 5);
     assertEquals(
         expectedTermRatingEntity.getProperty("difficulty"),
         termRatingQuery.getProperty("difficulty"));
+    
     expectedTermRatingEntity.setProperty("comments-professor", "The professor was still okay.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-professor"),
         termRatingQuery.getProperty("comments-professor"));
+    
     expectedTermRatingEntity.setProperty("perception-professor", 3);
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-professor"),
@@ -181,12 +193,13 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingQuery =
-        queryEntities("Term Rating", reviewer - id, request.getParameter("reviewer-id")).get(0);
-    Entity expectedTermRatingEntity = new Entity("Term Rating");
+        queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
+    Entity expectedTermRatingEntity = new Entity("Rating");
     expectedTermRatingEntity.setProperty("score-class", -0.8999999761581421);
     assertEquals(
         expectedTermRatingEntity.getProperty("score-class"),
         termRatingQuery.getProperty("score-class"));
+    
     expectedTermRatingEntity.setProperty("score-professor", 0.8999999761581421);
     assertEquals(
         expectedTermRatingEntity.getProperty("score-professor"),
@@ -215,12 +228,13 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingQuery =
-        queryEntities("Term Rating", reviewer - id, request.getParameter("reviewer-id")).get(0);
-    Entity expectedTermRatingEntity = new Entity("Term Rating");
+        queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
+    Entity expectedTermRatingEntity = new Entity("Rating");
     expectedTermRatingEntity.setProperty("comments-class", "This class is very interesting.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-class"),
         termRatingQuery.getProperty("comments-class"));
+    
     expectedTermRatingEntity.setProperty("comments-professor", "This teacher is very bad.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-professor"),
