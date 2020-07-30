@@ -74,16 +74,16 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("reviewer-id"),
         termRatingQuery.getProperty("reviewer-id"));
     
-    expectedTermRatingEntity.setProperty("perception-class", 4);
+    expectedTermRatingEntity.setProperty("perception-class", Long.valueOf(4));
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-class"),
         termRatingQuery.getProperty("perception-class"));
     
-    expectedTermRatingEntity.setProperty("hours", 8);
+    expectedTermRatingEntity.setProperty("hours", Long.valueOf(8));
     assertEquals(
         expectedTermRatingEntity.getProperty("hours"), termRatingQuery.getProperty("hours"));
     
-    expectedTermRatingEntity.setProperty("difficulty", 4);
+    expectedTermRatingEntity.setProperty("difficulty", Long.valueOf(4));
     assertEquals(
         expectedTermRatingEntity.getProperty("difficulty"),
         termRatingQuery.getProperty("difficulty"));
@@ -93,7 +93,7 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("comments-professor"),
         termRatingQuery.getProperty("comments-professor"));
     
-    expectedTermRatingEntity.setProperty("perception-professor", 3);
+    expectedTermRatingEntity.setProperty("perception-professor", Long.valueOf(3));
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-professor"),
         termRatingQuery.getProperty("perception-professor"));
@@ -146,16 +146,16 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("reviewer-id"),
         termRatingQuery.getProperty("reviewer-id"));
     
-    expectedTermRatingEntity.setProperty("perception-class", 1);
+    expectedTermRatingEntity.setProperty("perception-class", Long.valueOf(1));
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-class"),
         termRatingQuery.getProperty("perception-class"));
     
-    expectedTermRatingEntity.setProperty("hours", 10);
+    expectedTermRatingEntity.setProperty("hours", Long.valueOf(10));
     assertEquals(
         expectedTermRatingEntity.getProperty("hours"), termRatingQuery.getProperty("hours"));
     
-    expectedTermRatingEntity.setProperty("difficulty", 5);
+    expectedTermRatingEntity.setProperty("difficulty", Long.valueOf(5));
     assertEquals(
         expectedTermRatingEntity.getProperty("difficulty"),
         termRatingQuery.getProperty("difficulty"));
@@ -165,7 +165,7 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("comments-professor"),
         termRatingQuery.getProperty("comments-professor"));
     
-    expectedTermRatingEntity.setProperty("perception-professor", 3);
+    expectedTermRatingEntity.setProperty("perception-professor", Long.valueOf(3));
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-professor"),
         termRatingQuery.getProperty("perception-professor"));
