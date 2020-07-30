@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
-  private Key existingTermRatingKey;
   private Key currentTermKey;
 
   @Override
@@ -56,6 +55,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
+    addTermRating(request);
+    response.setContentType("text/html; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.sendRedirect("/index.html");
+  }
+
+  public void addTermRating(HttpServletRequest request) {
     String classFeedback = request.getParameter("class-input");
     int classRating = Integer.parseInt(request.getParameter("rating-class"));
     int workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
@@ -65,65 +71,27 @@ public class DataServlet extends HttpServlet {
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
-      Translate translateService = TranslateOptions.getDefaultInstance().getService();
-      Translation translationClassFeedback =
-          translateService.translate(classFeedback, Translate.TranslateOption.targetLanguage("en"));
-      Translation translationProfessorFeedback =
-          translateService.translate(
-              professorFeedback, Translate.TranslateOption.targetLanguage("en"));
-      String translatedClassFeedback = translationClassFeedback.getTranslatedText();
-      String translatedProfessorFeedback = translationProfessorFeedback.getTranslatedText();
-      classFeedback = translatedClassFeedback;
-      professorFeedback = translatedProfessorFeedback;
+      classFeedback = translateFeedback(classFeedback);
+      professorFeedback = translateFeedback(professorFeedback);
     }
 
-    Document classFeedbackDoc =
-        Document.newBuilder().setContent(classFeedback).setType(Document.Type.PLAIN_TEXT).build();
-    Document professorFeedbackDoc =
-        Document.newBuilder()
-            .setContent(professorFeedback)
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
-
-    LanguageServiceClient classLanguageService = LanguageServiceClient.create();
-    Sentiment classSentiment =
-        classLanguageService.analyzeSentiment(classFeedbackDoc).getDocumentSentiment();
-    float classScore = classSentiment.getScore();
-    classLanguageService.close();
-
-    LanguageServiceClient profLanguageService = LanguageServiceClient.create();
-    Sentiment professorSentiment =
-        profLanguageService.analyzeSentiment(professorFeedbackDoc).getDocumentSentiment();
-    float professorScore = professorSentiment.getScore();
-    profLanguageService.close();
+    float classScore = getSentimentScore(classFeedback);
+    float professorScore = getSentimentScore(professorFeedback);
 
     // Gets user email.
     String userId = request.getParameter("ID");
-
-    // Check whether user has reviewer ID in system.
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Filter userFilter = new FilterPredicate("ID", FilterOperator.EQUAL, userId);
-    Query userQuery = new Query("User").setFilter(userFilter);
-    // This is initialized when authentication happens, so should not be empty.
-    List<Entity> userQueryList =
-        datastore.prepare(userQuery).asList(FetchOptions.Builder.withDefaults());
-
-    // Has to be added to URL.
-    currentTermKey = request.getParameter("term").getTerm();
+    // Gets term key
+    Key currentTermKey = request.getParameter("CourseClass").getTerm();
     Entity currentTerm = datastore.get(currentTermKey);
 
-    // Checks for term rating by reviewer.
-    Filter termReviewerFilter = new FilterPredicate("reviewer-id", FilterOperator.EQUAL, userId);
-    Query termRatingQuery =
-        new Query("Rating Term").setAncestor(currentTermKey).setFilter(termReviewerFilter);
-    List<Entity> termRatingQueryList =
-        datastore.prepare(termRatingQuery).asList(FetchOptions.Builder.withDefaults());
+    // Check whether user has reviewed that term.
+    List<Entity> termRatingQueryList = queryEntities("Rating Term", "reviewer-id", userId);
 
-    if (termRatingQueryList.isEmpty()) {
-      Entity classRatingEntity = new Entity("Rating Term", currentTermKey);
-    } else {
-      Entity classRatingEntity = termRatingQueryList.get(0);
-    }
+    classRatingEntity =
+        termRatingQueryList.isEmpty()
+            ? new Entity("Rating Term", currentTermKey)
+            : termRatingQueryList.get(0);
+
     classRatingEntity.setProperty("comments-class", classFeedback);
     classRatingEntity.setProperty("reviewer-id", userId);
     classRatingEntity.setProperty("score-class", classScore);
@@ -134,9 +102,32 @@ public class DataServlet extends HttpServlet {
     classRatingEntity.setProperty("score-professor", professorScore);
     classRatingEntity.setProperty("perception-professor", professorRating);
     datastore.put(classRatingEntity);
+  }
 
-    response.setContentType("text/html; charset=UTF-8");
-    response.setCharacterEncoding("UTF-8");
-    response.sendRedirect("/index.html");
+  public void translateFeedback(String feedback) {
+    Translate translateService = TranslateOptions.getDefaultInstance().getService();
+    Translation translationFeedback =
+        translateService.translate(feedback, Translate.TranslateOption.targetLanguage("en"));
+    String translatedFeedback = translationFeedback.getTranslatedText();
+    return translatedFeedback;
+  }
+
+  public void getSentimentScore(String feedback) {
+    Document feedbackDoc =
+        Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
+
+    LanguageServiceClient languageService = LanguageServiceClient.create();
+    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    float score = sentiment.getScore();
+    languageService.close();
+  }
+
+  public void queryEntities(String entityName, String propertyName, String propertyValue) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Filter filter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
+    Query query = new Query(entityName).setFilter(filter);
+    // This is initialized when authentication happens, so should not be empty.
+    List<Entity> queryList = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+    return queryList;
   }
 }
