@@ -34,9 +34,9 @@ public class AddSchoolData extends HttpServlet {
   }
 
   public void addSchoolData(DatastoreService db, HttpServletRequest request) {
-    existingCourseKey = null;
-    existingCourseKey = null;
-    existingProfessorKey = null;
+    // existingCourseKey = null;
+    // existingCourseKey = null;
+    // existingProfessorKey = null;
 
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
