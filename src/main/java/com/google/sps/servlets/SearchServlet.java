@@ -42,7 +42,7 @@ public class SearchServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Filter> filters = getFilters(request);
     List<Entity> results = getResults(filters);
-    List<Courses> courses = getCourses(results);
+    List<Course> courses = getCourses(results);
 
     String coursesJson = new Gson().toJson(courses);
     response.setContentType("application/json;");
@@ -50,7 +50,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Create list of filters given parameters specified in request. */
-  private List<Filter> getFilters(HttpServletRequest request) {
+  public List<Filter> getFilters(HttpServletRequest request) {
     List<Filter> filters = new ArrayList<>();
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
@@ -85,7 +85,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
-  private List<Entity> getResults(List<Filter> filters) {
+  public List<Entity> getResults(List<Filter> filters) {
     Query courseQuery = new Query("Course");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
@@ -101,7 +101,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Given list of result Entity courses, format into Course objects. */
-  private List<Course> getCourses(List<Entity> results) {
+  public List<Course> getCourses(List<Entity> results) {
     List<Course> courses = new ArrayList<>();
     for (Entity entity : results) {
       String name = (String) entity.getProperty("name");

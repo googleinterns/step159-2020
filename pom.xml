@@ -98,7 +98,12 @@
      <groupId>com.google.api-client</groupId>
      <artifactId>google-api-client</artifactId>
      <version>1.30.9</version>
-   </dependency>
+    </dependency>
+	<dependency>
+		<groupId>com.google.code.findbugs</groupId>
+		 <artifactId>jsr305</artifactId>
+		 <version>3.0.2</version>
+	</dependency>
   </dependencies>
 
   <build>
