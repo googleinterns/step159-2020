@@ -62,11 +62,11 @@ public class DataServlet extends HttpServlet {
   public void addTermRating(HttpServletRequest request) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String termFeedback = request.getParameter("term-input");
-    Long termRating = Integer.parseInt(request.getParameter("rating-term"));
-    Long workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
-    Long difficulty = Integer.parseInt(request.getParameter("difficulty"));
+    Long termRating = Long.parseLong(request.getParameter("rating-term"));
+    Long workHours = Long.parseLong(request.getParameter("hoursOfWork"));
+    Long difficulty = Long.parseLong(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
-    Long professorRating = Integer.parseInt(request.getParameter("rating-professor"));
+    Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
@@ -80,8 +80,11 @@ public class DataServlet extends HttpServlet {
     // Gets user email.
     String userId = request.getParameter("ID");
     // Gets term key from Course object.
-    Key currentTermKey = request.getParameter("Course").term;
-    Entity currentTerm = datastore.get(currentTermKey);
+    // Key currentTermKey = request.getParameter("Course").term;
+    // Entity currentTerm = datastore.get(currentTermKey);
+    Entity currentTerm = new Entity("Term");
+    Key currentTermKey = currentTerm.getKey();
+    datastore.put(currentTerm);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
@@ -114,11 +117,11 @@ public class DataServlet extends HttpServlet {
   private float getSentimentScore(String feedback) {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-
     LanguageServiceClient languageService = LanguageServiceClient.create();
     Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
     languageService.close();
+    return score;
   }
 
   private List<Entity> queryEntities(String entityName, String propertyName, String propertyValue) {
