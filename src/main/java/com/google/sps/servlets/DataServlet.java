@@ -34,12 +34,12 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Rating").addSort("score-class", SortDirection.ASCENDING);
+    Query query = new Query("Rating").addSort("score-term", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {
-      String comment = (String) entity.getProperty("comments-class");
+      String comment = (String) entity.getProperty("comments-term");
       commentsList.add(comment);
     }
 
@@ -61,8 +61,8 @@ public class DataServlet extends HttpServlet {
 
   public void addTermRating(HttpServletRequest request) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    String classFeedback = request.getParameter("term-input");
-    Long classRating = Integer.parseInt(request.getParameter("rating-class"));
+    String termFeedback = request.getParameter("term-input");
+    Long termRating = Integer.parseInt(request.getParameter("rating-term"));
     Long workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
     Long difficulty = Integer.parseInt(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
@@ -70,11 +70,11 @@ public class DataServlet extends HttpServlet {
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
-      classFeedback = translateFeedback(classFeedback);
+      termFeedback = translateFeedback(termFeedback);
       professorFeedback = translateFeedback(professorFeedback);
     }
 
-    float classScore = getSentimentScore(classFeedback);
+    float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
     // Gets user email.
@@ -86,21 +86,21 @@ public class DataServlet extends HttpServlet {
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
 
-    Entity classRatingEntity =
+    Entity termRatingEntity =
         termRatingQueryList.isEmpty()
             ? new Entity("Rating", currentTermKey)
             : termRatingQueryList.get(0);
 
-    classRatingEntity.setProperty("comments-class", classFeedback);
-    classRatingEntity.setProperty("reviewer-id", userId);
-    classRatingEntity.setProperty("score-class", classScore);
-    classRatingEntity.setProperty("perception-class", classRating);
-    classRatingEntity.setProperty("hours", workHours);
-    classRatingEntity.setProperty("difficulty", difficulty);
-    classRatingEntity.setProperty("comments-professor", professorFeedback);
-    classRatingEntity.setProperty("score-professor", professorScore);
-    classRatingEntity.setProperty("perception-professor", professorRating);
-    datastore.put(classRatingEntity);
+    termRatingEntity.setProperty("comments-term", termFeedback);
+    termRatingEntity.setProperty("reviewer-id", userId);
+    termRatingEntity.setProperty("score-term", termScore);
+    termRatingEntity.setProperty("perception-term", termRating);
+    termRatingEntity.setProperty("hours", workHours);
+    termRatingEntity.setProperty("difficulty", difficulty);
+    termRatingEntity.setProperty("comments-professor", professorFeedback);
+    termRatingEntity.setProperty("score-professor", professorScore);
+    termRatingEntity.setProperty("perception-professor", professorRating);
+    datastore.put(termRatingEntity);
   }
 
   private String translateFeedback(String feedback) {
