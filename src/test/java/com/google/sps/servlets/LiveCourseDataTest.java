@@ -99,10 +99,4 @@ public final class LiveCourseDataTest {
     List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
     return result;
   }
-
-  private List<Entity> findQueryMatch(DatastoreService db, String entityType) {
-    Query q = new Query(entityType);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    return result;
-  }
 }
