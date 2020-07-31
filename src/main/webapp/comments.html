@@ -15,8 +15,10 @@
     <div id="hours-chart" style="width: 900px; height: 500px"></div>
     <div id="difficulty-chart" style="width: 900px; height: 500px"></div>
 
+    <button type="button" onclick="setUserID()">Set User ID</button>
+
     <p>Rate your term and professors!</p>
-    <form action="/data" method="POST">
+    <form action="/data" method="POST" id="termForm">
       <p>Rate your term:</p>
 
       <textarea name="term-input" maxlength="1500">
@@ -66,6 +68,24 @@ Write opinion on professor here.</textarea
       <label for="yes">Yes.</label>
       <input type="radio" id="no" name="languages" value="false" />
       <label for="no">No.</label>
+
+      <input
+        type="button"
+        id="clear-form"
+        onclick="clearForm()"
+        value="Reset"
+      />
+      <label for="clear-form">Click to clear your form.</label>
+      <div id="clear-message"></div>
+      <input
+        type="button"
+        id="fill-form"
+        onclick="autofillForm()"
+        value="Autofill"
+      />
+      <label for="fill-form"
+        >Click to fill your form with previous term rating.</label
+      >
 
       <input type="submit" />
     </form>

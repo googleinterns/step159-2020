@@ -96,17 +96,40 @@ function setParam(name, value) {
 }
 
 function setUserID() {
-  const auth2 = gapi.auth2.getAuthInstance();
-  const profile = auth2.currentUser.get().getBasicProfile();
-  setParam("ID", profile.getID());
+  //   const auth2 = gapi.auth2.getAuthInstance();
+  //   const profile = auth2.currentUser.get().getBasicProfile();
+  setParam("ID", "Laura");
 }
 
-function autofill() {
+function autofillForm() {
   // Idea is to grab from get function a hash map, access each thing and fill out form.
   fetch("/data")
     .then((response) => response.json())
     .then((jsonVersionHashtable) => {
-      document.getElementById("class-input").innerHTML =
-        jsonVersionHashtable["comments-class"];
+      if (Object.keys(jsonVersionHashtable).length == 0) {
+        document.getElementById("clear-message").innerHTML =
+          "You do not have a previous rating";
+      } else {
+        document.getElementById("term-input").innerHTML =
+          jsonVersionHashtable["comments-term"];
+        document.getElementById("rating-term").innerHTML = Number(
+          jsonVersionHashtable["perception-term"]
+        );
+        document.getElementById("hoursOfWork").innerHTML = Number(
+          jsonVersionHashtable["hours"]
+        );
+        document.getElementById("difficulty").innerHTML = Number(
+          jsonVersionHashtable["difficulty"]
+        );
+        document.getElementById("prof-input").innerHTML =
+          jsonVersionHashtable["comments-professor"];
+        document.getElementById("rating-prof").innerHTML = Number(
+          jsonVersionHashtable["perception-professor"]
+        );
+      }
     });
+}
+
+function clearForm() {
+  document.getElementById("termForm").reset();
 }
