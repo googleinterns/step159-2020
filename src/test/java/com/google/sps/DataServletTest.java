@@ -37,20 +37,18 @@ public final class DataServletTest {
 
   @Mock HttpServletRequest request;
 
-  @Mock HttpServletRequest requestB;
-
   @Test
-  public void AddingNewTermRatingNoSentimentAnalysisNoTranslation() {
+  public void AddingNewTermRating_NoTranslation() {
 
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = Mockito.mock(HttpServletRequest.class);
 
     // First Term Rating for this term.
-    when(request.getParameter("class-input")).thenReturn("I really like this class.");
-    when(request.getParameter("rating-class")).thenReturn("4");
+    when(request.getParameter("term-input")).thenReturn("I do not like this.");
+    when(request.getParameter("rating-class")).thenReturn("1");
     when(request.getParameter("hoursOfWork")).thenReturn("8");
     when(request.getParameter("difficulty")).thenReturn("4");
-    when(request.getParameter("prof-input")).thenReturn("The professor was okay.");
+    when(request.getParameter("prof-input")).thenReturn("The professor was amazing.");
     when(request.getParameter("rating-professor")).thenReturn("3");
     when(request.getParameter("languages")).thenReturn("false");
     when(request.getParameter("ID")).thenReturn("numberOneId");
@@ -64,7 +62,7 @@ public final class DataServletTest {
     Entity termRatingQuery =
         queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
     Entity expectedTermRatingEntity = new Entity("Rating");
-    expectedTermRatingEntity.setProperty("comments-class", "I really like this.");
+    expectedTermRatingEntity.setProperty("comments-class", "I do not like this.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-class"),
         termRatingQuery.getProperty("comments-class"));
@@ -74,7 +72,7 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("reviewer-id"),
         termRatingQuery.getProperty("reviewer-id"));
     
-    expectedTermRatingEntity.setProperty("perception-class", Long.valueOf(4));
+    expectedTermRatingEntity.setProperty("perception-class", Long.valueOf(1));
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-class"),
         termRatingQuery.getProperty("perception-class"));
@@ -88,7 +86,7 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("difficulty"),
         termRatingQuery.getProperty("difficulty"));
     
-    expectedTermRatingEntity.setProperty("comments-professor", "The professor was okay.");
+    expectedTermRatingEntity.setProperty("comments-professor", "The professor was amazing.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-professor"),
         termRatingQuery.getProperty("comments-professor"));
@@ -97,15 +95,25 @@ public final class DataServletTest {
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-professor"),
         termRatingQuery.getProperty("perception-professor"));
+    
+    expectedTermRatingEntity.setProperty("score-class", -0.8999999761581421);
+    assertEquals(
+        expectedTermRatingEntity.getProperty("score-class"),
+        termRatingQuery.getProperty("score-class"));
+    
+    expectedTermRatingEntity.setProperty("score-professor", 0.8999999761581421);
+    assertEquals(
+        expectedTermRatingEntity.getProperty("score-professor"),
+        termRatingQuery.getProperty("score-professor"));
   }
 
   @Test
-  public void OverwritingExistingTermRatingNoSentimentAnalysisNoTranslation() {
+  public void OverwritingExistingTermRating_NoTranslation() {
 
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = Mockito.mock(HttpServletRequest.class);
 
-    when(request.getParameter("class-input")).thenReturn("I really like this class.");
+    when(request.getParameter("term-input")).thenReturn("I really like this class.");
     when(request.getParameter("rating-class")).thenReturn("4");
     when(request.getParameter("hoursOfWork")).thenReturn("8");
     when(request.getParameter("difficulty")).thenReturn("4");
@@ -120,11 +128,11 @@ public final class DataServletTest {
 
     newTermRating.addTermRating(request);
 
-    when(request.getParameter("class-input")).thenReturn("I really hate this class.");
+    when(request.getParameter("term-input")).thenReturn("I don't like this class.");
     when(request.getParameter("rating-class")).thenReturn("1");
     when(request.getParameter("hoursOfWork")).thenReturn("10");
     when(request.getParameter("difficulty")).thenReturn("5");
-    when(request.getParameter("prof-input")).thenReturn("The professor was still okay.");
+    when(request.getParameter("prof-input")).thenReturn("This teacher was wonderful.");
     when(request.getParameter("rating-professor")).thenReturn("3");
     when(request.getParameter("languages")).thenReturn("false");
     when(request.getParameter("ID")).thenReturn("numberOneId");
@@ -136,7 +144,7 @@ public final class DataServletTest {
     Entity termRatingQuery =
         queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
     Entity expectedTermRatingEntity = new Entity("Rating");
-    expectedTermRatingEntity.setProperty("comments-class", "I really hate this class.");
+    expectedTermRatingEntity.setProperty("comments-class", "I don't like this class.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-class"),
         termRatingQuery.getProperty("comments-class"));
@@ -160,7 +168,7 @@ public final class DataServletTest {
         expectedTermRatingEntity.getProperty("difficulty"),
         termRatingQuery.getProperty("difficulty"));
     
-    expectedTermRatingEntity.setProperty("comments-professor", "The professor was still okay.");
+    expectedTermRatingEntity.setProperty("comments-professor", "This teacher was wonderful.");
     assertEquals(
         expectedTermRatingEntity.getProperty("comments-professor"),
         termRatingQuery.getProperty("comments-professor"));
@@ -169,55 +177,26 @@ public final class DataServletTest {
     assertEquals(
         expectedTermRatingEntity.getProperty("perception-professor"),
         termRatingQuery.getProperty("perception-professor"));
-  }
-
-  @Test
-  public void AddingTermRatingWithSentimentAnalysis() {
-
-    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-
-    when(request.getParameter("class-input")).thenReturn("I do not like this.");
-    when(request.getParameter("rating-class")).thenReturn("4");
-    when(request.getParameter("hoursOfWork")).thenReturn("8");
-    when(request.getParameter("difficulty")).thenReturn("4");
-    when(request.getParameter("prof-input")).thenReturn("The professor was amazing.");
-    when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("languages")).thenReturn("false");
-    when(request.getParameter("ID")).thenReturn("numberOneId");
-    Entity termEntity = new Entity("Term");
-    Key termKey = termEntity.getKey();
-    when(request.getParameter("CourseClass"))
-        .thenReturn(Course("Spring 2020", "Smith", 12, termKey));
-
-    newTermRating.addTermRating(request);
-
-    Entity termRatingQuery =
-        queryEntities("Rating", "reviewer-id", request.getParameter("reviewer-id")).get(0);
-    Entity expectedTermRatingEntity = new Entity("Rating");
-    expectedTermRatingEntity.setProperty("score-class", -0.8999999761581421);
+    
+    expectedTermRatingEntity.setProperty("score-class", -0.699999988079071);
     assertEquals(
         expectedTermRatingEntity.getProperty("score-class"),
         termRatingQuery.getProperty("score-class"));
     
-    expectedTermRatingEntity.setProperty("score-professor", 0.8999999761581421);
+    expectedTermRatingEntity.setProperty("score-professor", 0.800000011920929);
     assertEquals(
         expectedTermRatingEntity.getProperty("score-professor"),
         termRatingQuery.getProperty("score-professor"));
   }
 
   @Test
-  public void AddingTermRatingWithTranslation() {
+  public void AddingTermRating_WithTranslation() {
 
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = Mockito.mock(HttpServletRequest.class);
 
-    when(request.getParameter("class-input")).thenReturn("Esta clase es muy interesante.");
-    when(request.getParameter("rating-class")).thenReturn("4");
-    when(request.getParameter("hoursOfWork")).thenReturn("8");
-    when(request.getParameter("difficulty")).thenReturn("4");
+    when(request.getParameter("term-input")).thenReturn("Esta clase es muy interesante.");
     when(request.getParameter("prof-input")).thenReturn("Este profesor es muy malo.");
-    when(request.getParameter("rating-professor")).thenReturn("3");
     when(request.getParameter("languages")).thenReturn("true");
     when(request.getParameter("ID")).thenReturn("numberOneId");
     Entity termEntity = new Entity("Term");
