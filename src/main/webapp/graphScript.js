@@ -20,7 +20,7 @@ function makeGraph() {
 
       const difficultyData = new google.visualization.arrayToDataTable(data.difficulty);
       const diffOptions = {
-          title: "Diffculty of Class",
+          title: "Difficulty of Class",
           legend: { position: "none" },
           vAxis: {title: "# Students"},
           hAxis: {title: "Difficulty"},

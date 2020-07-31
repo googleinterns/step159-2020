@@ -104,21 +104,21 @@ public final class AddSchoolDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
     requestB = createRequest(requestB, "Stanford", "CS 101", "Spring 2020", "12", "Jimmy");
+    int exceptedTermResultLength = 2;
     int expectedSchoolResultLength = 2;
     int exceptedCourseResultLength = 2;
-    int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
 
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> schoolQuery = findQueryMatch(db, "School");
     List<Entity> courseQuery = findQueryMatch(db, "Course");
-    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> profQuery = findQueryMatch(db, "Professor");
 
+    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
-    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(exceptedProfessorResultLength, profQuery.size());
   }
 
@@ -127,21 +127,21 @@ public final class AddSchoolDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
     requestB = createRequest(request, "MIT", "6.08", "Spring 2020", "12", "Joe");
-    int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
+    int expectedSchoolResultLength = 1;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
 
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> schoolQuery = findQueryMatch(db, "School");
     List<Entity> courseQuery = findQueryMatch(db, "Course");
-    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> profQuery = findQueryMatch(db, "Professor");
 
+    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
-    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(exceptedProfessorResultLength, profQuery.size());
   }
 
@@ -150,21 +150,21 @@ public final class AddSchoolDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
     requestB = createRequest(request, "MIT", "6.08", "Spring 2020", "12", "Jason Ku");
+    int exceptedTermResultLength = 2;
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
-    int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 1;
 
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> schoolQuery = findQueryMatch(db, "School");
     List<Entity> courseQuery = findQueryMatch(db, "Course");
-    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> profQuery = findQueryMatch(db, "Professor");
 
+    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
-    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(exceptedProfessorResultLength, profQuery.size());
   }
 
@@ -173,21 +173,21 @@ public final class AddSchoolDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
     requestB = createRequest(request, "MIT", "6.08", "Spring 2020", "12", "Srini");
+    int exceptedTermResultLength = 2;
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
-    int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
 
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> schoolQuery = findQueryMatch(db, "School");
     List<Entity> courseQuery = findQueryMatch(db, "Course");
-    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> profQuery = findQueryMatch(db, "Professor");
 
+    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
-    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(exceptedProfessorResultLength, profQuery.size());
   }
 
@@ -196,21 +196,21 @@ public final class AddSchoolDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
     requestB = createRequest(request, "MIT", "6.006", "Spring 2021", "12", "Jason Ku");
+    int exceptedTermResultLength = 2;
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 1;
-    int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 1;
 
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> schoolQuery = findQueryMatch(db, "School");
     List<Entity> courseQuery = findQueryMatch(db, "Course");
-    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> profQuery = findQueryMatch(db, "Professor");
 
+    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
-    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(exceptedProfessorResultLength, profQuery.size());
   }
 
@@ -219,21 +219,21 @@ public final class AddSchoolDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
     requestB = createRequest(request, "MIT", "6.006", "Spring 2021", "12", "Srini");
+    int exceptedTermResultLength = 2;
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 1;
-    int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
 
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> schoolQuery = findQueryMatch(db, "School");
     List<Entity> courseQuery = findQueryMatch(db, "Course");
-    List<Entity> termQuery = findQueryMatch(db, "Term");
     List<Entity> profQuery = findQueryMatch(db, "Professor");
 
+    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
-    assertEquals(exceptedTermResultLength, termQuery.size());
     assertEquals(exceptedProfessorResultLength, profQuery.size());
   }
 
