@@ -1,5 +1,6 @@
-package com.google.sps.servlets.second;
+package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -48,47 +49,36 @@ public class AddSchoolData extends HttpServlet {
     Boolean isNewCourse = isNewCourseDetector(courseName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
 
-    Entity school;
-    Entity course;
-    Entity professor;
-    Entity term;
+    Entity school = null;
+    Entity course = null;
+    Entity professor = null;
+    Entity term = null;
 
     if (isNewSchool) {
       school = createSchool(schoolName);
       course = createCourse(courseName, units, school.getKey());
       professor = createProfessor(profName, school.getKey());
       term = createTerm(termName, professor.getKey(), course.getKey());
-      db.put(school);
-      db.put(course);
-      db.put(professor);
-      db.put(term);
     } else {
       if (isNewCourse) {
         if (isNewProfessor) {
           course = createCourse(courseName, units, existingSchoolKey);
           professor = createProfessor(profName, existingSchoolKey);
           term = createTerm(termName, professor.getKey(), course.getKey());
-          db.put(course);
-          db.put(professor);
-          db.put(term);
         } else {
           course = createCourse(courseName, units, existingSchoolKey);
           term = createTerm(termName, existingProfessorKey, course.getKey());
-          db.put(course);
-          db.put(term);
         }
       } else {
         if (isNewProfessor) {
           professor = createProfessor(profName, existingSchoolKey);
           term = createTerm(termName, professor.getKey(), existingCourseKey);
-          db.put(professor);
-          db.put(term);
         } else {
           term = createTerm(termName, existingProfessorKey, existingCourseKey);
-          db.put(term);
         }
       }
     }
+    putNewEntities(school, course, term, professor);
   }
 
   private List<Entity> findQueryMatch(
@@ -104,9 +94,8 @@ public class AddSchoolData extends HttpServlet {
     if (!querySchool.isEmpty()) {
       existingSchoolKey = querySchool.get(0).getKey();
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   private Boolean isNewCourseDetector(String courseName) {
@@ -114,9 +103,8 @@ public class AddSchoolData extends HttpServlet {
     if (!queryCourse.isEmpty()) {
       existingCourseKey = queryCourse.get(0).getKey();
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   private Boolean isNewProfessorDetector(String profName) {
@@ -124,9 +112,8 @@ public class AddSchoolData extends HttpServlet {
     if (!queryProfessor.isEmpty()) {
       existingProfessorKey = queryProfessor.get(0).getKey();
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   private Entity createSchool(String schoolName) {
@@ -153,5 +140,24 @@ public class AddSchoolData extends HttpServlet {
     newTerm.setProperty("term", term);
     newTerm.setProperty("professorKey", professor);
     return newTerm;
+  }
+
+  private void putNewEntities(Entity school, Entity course, Entity term, Entity professor)
+      throws DatastoreFailureException {
+    try {
+      if (school != null) {
+        db.put(school);
+      }
+      if (course != null) {
+        db.put(course);
+      }
+      if (term != null) {
+        db.put(term);
+      }
+      if (professor != null) {
+        db.put(professor);
+      }
+    } catch (DatastoreFailureException e) {
+    }
   }
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets.second;
+package com.google.sps.servlets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -37,7 +37,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-/** */
+// TODO: ADD TEST FOR:
+// - Missing/Malformed Data
+// - Datastore put error
+// - Identical Request
 public final class AddSchoolDataTest {
 
   private static final LocalServiceTestHelper helper =
@@ -58,45 +61,36 @@ public final class AddSchoolDataTest {
   }
 
   @Mock HttpServletRequest request;
-
   @Mock HttpServletRequest requestB;
 
   @Test
   public void AddingNewSchool_CreatesNewEntityForAll() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+
     newSchoolObject.addSchoolData(db, request);
 
     Entity schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), false)
-            .get(0);
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name")).get(0);
     Entity expectedSchoolEntity = new Entity("School");
     expectedSchoolEntity.setProperty("school-name", "MIT");
     assertEquals(
         expectedSchoolEntity.getProperty("school-name"), schoolQuery.getProperty("school-name"));
 
     Entity courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), false)
-            .get(0);
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name")).get(0);
     Entity expectedCourseEntity = new Entity("Course");
     expectedCourseEntity.setProperty("course-name", "6.006");
     assertEquals(
         expectedCourseEntity.getProperty("course-name"), courseQuery.getProperty("course-name"));
 
-    Entity termQuery =
-        findQueryMatch(db, "Term", "term", request.getParameter("term"), false).get(0);
+    Entity termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term")).get(0);
     Entity expectedTermEntity = new Entity("Term");
     expectedTermEntity.setProperty("term", "Spring 2020");
     assertEquals(expectedTermEntity.getProperty("term"), termQuery.getProperty("term"));
 
     Entity profQuery =
-        findQueryMatch(
-                db, "Professor", "professor-name", request.getParameter("professor-name"), false)
+        findQueryMatch(db, "Professor", "professor-name", request.getParameter("professor-name"))
             .get(0);
     Entity expectedProfessorEntity = new Entity("Professor");
     expectedProfessorEntity.setProperty("professor-name", "Jason Ku");
@@ -108,35 +102,19 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewTerm_NewSchool_NewCourse_NewProfessor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("Stanford");
-    when(requestB.getParameter("course-name")).thenReturn("CS 101");
-    when(requestB.getParameter("term")).thenReturn("Spring 2020");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Jimmy");
-    newSchoolObject.addSchoolData(db, requestB);
-
-    List<Entity> schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
-    List<Entity> courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
-    List<Entity> profQuery =
-        findQueryMatch(
-            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
-
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(requestB, "Stanford", "CS 101", "Spring 2020", "12", "Jimmy");
     int expectedSchoolResultLength = 2;
     int exceptedCourseResultLength = 2;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
+
+    newSchoolObject.addSchoolData(db, request);
+    newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> schoolQuery = findQueryMatch(db, "School");
+    List<Entity> courseQuery = findQueryMatch(db, "Course");
+    List<Entity> termQuery = findQueryMatch(db, "Term");
+    List<Entity> profQuery = findQueryMatch(db, "Professor");
 
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
@@ -147,35 +125,19 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewCourseToOldSchool_CreatesNewEntityForAllExceptSchool() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.08");
-    when(requestB.getParameter("term")).thenReturn("Spring 2020");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Joe");
-    newSchoolObject.addSchoolData(db, requestB);
-
-    List<Entity> schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
-    List<Entity> courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
-    List<Entity> profQuery =
-        findQueryMatch(
-            db, "Professor", "Professor-name", request.getParameter("professor-name"), true);
-
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.08", "Spring 2020", "12", "Joe");
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
+
+    newSchoolObject.addSchoolData(db, request);
+    newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> schoolQuery = findQueryMatch(db, "School");
+    List<Entity> courseQuery = findQueryMatch(db, "Course");
+    List<Entity> termQuery = findQueryMatch(db, "Term");
+    List<Entity> profQuery = findQueryMatch(db, "Professor");
 
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
@@ -186,35 +148,19 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewTerm_NoNewSchool_NewCourse_NoNewProfessor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.08");
-    when(requestB.getParameter("term")).thenReturn("Spring 2020");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, requestB);
-
-    List<Entity> schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
-    List<Entity> courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
-    List<Entity> profQuery =
-        findQueryMatch(
-            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
-
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.08", "Spring 2020", "12", "Jason Ku");
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 1;
+
+    newSchoolObject.addSchoolData(db, request);
+    newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> schoolQuery = findQueryMatch(db, "School");
+    List<Entity> courseQuery = findQueryMatch(db, "Course");
+    List<Entity> termQuery = findQueryMatch(db, "Term");
+    List<Entity> profQuery = findQueryMatch(db, "Professor");
 
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
@@ -225,35 +171,19 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewTerm_NoNewSchool_NewCourse_NewProfessor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.08");
-    when(requestB.getParameter("term")).thenReturn("Spring 2020");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Srini");
-    newSchoolObject.addSchoolData(db, requestB);
-
-    List<Entity> schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
-    List<Entity> courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
-    List<Entity> profQuery =
-        findQueryMatch(
-            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
-
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.08", "Spring 2020", "12", "Srini");
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 2;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
+
+    newSchoolObject.addSchoolData(db, request);
+    newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> schoolQuery = findQueryMatch(db, "School");
+    List<Entity> courseQuery = findQueryMatch(db, "Course");
+    List<Entity> termQuery = findQueryMatch(db, "Term");
+    List<Entity> profQuery = findQueryMatch(db, "Professor");
 
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
@@ -264,35 +194,19 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewTerm_NoNewSchool_NoNewCourse_NoNewProfessor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.006");
-    when(requestB.getParameter("term")).thenReturn("Spring 2021");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, requestB);
-
-    List<Entity> schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
-    List<Entity> courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
-    List<Entity> profQuery =
-        findQueryMatch(
-            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
-
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.006", "Spring 2021", "12", "Jason Ku");
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 1;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 1;
+
+    newSchoolObject.addSchoolData(db, request);
+    newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> schoolQuery = findQueryMatch(db, "School");
+    List<Entity> courseQuery = findQueryMatch(db, "Course");
+    List<Entity> termQuery = findQueryMatch(db, "Term");
+    List<Entity> profQuery = findQueryMatch(db, "Professor");
 
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
@@ -303,35 +217,19 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewTerm_NoNewSchool_NoNewCourse_NewProfessor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
-    newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.006");
-    when(requestB.getParameter("term")).thenReturn("Spring 2021");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Srini");
-    newSchoolObject.addSchoolData(db, requestB);
-
-    List<Entity> schoolQuery =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), true);
-    List<Entity> courseQuery =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), true);
-    List<Entity> termQuery = findQueryMatch(db, "Term", "term", request.getParameter("term"), true);
-    List<Entity> profQuery =
-        findQueryMatch(
-            db, "Professor", "professor-name", request.getParameter("professor-name"), true);
-
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.006", "Spring 2021", "12", "Srini");
     int expectedSchoolResultLength = 1;
     int exceptedCourseResultLength = 1;
     int exceptedTermResultLength = 2;
     int exceptedProfessorResultLength = 2;
+
+    newSchoolObject.addSchoolData(db, request);
+    newSchoolObject.addSchoolData(db, requestB);
+    List<Entity> schoolQuery = findQueryMatch(db, "School");
+    List<Entity> courseQuery = findQueryMatch(db, "Course");
+    List<Entity> termQuery = findQueryMatch(db, "Term");
+    List<Entity> profQuery = findQueryMatch(db, "Professor");
 
     assertEquals(expectedSchoolResultLength, schoolQuery.size());
     assertEquals(exceptedCourseResultLength, courseQuery.size());
@@ -342,24 +240,13 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewCourses_SameSchoolAncestor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.08", "Spring 2021", "12", "Srini");
+
     newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.08");
-    when(requestB.getParameter("term")).thenReturn("Spring 2021");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Srini");
     newSchoolObject.addSchoolData(db, requestB);
-
     Key school =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), false)
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"))
             .get(0)
             .getKey();
     List<Entity> children = findChildren(db, "Course", school);
@@ -370,24 +257,13 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingNewTerms_SameCourseAncestor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.006", "Spring 2021", "12", "Srini");
+
     newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.006");
-    when(requestB.getParameter("term")).thenReturn("Spring 2021");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Srini");
     newSchoolObject.addSchoolData(db, requestB);
-
     Key course =
-        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"), false)
+        findQueryMatch(db, "Course", "course-name", request.getParameter("course-name"))
             .get(0)
             .getKey();
     List<Entity> children = findChildren(db, "Term", course);
@@ -398,24 +274,13 @@ public final class AddSchoolDataTest {
   @Test
   public void AddingSchoolProfessors_SameSchoolAncestor() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("school-name")).thenReturn("MIT");
-    when(request.getParameter("course-name")).thenReturn("6.006");
-    when(request.getParameter("term")).thenReturn("Spring 2020");
-    when(request.getParameter("units")).thenReturn("12");
-    when(request.getParameter("professor-name")).thenReturn("Jason Ku");
+    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    requestB = createRequest(request, "MIT", "6.008", "Spring 2021", "12", "Srini");
+
     newSchoolObject.addSchoolData(db, request);
-
-    requestB = Mockito.mock(HttpServletRequest.class);
-    when(requestB.getParameter("school-name")).thenReturn("MIT");
-    when(requestB.getParameter("course-name")).thenReturn("6.008");
-    when(requestB.getParameter("term")).thenReturn("Spring 2021");
-    when(requestB.getParameter("units")).thenReturn("12");
-    when(requestB.getParameter("professor-name")).thenReturn("Srini");
     newSchoolObject.addSchoolData(db, requestB);
-
     Key school =
-        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"), false)
+        findQueryMatch(db, "School", "school-name", request.getParameter("school-name"))
             .get(0)
             .getKey();
     List<Entity> children = findChildren(db, "Professor", school);
@@ -423,27 +288,39 @@ public final class AddSchoolDataTest {
     assertEquals(2, children.size());
   }
 
-  public List<Entity> findQueryMatch(
-      DatastoreService db,
-      String entityType,
-      String entityProperty,
-      String propertyValue,
-      Boolean onlyType) {
-    Query q;
-
-    if (onlyType) {
-      q = new Query(entityType);
-    } else {
-      Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
-      q = new Query(entityType).setFilter(filter);
-    }
+  private List<Entity> findQueryMatch(
+      DatastoreService db, String entityType, String entityProperty, String propertyValue) {
+    Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
+    Query q = new Query(entityType).setFilter(filter);
     List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
     return result;
   }
 
-  public List<Entity> findChildren(DatastoreService db, String type, Key parent) {
+  private List<Entity> findQueryMatch(DatastoreService db, String entityType) {
+    Query q = new Query(entityType);
+    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
+    return result;
+  }
+
+  private List<Entity> findChildren(DatastoreService db, String type, Key parent) {
     Query q = new Query(type).setAncestor(parent);
     List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
     return result;
+  }
+
+  private HttpServletRequest createRequest(
+      HttpServletRequest request,
+      String schoolName,
+      String courseName,
+      String termName,
+      String units,
+      String profName) {
+    request = Mockito.mock(HttpServletRequest.class);
+    when(request.getParameter("school-name")).thenReturn(schoolName);
+    when(request.getParameter("course-name")).thenReturn(courseName);
+    when(request.getParameter("term")).thenReturn(termName);
+    when(request.getParameter("units")).thenReturn(units);
+    when(request.getParameter("professor-name")).thenReturn(profName);
+    return request;
   }
 }
