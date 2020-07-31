@@ -3,9 +3,7 @@
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
@@ -14,7 +12,6 @@ import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,27 +23,41 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private final List<Object> commentsList = new ArrayList<>();
+  private final Hashtable<String, String> hashtable = new Hashtable<String, String>();
   //   private Key existingTermRatingKey;
   //   private Key currentProfKey;
   //   private Key currentTermKey;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Rating").addSort("score-class", SortDirection.ASCENDING);
+    Filter ratingFilter =
+        new FilterPredicate("reviewer-id", FilterOperator.EQUAL, request.getParameter("ID"));
+    Query ratingQuery =
+        new Query("Rating")
+            .setAncestor(request.getParameter("Course").term)
+            .setFilter(ratingFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+    List<Entity> ratingQueryList =
+        datastore.prepare(ratingQuery).asList(FetchOptions.Builder.withDefaults());
 
-    for (Entity entity : results.asIterable()) {
-      String comment = (String) entity.getProperty("comments-class");
-      commentsList.add(comment);
+    if (!ratingQueryList.isEmpty()) {
+      // Put list empty, check in JS if it is empty and print message if no other rating
+      // If not, put things in list yay :)
+      Entity latestRating = ratingQueryList.get(0);
+      hashtable.put("comments-class", latestRating.getProperty("comments-class"));
+      hashtable.put(
+          "perception-class", String.parseString(latestRating.getProperty("perception-class")));
+      hashtable.put("hours", String.parseString(latestRating.getProperty("hours")));
+      hashtable.put("difficulty", String.parseString(latestRating.getProperty(difficulty)));
+      hashtable.put("comments-professor", latestRating.getProperty(comments - professor));
+      hashtable.put("perception-professor", latestRating.getProperty(perception - professor));
     }
 
     // Send JSON string.
-    String jsonVersionCommentsList = new Gson().toJson(commentsList);
-    commentsList.clear();
+    String jsonVersionHashtable = new Gson().toJson(hashtable);
+    ratingQueryList.clear();
     response.setContentType("application/json;");
-    response.getWriter().println(jsonVersionCommentsList);
+    response.getWriter().println(jsonVersionHashtable);
   }
 
   @Override

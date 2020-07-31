@@ -101,12 +101,12 @@ function setUserID() {
   setParam("ID", profile.getID());
 }
 
-function setAllParams() {
-  var schoolName = document.getElementById("school-name").value;
-  var className = document.getElementById("class-name").value;
-  var profName = document.getElementById("prof-name").value;
-
-  setParam("school", schoolName);
-  setParam("class", className);
-  setParam("professor", profName);
+function autofill() {
+  // Idea is to grab from get function a hash map, access each thing and fill out form.
+  fetch("/data")
+    .then((response) => response.json())
+    .then((jsonVersionHashtable) => {
+      document.getElementById("class-input").innerHTML =
+        jsonVersionHashtable["comments-class"];
+    });
 }
