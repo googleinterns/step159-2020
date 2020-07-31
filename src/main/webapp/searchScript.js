@@ -24,13 +24,21 @@ function showCourses() {
   fetch(url)
   .then(response => response.json())
   .then((courses) => {
-    courses.forEach(course => courseResults.appendChild(createListElement(course.name)));
+    courses.forEach(course => courseResults.appendChild(createListElement(course)));
   });
 }
 
-/* Creates an <li> element containing text. */
-function createListElement(text) {
+/* Creates an <li> element containing the course link and name. */
+function createListElement(course) {
   const liElement = document.createElement('li');
-  liElement.innerText = text;
+  const link = document.createElement('a');
+  const url = new URL("/term-live", window.location.origin);
+  url.searchParams.set("name", course.name);
+  url.searchParams.set("professor", course.professor);
+  url.searchParams.set("units", course.units);
+  url.searchParams.set("term", course.term);
+  link.setAttribute('href', url);
+  link.innerText = course.name;
+  liElement.appendChild(link);
   return liElement;
 }
