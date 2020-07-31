@@ -10,7 +10,6 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.sps.data.GraphDataObject;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -140,8 +139,6 @@ public class AddSchoolData extends HttpServlet {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
     newTerm.setProperty("professorKey", professor);
-    GraphDataObject bug = new GraphDataObject("bug", "bug");
-    newTerm.setProperty("bug", bug);
     return newTerm;
   }
 
