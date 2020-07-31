@@ -61,7 +61,7 @@ public class DataServlet extends HttpServlet {
 
   public void addTermRating(HttpServletRequest request) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    String classFeedback = request.getParameter("class-input");
+    String classFeedback = request.getParameter("term-input");
     Long classRating = Integer.parseInt(request.getParameter("rating-class"));
     Long workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
     Long difficulty = Integer.parseInt(request.getParameter("difficulty"));
