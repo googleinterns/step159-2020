@@ -15,31 +15,31 @@
     <div id="hours-chart" style="width: 900px; height: 500px"></div>
     <div id="difficulty-chart" style="width: 900px; height: 500px"></div>
 
-    <p>Rate your classes and professors!</p>
-    <form action="/data" method="POST" autocomplete="on">
-      <p>Rate your class:</p>
+    <p>Rate your term and professors!</p>
+    <form action="/data" method="POST">
+      <p>Rate your term:</p>
 
-      <textarea name="class-input" maxlength="1500" autocomplete="on">
-Write opinion on class here.</textarea
+      <textarea name="term-input" maxlength="1500">
+Write opinion on term here.</textarea
       >
 
-      <p>How would you rate this class?</p>
+      <p>How would you rate this term?</p>
       <input
-        type="number"
-        id="rating-class"
-        name="rating-class"
+        type="rating-term"
+        id="rating-term"
+        name="rating-term"
         min="0"
         max="5"
       />
-      <label for="rating-class"
-        >Class Rating (From 0 = Terrible to 5 = Excellent)</label
+      <label for="rating-term"
+        >Term Rating (From 0 = Terrible to 5 = Excellent)</label
       >
 
-      <p>How many hours per week did you spend on this class?</p>
+      <p>How many hours per week did you spend on this term?</p>
       <input type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
       <label for="hoursOfWork">Hours (include in-class time)</label>
 
-      <p>How difficult did you find this class?</p>
+      <p>How difficult did you find this term?</p>
       <input type="number" id="difficulty" name="difficulty" min="0" max="5" />
       <label for="difficulty"
         >Difficulty (From 0 = Very Easy to 5 = Very Hard)</label
@@ -69,7 +69,6 @@ Write opinion on professor here.</textarea
 
       <input type="submit" />
     </form>
-    <div id="class-id"></div>
     <ul id="log"></ul>
   </body>
 </html>
