@@ -46,7 +46,7 @@ public class LiveCourseData extends HttpServlet {
     List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
 
     for (Entity rating : termRatings) {
-      dataList.add(Long.parseLong(rating.getProperty(property).toString()));
+      dataList.add((long) rating.getProperty(property));
     }
     return dataList;
   }
