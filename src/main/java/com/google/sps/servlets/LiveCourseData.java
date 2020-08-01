@@ -24,13 +24,13 @@ public class LiveCourseData extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    findData(db, request);
+    findTerm(db, request);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/AddSchoolData.html");
   }
 
-  public Entity findData(DatastoreService db, HttpServletRequest request) {
+  public Entity findTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
@@ -39,6 +39,16 @@ public class LiveCourseData extends HttpServlet {
 
     Entity foundTerm = findTerm(db, schoolName, courseName, termName, units, profName);
     return foundTerm;
+  }
+
+  public List<Long> getTermData(DatastoreService db, Entity term, String property) {
+    List<Long> dataList = new ArrayList();
+    List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
+
+    for (Entity rating : termRatings) {
+      dataList.add(Long.parseLong(rating.getProperty(property).toString()));
+    }
+    return dataList;
   }
 
   private Entity findTerm(
@@ -72,6 +82,12 @@ public class LiveCourseData extends HttpServlet {
       DatastoreService db, String entityType, String entityProperty, String propertyValue) {
     Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
     Query q = new Query(entityType).setFilter(filter);
+    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
+    return result;
+  }
+
+  private List<Entity> findChildren(DatastoreService db, String type, Key parent) {
+    Query q = new Query(type).setAncestor(parent);
     List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
     return result;
   }

@@ -28,6 +28,8 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -70,10 +72,27 @@ public final class LiveCourseDataTest {
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
     Key expectedParent = findQueryMatch(db, "Course", "course-name", "6.006").get(0).getKey();
-    Entity found = LiveData.findData(db, request);
+    Entity found = LiveData.findTerm(db, request);
 
     assertEquals(expectedParent, found.getParent());
     assertEquals(expectedTermName, found.getProperty("term"));
+  }
+
+  @Test
+  public void GettingRatingData_Hours_Difficulty() {
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+    Entity parent = addTermEntity(db);
+    addRatingEntity(db, 12, 7, parent.getKey());
+    addRatingEntity(db, 7, 4, parent.getKey());
+
+    List<Long> expectedHoursList = new ArrayList(Arrays.asList((long) 12, (long) 7));
+    List<Long> expectedDifficultyList = new ArrayList(Arrays.asList((long) 7, (long) 4));
+
+    List<Long> actualHoursList = LiveData.getTermData(db, parent, "hours");
+    List<Long> actualDifficultyList = LiveData.getTermData(db, parent, "difficulty");
+
+    assertEquals(expectedHoursList, actualHoursList);
+    assertEquals(expectedDifficultyList, actualDifficultyList);
   }
 
   private HttpServletRequest createRequest(
@@ -100,9 +119,17 @@ public final class LiveCourseDataTest {
     return result;
   }
 
-  private List<Entity> findQueryMatch(DatastoreService db, String entityType) {
-    Query q = new Query(entityType);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    return result;
+  private void addRatingEntity(DatastoreService db, int hours, int difficulty, Key parent) {
+    Entity entity = new Entity("Rating", parent);
+    entity.setProperty("hours", hours);
+    entity.setProperty("difficulty", difficulty);
+    db.put(entity);
+  }
+
+  private Entity addTermEntity(DatastoreService db) {
+    Entity entity = new Entity("Term");
+    Key entKey = entity.getKey();
+    db.put(entity);
+    return entity;
   }
 }
