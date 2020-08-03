@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GraphDataObject {
-  List<Object> hourList = new ArrayList<>();
-  List<Object> difficultyList = new ArrayList<>();
+  public List<Object> hourList = new ArrayList<>();
+  public List<Object> difficultyList = new ArrayList<>();
 
   public GraphDataObject(String hourTitle, String diffTitle) {
     hourList.add(Arrays.asList(hourTitle));

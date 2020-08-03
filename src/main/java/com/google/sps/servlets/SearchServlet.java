@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
+import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

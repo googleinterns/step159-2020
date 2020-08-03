@@ -1,10 +1,10 @@
-package com.google.sps.servlets;
+package com.google.sps.data;
 
 public class Course {
-  String name;
-  String professor;
-  Long units;
-  String term;
+  public String name;
+  public String professor;
+  public Long units;
+  public String term;
 
   public Course(String courseName, String professorName, Long numUnits, String termName) {
     name = courseName;
