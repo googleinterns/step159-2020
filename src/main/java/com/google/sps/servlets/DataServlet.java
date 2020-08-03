@@ -32,7 +32,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Rating").addSort("score-term", SortDirection.ASCENDING);
+    Query ratingQuery = new Query("Rating").addSort("score-term", SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     List<Entity> ratingQueryList =
         datastore.prepare(ratingQuery).asList(FetchOptions.Builder.withDefaults());
@@ -52,7 +52,7 @@ public class DataServlet extends HttpServlet {
 
     // Send JSON string.
     String jsonVersionHashtable = new Gson().toJson(hashtable);
-    ratingQueryList.clear();
+    hashtable.clear();
     response.setContentType("application/json;");
     response.getWriter().println(jsonVersionHashtable);
   }
@@ -69,11 +69,11 @@ public class DataServlet extends HttpServlet {
   public void addTermRating(HttpServletRequest request) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String termFeedback = request.getParameter("term-input");
-    Long termRating = Integer.parseInt(request.getParameter("rating-term"));
-    Long workHours = Integer.parseInt(request.getParameter("hoursOfWork"));
-    Long difficulty = Integer.parseInt(request.getParameter("difficulty"));
+    Long termRating = Long.parseLong(request.getParameter("rating-term"));
+    Long workHours = Long.parseLong(request.getParameter("hoursOfWork"));
+    Long difficulty = Long.parseLong(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
-    Long professorRating = Integer.parseInt(request.getParameter("rating-professor"));
+    Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
     boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
 
     if (translateToEnglish) {
@@ -87,9 +87,8 @@ public class DataServlet extends HttpServlet {
     // Gets user email.
     String userId = request.getParameter("ID");
     // Gets term key from Course object.
-    Key currentTermKey = request.getParameter("Course").term;
-    Entity currentTerm = datastore.get(currentTermKey);
-
+    Key currentTermKey = request.getParameter("term");
+    
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
 
