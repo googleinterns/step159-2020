@@ -63,7 +63,14 @@ public final class LiveCourseDataTest {
   @Test
   public void FindingExisitngTermEntity() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request = createRequest(request, "MIT", "6.006", "Spring 2020", "12", "Jason Ku");
+    request =
+        createRequest(
+            request, /*schoolName*/
+            "MIT", /*courseName*/
+            "6.006", /*termName*/
+            "Spring 2020", /*units*/
+            "12", /*profName*/
+            "Jason Ku");
     requestB = createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
     String expectedTermName = "Spring 2020";
 
