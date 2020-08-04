@@ -14,9 +14,6 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +56,7 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/index.html");
   }
 
-  public void addTermRating(HttpServletRequest request) {
+  public void addTermRating(HttpServletRequest request) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String termFeedback = request.getParameter("term-input");
     Long termRating = Long.parseLong(request.getParameter("rating-term"));
@@ -67,12 +64,6 @@ public class DataServlet extends HttpServlet {
     Long difficulty = Long.parseLong(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
     Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
-    boolean translateToEnglish = Boolean.parseBoolean(request.getParameter("languages"));
-
-    if (translateToEnglish) {
-      termFeedback = translateFeedback(termFeedback);
-      professorFeedback = translateFeedback(professorFeedback);
-    }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
@@ -106,15 +97,7 @@ public class DataServlet extends HttpServlet {
     datastore.put(termRatingEntity);
   }
 
-  private String translateFeedback(String feedback) {
-    Translate translateService = TranslateOptions.getDefaultInstance().getService();
-    Translation translationFeedback =
-        translateService.translate(feedback, Translate.TranslateOption.targetLanguage("en"));
-    String translatedFeedback = translationFeedback.getTranslatedText();
-    return translatedFeedback;
-  }
-
-  private float getSentimentScore(String feedback) {
+  private float getSentimentScore(String feedback) throws IOException {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
     LanguageServiceClient languageService = LanguageServiceClient.create();
@@ -124,7 +107,8 @@ public class DataServlet extends HttpServlet {
     return score;
   }
 
-  private List<Entity> queryEntities(String entityName, String propertyName, String propertyValue) {
+  private List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
+      throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter filter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
     Query query = new Query(entityName).setFilter(filter);
