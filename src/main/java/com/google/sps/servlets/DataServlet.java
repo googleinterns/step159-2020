@@ -26,9 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final Hashtable<String, String> hashtable = new Hashtable<String, String>();
-  //   private Key existingTermRatingKey;
-  //   private Key currentProfKey;
-  //   private Key currentTermKey;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -130,6 +127,7 @@ public class DataServlet extends HttpServlet {
     Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
     languageService.close();
+    return score;
   }
 
   private List<Entity> queryEntities(String entityName, String propertyName, String propertyValue) {
