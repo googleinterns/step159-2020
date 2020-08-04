@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
+  // private DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -59,7 +61,7 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/index.html");
   }
 
-  public void addTermRating(HttpServletRequest request) {
+  public void addTermRating(HttpServletRequest request) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     String termFeedback = request.getParameter("term-input");
     Long termRating = Long.parseLong(request.getParameter("rating-term"));
@@ -80,11 +82,10 @@ public class DataServlet extends HttpServlet {
     // Gets user email.
     String userId = request.getParameter("ID");
     // Gets term key from Course object.
-    // Key currentTermKey = request.getParameter("Course").term;
-    // Entity currentTerm = datastore.get(currentTermKey);
-    Entity currentTerm = new Entity("Term");
-    Key currentTermKey = currentTerm.getKey();
-    datastore.put(currentTerm);
+    Key currentTermKey = KeyFactory.stringToKey(request.getParameter("term"));
+    // Entity currentTerm = new Entity("Term");
+    // Key currentTermKey = currentTerm.getKey();
+    // datastore.put(currentTerm);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
@@ -106,17 +107,24 @@ public class DataServlet extends HttpServlet {
     datastore.put(termRatingEntity);
   }
 
-  private String translateFeedback(String feedback) {
-    Translate translateService = TranslateOptions.getDefaultInstance().getService();
+  public String translateFeedback(String feedback) throws IOException {
+
+    Translate translateService =
+        TranslateOptions.newBuilder()
+            .setProjectId("nina-laura-dagm-step-2020")
+            .setQuotaProjectId("nina-laura-dagm-step-2020")
+            .build()
+            .getService();
     Translation translationFeedback =
         translateService.translate(feedback, Translate.TranslateOption.targetLanguage("en"));
     String translatedFeedback = translationFeedback.getTranslatedText();
     return translatedFeedback;
   }
 
-  private float getSentimentScore(String feedback) {
+  public float getSentimentScore(String feedback) throws IOException {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
+
     LanguageServiceClient languageService = LanguageServiceClient.create();
     Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
@@ -124,7 +132,8 @@ public class DataServlet extends HttpServlet {
     return score;
   }
 
-  private List<Entity> queryEntities(String entityName, String propertyName, String propertyValue) {
+  public List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
+      throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter filter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
     Query query = new Query(entityName).setFilter(filter);

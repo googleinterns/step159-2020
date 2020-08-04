@@ -18,14 +18,14 @@
     <p>Rate your term and professors!</p>
     <form action="/data" method="POST">
       <p>Rate your term:</p>
-      
+
       <textarea name="term-input" maxlength="1500">
 Write opinion on term here.</textarea
       >
 
       <p>How would you rate this term?</p>
       <input
-        type="rating-term"
+        type="number"
         id="rating-term"
         name="rating-term"
         min="0"
@@ -51,7 +51,7 @@ Write opinion on professor here.</textarea
 
       <p>How would you rate the professor?</p>
       <input
-        type="rating-prof"
+        type="number"
         id="rating-prof"
         name="rating-prof"
         min="0"
@@ -67,6 +67,9 @@ Write opinion on professor here.</textarea
       <input type="radio" id="no" name="languages" value="false" />
       <label for="no">No.</label>
 
+      <textarea id="term" maxlength="1500">
+Write opinion on term here.</textarea
+      >
       <input type="submit" />
     </form>
     <ul id="log"></ul>
