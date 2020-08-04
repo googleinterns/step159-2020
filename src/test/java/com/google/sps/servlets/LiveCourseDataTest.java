@@ -72,7 +72,7 @@ public final class LiveCourseDataTest {
     newSchoolObject.addSchoolData(db, request);
     newSchoolObject.addSchoolData(db, requestB);
     Key expectedParent = findQueryMatch(db, "Course", "course-name", "6.006").get(0).getKey();
-    Entity found = LiveData.findTerm(db, request);
+    Entity found = LiveData.getTerm(db, request);
 
     assertEquals(expectedParent, found.getParent());
     assertEquals(expectedTermName, found.getProperty("term"));

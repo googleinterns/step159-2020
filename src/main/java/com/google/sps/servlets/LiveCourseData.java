@@ -24,13 +24,13 @@ public class LiveCourseData extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    findTerm(db, request);
+    getTerm(db, request);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/AddSchoolData.html");
   }
 
-  public Entity findTerm(DatastoreService db, HttpServletRequest request) {
+  public Entity getTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
