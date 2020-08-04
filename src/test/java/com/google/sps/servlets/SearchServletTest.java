@@ -20,13 +20,10 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -59,75 +56,16 @@ public final class SearchServletTest {
   @Mock HttpServletRequest request;
 
   @Test
-  /* Ensure the correct filters are set when all search parameters are specified. */
-  public void MakeFilters_AllParamsSet() {
-    request = createRequest(request, "CS 105", "Smith", "Spring 2020", "1,2,3");
-
-    List<Filter> expectedFilters = new ArrayList<>();
-    List<Integer> units = new ArrayList<Integer>(Arrays.asList(1, 2, 3));
-
-    expectedFilters.add(new FilterPredicate("name", FilterOperator.EQUAL, "CS 105"));
-    expectedFilters.add(new FilterPredicate("professor", FilterOperator.EQUAL, "Smith"));
-    expectedFilters.add(new FilterPredicate("term", FilterOperator.EQUAL, "Spring 2020"));
-    expectedFilters.add(new FilterPredicate("units", FilterOperator.IN, units));
-
-    List<Filter> filters = searchObject.getFilters(request);
-
-    assertEquals(filters, expectedFilters);
-  }
-
-  @Test
-  /* Ensure no filters are made given no search parameters are specified. */
-  public void MakeFilters_NoParamsSet() {
-
-    // TODO: Find a better way to replicate null parameters -
-    // getting NullPointerException when trying other methods.
-    request = createRequest(request, "", "", "select", "");
-
-    List<Filter> expectedFilters = new ArrayList<>();
-
-    List<Filter> filters = searchObject.getFilters(request);
-
-    assertEquals(filters, expectedFilters);
-  }
-
-  @Test
-  /* Ensure the correct results are retrieved from Datastore given that all filters are set. */
-  public void GetResults_AllFiltersSet() {
-
-    request = createRequest(request, "CS 105", "Smith", "Spring 2020", "1,2,3");
-    List<Entity> expectedResults = new ArrayList<>();
-
-    addCourseEntityWithList("CS 105", "Smith", "Spring 2020", 1, expectedResults, true);
-    addCourseEntityWithList("CS 105", "Smith", "Spring 2020", 4, expectedResults, false);
-
-    List<Filter> filters = searchObject.getFilters(request); // Tested in makeFiltersAllParams.
-    List<Entity> results = searchObject.getResults(filters);
-
-    assertEquals(results, expectedResults);
-  }
-
-  @Test
-  /* Ensure the correct results are retrieved from Datastore given no search filters. */
-  public void GetResults_NoFiltersSet() {
-
-    request = createRequest(request, "", "", "select", "");
-    List<Entity> expectedResults = new ArrayList<>();
-
-    addCourseEntityWithList("CS 105", "Smith", "Spring 2020", 1, expectedResults, true);
-    addCourseEntityWithList("CS 105", "Smith", "Spring 2020", 4, expectedResults, true);
-
-    List<Filter> filters = searchObject.getFilters(request); // Tested in makeFiltersNoParams.
-    List<Entity> results = searchObject.getResults(filters);
-
-    assertEquals(results, expectedResults);
-  }
-
-  @Test
   /* Ensure the whole doGet process works given all search filters are set. */
-  public void GetCourses_AllParamsSet() {
+  public void GetCourses_AllParamsSet() throws IOException {
 
-    request = createRequest(request, "CS 105", "Smith", "Spring 2020", "1,2,3");
+    request =
+        createRequest(
+            request, /*name*/
+            "CS 105", /*professor*/
+            "Smith", /*term*/
+            "Spring 2020", /*units*/
+            "1,2,3");
     List<Course> expectedCourses = new ArrayList<>();
 
     addCourseEntity("CS 105", "Smith", "Spring 2020", 1);
@@ -138,9 +76,8 @@ public final class SearchServletTest {
 
     addCourseEntity("CS 106", "Smith", "Spring 2020", 3);
 
-    List<Filter> filters = searchObject.getFilters(request); // Tested in makeFiltersAllParams.
-    List<Entity> results = searchObject.getResults(filters); // Tested in getResultsAllFilters.
-    List<Course> courses = searchObject.getCourses(results);
+    List<Course> courses = searchObject.getHelper(request);
+    System.out.println(response);
 
     assertEqualsCourseArrays(courses, expectedCourses);
   }
@@ -149,7 +86,8 @@ public final class SearchServletTest {
   /* Ensure the whole doGet process works as expected given no search filters. */
   public void GetCourses_NoParamsSet() {
 
-    request = createRequest(request, "", "", "select", "");
+    request =
+        createRequest(request, /*name*/ "", /*professor*/ "", /*term*/ "select", /*units*/ "");
     List<Course> expectedCourses = new ArrayList<>();
 
     addCourseEntity("CS 105", "Smith", "Spring 2020", 1);
@@ -161,10 +99,7 @@ public final class SearchServletTest {
     addCourseEntity("CS 106", "Smith", "Spring 2020", 3);
     expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020"));
 
-    List<Filter> filters = searchObject.getFilters(request); // Tested in makeFiltersAllParams.
-    List<Entity> results = searchObject.getResults(filters); // Tested in getResultsAllFilters.
-    List<Course> courses = searchObject.getCourses(results);
-
+    List<Course> courses = searchObject.getHelper(request);
     assertEqualsCourseArrays(courses, expectedCourses);
   }
 

@@ -40,13 +40,19 @@ public class SearchServlet extends HttpServlet {
   @Override
   /* Show courses. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<Filter> filters = getFilters(request);
-    List<Entity> results = getResults(filters);
-    List<Course> courses = getCourses(results);
+    List<Course> courses = getHelper(request);
 
     String coursesJson = new Gson().toJson(courses);
     response.setContentType("application/json;");
     response.getWriter().println(coursesJson);
+  }
+
+  /* Create list of courses given request. Used for testing. */
+  public List<Course> getHelper(HttpServletRequest request) {
+    List<Filter> filters = getFilters(request);
+    List<Entity> results = getResults(filters);
+    List<Course> courses = getCourses(results);
+    return courses;
   }
 
   /* Create list of filters given parameters specified in request. */
