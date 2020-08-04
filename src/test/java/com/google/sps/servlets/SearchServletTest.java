@@ -22,10 +22,12 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,7 @@ public final class SearchServletTest {
   }
 
   @Mock HttpServletRequest request;
+  @Mock HttpServletResponse response;
 
   @Test
   /* Ensure the whole doGet process works given all search filters are set. */
@@ -61,11 +64,11 @@ public final class SearchServletTest {
 
     request =
         createRequest(
-            request, /*name*/
-            "CS 105", /*professor*/
-            "Smith", /*term*/
-            "Spring 2020", /*units*/
-            "1,2,3");
+            request,
+            /* name */ "CS 105",
+            /* professor */ "Smith",
+            /* term */ "Spring 2020",
+            /* units */ "1,2,3");
     List<Course> expectedCourses = new ArrayList<>();
 
     addCourseEntity("CS 105", "Smith", "Spring 2020", 1);
@@ -77,8 +80,6 @@ public final class SearchServletTest {
     addCourseEntity("CS 106", "Smith", "Spring 2020", 3);
 
     List<Course> courses = searchObject.getHelper(request);
-    System.out.println(response);
-
     assertEqualsCourseArrays(courses, expectedCourses);
   }
 
@@ -142,10 +143,10 @@ public final class SearchServletTest {
     for (int i = 0; i < courses.size(); i++) {
       Course actual = courses.get(i);
       Course expected = expectedCourses.get(i);
-      assertEquals(actual.name, expected.name);
-      assertEquals(actual.professor, expected.professor);
-      assertEquals(actual.units, expected.units);
-      assertEquals(actual.term, expected.term);
+      assertEquals(actual.getName(), expected.getName());
+      assertEquals(actual.getProfessor(), expected.getProfessor());
+      assertEquals(actual.getUnits(), expected.getUnits());
+      assertEquals(actual.getTerm(), expected.getTerm());
     }
   }
 }

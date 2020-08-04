@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
+import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Create list of filters given parameters specified in request. */
-  public List<Filter> getFilters(HttpServletRequest request) {
+  private List<Filter> getFilters(HttpServletRequest request) {
     List<Filter> filters = new ArrayList<>();
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
@@ -91,7 +92,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
-  public List<Entity> getResults(List<Filter> filters) {
+  private List<Entity> getResults(List<Filter> filters) {
     Query courseQuery = new Query("Course");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
@@ -107,7 +108,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Given list of result Entity courses, format into Course objects. */
-  public List<Course> getCourses(List<Entity> results) {
+  private List<Course> getCourses(List<Entity> results) {
     List<Course> courses = new ArrayList<>();
     for (Entity entity : results) {
       String name = (String) entity.getProperty("name");
