@@ -29,7 +29,7 @@ public class LiveCourseData extends HttpServlet {
     response.sendRedirect("/AddSchoolData.html");
   }
 
-  public Entity findData(DatastoreService db, HttpServletRequest request) {
+  public Entity getTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
