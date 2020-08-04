@@ -29,6 +29,7 @@ public class AddSchoolData extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     addSchoolData(db, request);
+
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/AddSchoolData.html");
