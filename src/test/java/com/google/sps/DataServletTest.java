@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.cloud.language.v1.LanguageServiceClient;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +30,7 @@ public final class DataServletTest {
 
   private DataServlet newTermRating;
   private Entity termEntity;
+  private LanguageServiceClient languageServiceClient;
 
   @BeforeEach
   public void setUp() {
@@ -58,7 +60,6 @@ public final class DataServletTest {
     when(request.getParameter("difficulty")).thenReturn("4");
     when(request.getParameter("prof-input")).thenReturn("The professor was amazing.");
     when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("languages")).thenReturn("false");
     when(request.getParameter("ID")).thenReturn("numberOneId");
     Entity termEntity = new Entity("Term");
     datastore.put(termEntity);
@@ -101,7 +102,6 @@ public final class DataServletTest {
     when(request.getParameter("difficulty")).thenReturn("4");
     when(request.getParameter("prof-input")).thenReturn("The professor was okay.");
     when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("languages")).thenReturn("false");
     when(request.getParameter("ID")).thenReturn("numberOneId");
     Entity termEntity = new Entity("Term");
     datastore.put(termEntity);
@@ -116,7 +116,6 @@ public final class DataServletTest {
     when(request.getParameter("difficulty")).thenReturn("5");
     when(request.getParameter("prof-input")).thenReturn("This teacher was wonderful.");
     when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("languages")).thenReturn("false");
     when(request.getParameter("ID")).thenReturn("numberOneId");
     when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
 
@@ -144,30 +143,5 @@ public final class DataServletTest {
     assertEquals(-0.699999988079071, termRatingQuery.getProperty("score-term"));
 
     assertEquals(0.800000011920929, termRatingQuery.getProperty("score-professor"));
-  }
-
-  @Test
-  public void AddingTermRating_WithTranslation() throws IOException {
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
-
-    when(request.getParameter("term-input")).thenReturn("Esta clase es muy interesante.");
-    when(request.getParameter("prof-input")).thenReturn("Este profesor es muy malo.");
-    when(request.getParameter("languages")).thenReturn("true");
-    when(request.getParameter("ID")).thenReturn("numberOneId");
-    Entity termEntity = new Entity("Term");
-    datastore.put(termEntity);
-    Key termKey = termEntity.getKey();
-    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
-
-    newTermRating.addTermRating(request);
-
-    Entity termRatingQuery =
-        newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
-
-    assertEquals("This class is very interesting.", termRatingQuery.getProperty("comments-term"));
-
-    assertEquals("This teacher is very bad.", termRatingQuery.getProperty("comments-professor"));
   }
 }
