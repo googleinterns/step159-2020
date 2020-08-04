@@ -16,7 +16,9 @@ function makeGraph() {
           }
         };
         const hourChart = new google.visualization.Histogram(document.getElementById("hours-chart"));
+        const hourChart2 = new google.visualization.Histogram(document.getElementById("hours-chart2"));
         hourChart.draw(hourData, hourOptions);
+        hourChart2.draw(hourData, hourOptions);
 
       const difficultyData = new google.visualization.arrayToDataTable(data.difficulty);
       const diffOptions = {
@@ -29,6 +31,8 @@ function makeGraph() {
           }
         };
         const diffChart = new google.visualization.Histogram(document.getElementById("difficulty-chart"));
+        const diffChart2 = new google.visualization.Histogram(document.getElementById("difficulty-chart2"));
         diffChart.draw(difficultyData, diffOptions);
+        diffChart2.draw(difficultyData, diffOptions);
     });
 }

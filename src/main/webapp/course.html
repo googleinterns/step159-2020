@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <link rel="stylesheet" href="course-style.css"/>
+    <script src="graphScript.js"></script>  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <span class="navbar-brand mb-0 h1">Navbar</span>
+    </nav>
+
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4 text-center course-name">Course Name</h1>
+        <p class="lead text-center term-name">Term Name</p>
+      </div>
+    </div>
+
+    <div class="flex-container">
+      <div class="flex-child" id="hours-chart" >
+        Flex Column 1
+      </div>
+      <div class="flex-child" id="difficulty-chart">
+        Flex Column 2
+      </div>
+    </div>
+
+    <div class="flex-container">
+      <div class="flex-child" id="hours-chart2" >
+        Flex Column 1
+      </div>
+      <div class="flex-child" id="difficulty-chart2">
+        Flex Column 2
+      </div>
+    </div>
+
+
+    <div class = "container-xl form-container">
+      <h1 class="text-center"> Your Review </h1>
+      <form>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>Rate your term</p>
+                  <textarea class="form-control" name="term-input" maxlength="1500">Write opinion on term here.</textarea>
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How would you rate this term?</p>
+                  <input
+                    type="rating-term"
+                    id="rating-term"
+                    name="rating-term"
+                    min="0"
+                    max="5"
+                    class="form-control"
+                  />
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How many hours/week did you spend on this class?</p>
+                  <input class="form-control" type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How difficult did you find this term?</p>
+                  <input class="form-control" type="number" id="difficulty" name="difficulty" min="0" max="5" />
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>Rate your term</p>
+                  <textarea class="form-control" name="prof-input" maxlength="1500">Write opinion on professor here.</textarea>
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How would you rate this term?</p>
+                  <input
+                    type="rating-prof"
+                    id="rating-prof"
+                    name="rating-prof"
+                    min="0"
+                    max="5"
+                    class="form-control"
+                   />
+              </div>
+          </div>
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
+  </body>
+</html>
