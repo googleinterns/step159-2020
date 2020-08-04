@@ -87,8 +87,8 @@ public class LiveCourseData extends HttpServlet {
   }
 
   private List<Entity> findChildren(DatastoreService db, String type, Key parent) {
-    Query q = new Query(type).setAncestor(parent);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
+    Query children = new Query(type).setAncestor(parent);
+    List<Entity> result = db.prepare(children).asList(FetchOptions.Builder.withDefaults());
     return result;
   }
 }
