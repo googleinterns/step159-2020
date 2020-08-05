@@ -1,0 +1,42 @@
+.hidden {
+  display: none;
+}
+
+label, select {
+  margin-bottom: 20px;
+}
+
+#login-box {
+    margin:auto;
+    width: 120px;
+    padding: 30px;
+}
+
+#search-textarea, #search-selectboxes {
+    display: flex;
+}
+
+textarea, select, fieldset {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#search-button, #logout-button {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#search-button:hover, #logout-button:hover {
+  background-color: #45a049;
+}

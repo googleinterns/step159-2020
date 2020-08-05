@@ -87,8 +87,7 @@ public final class SearchServletTest {
   /* Ensure the whole doGet process works as expected given no search filters. */
   public void GetCourses_NoParamsSet() {
 
-    request =
-        createRequest(request, /*name*/ "", /*professor*/ "", /*term*/ "select", /*units*/ "");
+    request = createRequest(request, /*name*/ "", /*professor*/ "", /*term*/ "", /*units*/ "");
     List<Course> expectedCourses = new ArrayList<>();
 
     addCourseEntity("CS 105", "Smith", "Spring 2020", 1);

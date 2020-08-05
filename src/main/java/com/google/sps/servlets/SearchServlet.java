@@ -71,7 +71,7 @@ public class SearchServlet extends HttpServlet {
       filters.add(profFilter);
     }
 
-    if (!request.getParameter("term").equals("select")) {
+    if (!request.getParameter("term").isEmpty()) {
       String term = request.getParameter("term");
       Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
       filters.add(termFilter);

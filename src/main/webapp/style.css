@@ -1,14 +1,6 @@
-.hidden {
-    display: none;
+p,
+textarea {
+  display: flex;
+  margin: 20px;
+  padding: 20px;
 }
-
-label, select {
-    margin-bottom: 20px;
-}
-
-#login-box {
-    margin:auto;
-    width: 120px;
-    padding: 30px;
-}
-
