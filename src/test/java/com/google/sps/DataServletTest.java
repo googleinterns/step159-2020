@@ -52,10 +52,15 @@ public final class DataServletTest {
   @Mock LanguageServiceClient languageService;
 
   @Test
-  public void addTermRating_newRatingNoTranslation() throws IOException {
+  public void addTermRating_newRating() throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     request = Mockito.mock(HttpServletRequest.class);
+    Entity termEntity = new Entity("Term");
+    datastore.put(termEntity);
+    Key termKey = termEntity.getKey();
+
+    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
     when(request.getParameter("term-input")).thenReturn("I do not like this.");
     when(request.getParameter("rating-term")).thenReturn("1");
     when(request.getParameter("hoursOfWork")).thenReturn("8");
@@ -64,17 +69,6 @@ public final class DataServletTest {
     when(request.getParameter("rating-professor")).thenReturn("3");
     when(request.getParameter("ID")).thenReturn("numberOneId");
 
-    Entity termEntity = new Entity("Term");
-    datastore.put(termEntity);
-    Key termKey = termEntity.getKey();
-
-    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
-
-    Document document =
-        Document.newBuilder()
-            .setContent("I do not like this.")
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.8999999761581421))
@@ -85,23 +79,27 @@ public final class DataServletTest {
 
     Entity termRatingEntity =
         newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
-    assertEquals("I do not like this.", termRatingQuery.getProperty("comments-term"));
-    assertEquals("numberOneId", termRatingQuery.getProperty("reviewer-id"));
-    assertEquals(Long.valueOf(1), termRatingQuery.getProperty("perception-term"));
-    assertEquals(Long.valueOf(8), termRatingQuery.getProperty("hours"));
-    assertEquals(Long.valueOf(4), termRatingQuery.getProperty("difficulty"));
-    assertEquals("The professor was amazing.", termRatingQuery.getProperty("comments-professor"));
-    assertEquals(Long.valueOf(3), termRatingQuery.getProperty("perception-professor"));
-    assertEquals(-0.8999999761581421, termRatingQuery.getProperty("score-term"));
-    assertEquals(-0.8999999761581421, termRatingQuery.getProperty("score-professor"));
+    assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
+    assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
+    assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
+    assertEquals(Long.valueOf(8), termRatingEntity.getProperty("hours"));
+    assertEquals(Long.valueOf(4), termRatingEntity.getProperty("difficulty"));
+    assertEquals("The professor was amazing.", termRatingEntity.getProperty("comments-professor"));
+    assertEquals(Long.valueOf(3), termRatingEntity.getProperty("perception-professor"));
+    assertEquals(-0.8999999761581421, termRatingEntity.getProperty("score-term"));
+    assertEquals(-0.8999999761581421, termRatingEntity.getProperty("score-professor"));
   }
 
   @Test
-  public void addTermRating_overwritingExistingTermRatingNoTranslation() throws IOException {
+  public void addTermRating_overwritingExistingTermRating() throws IOException {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     request = Mockito.mock(HttpServletRequest.class);
+    Entity termEntity = new Entity("Term");
+    datastore.put(termEntity);
+    Key termKey = termEntity.getKey();
 
+    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
     when(request.getParameter("term-input")).thenReturn("I really like this class.");
     when(request.getParameter("rating-term")).thenReturn("4");
     when(request.getParameter("hoursOfWork")).thenReturn("8");
@@ -109,17 +107,7 @@ public final class DataServletTest {
     when(request.getParameter("prof-input")).thenReturn("The professor was okay.");
     when(request.getParameter("rating-professor")).thenReturn("3");
     when(request.getParameter("ID")).thenReturn("numberOneId");
-    Entity termEntity = new Entity("Term");
-    datastore.put(termEntity);
-    Key termKey = termEntity.getKey();
 
-    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
-
-    Document document =
-        Document.newBuilder()
-            .setContent("I don't like this class.")
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.699999988079071))
@@ -141,14 +129,14 @@ public final class DataServletTest {
 
     Entity termRatingEntity =
         newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
-    assertEquals("I don't like this class.", termRatingQuery.getProperty("comments-term"));
-    assertEquals("numberOneId", termRatingQuery.getProperty("reviewer-id"));
-    assertEquals(Long.valueOf(1), termRatingQuery.getProperty("perception-term"));
-    assertEquals(Long.valueOf(10), termRatingQuery.getProperty("hours"));
-    assertEquals(Long.valueOf(5), termRatingQuery.getProperty("difficulty"));
-    assertEquals("This teacher was wonderful.", termRatingQuery.getProperty("comments-professor"));
-    assertEquals(Long.valueOf(3), termRatingQuery.getProperty("perception-professor"));
-    assertEquals(-0.699999988079071, termRatingQuery.getProperty("score-term"));
-    assertEquals(-0.699999988079071, termRatingQuery.getProperty("score-professor"));
+    assertEquals("I don't like this class.", termRatingEntity.getProperty("comments-term"));
+    assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
+    assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
+    assertEquals(Long.valueOf(10), termRatingEntity.getProperty("hours"));
+    assertEquals(Long.valueOf(5), termRatingEntity.getProperty("difficulty"));
+    assertEquals("This teacher was wonderful.", termRatingEntity.getProperty("comments-professor"));
+    assertEquals(Long.valueOf(3), termRatingEntity.getProperty("perception-professor"));
+    assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-term"));
+    assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-professor"));
   }
 }
