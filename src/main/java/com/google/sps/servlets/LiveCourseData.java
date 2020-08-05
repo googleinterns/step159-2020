@@ -25,10 +25,7 @@ public class LiveCourseData extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    getAllDataFromTerm(db, request);
-    response.setContentType("text/html; charset=UTF-8");
-    response.setCharacterEncoding("UTF-8");
-    response.sendRedirect("/course.html");
+    TermDataHolder courseData = getAllDataFromTerm(db, request);
   }
 
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {

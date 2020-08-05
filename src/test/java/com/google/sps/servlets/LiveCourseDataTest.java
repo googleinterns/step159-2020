@@ -66,12 +66,12 @@ public final class LiveCourseDataTest {
   public void FindingExisitngTermEntity() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        request, /* schoolName */
-        "MIT", /* courseName */
-        "6.006", /* termName */
-        "Spring 2020", /* units */
-        "12", /* profName */
-        "Jason Ku");
+        /* requestServelt */ request,
+        /* schoolName */ "MIT",
+        /* courseName */ "6.006",
+        /* termName */ "Spring 2020",
+        /* units */ "12",
+        /* profName */ "Jason Ku");
     createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
     String expectedTermName = "Spring 2020";
 
