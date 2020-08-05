@@ -90,7 +90,7 @@ public final class LiveCourseDataTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     Entity parent = addTermEntity(db);
     addRatingEntity(db, /* hours */ 12, /* difficulty */ 7, parent.getKey());
-    addRatingEntity(db, 7, 4, parent.getKey());
+    addRatingEntity(db, /* hours */ 7, /* difficulty */ 4, parent.getKey());
 
     List<Long> expectedHoursList = new ArrayList(Arrays.asList((long) 12, (long) 7));
     List<Long> expectedDifficultyList = new ArrayList(Arrays.asList((long) 7, (long) 4));
