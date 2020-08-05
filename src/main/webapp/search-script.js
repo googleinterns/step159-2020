@@ -1,5 +1,16 @@
-function countUnits(){
+function countSearchUnits() {
   const inputElems = document.getElementsByName("search-units");
+  const arr = []
+  for (let i = 0; i < inputElems.length; i++) {       
+    if (inputElems[i].checked){
+      arr.push(inputElems[i].value);
+    }
+  }
+  return arr;
+}
+
+function countAddUnits() {
+  const inputElems = document.getElementsByName("num-units");
   const arr = []
   for (let i = 0; i < inputElems.length; i++) {       
     if (inputElems[i].checked){
@@ -14,13 +25,15 @@ function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
-  const units = countUnits();
+  const units = countSearchUnits();
+  const school = getUserSchool();
   courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("courseName", courseName);
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
+  url.searchParams.set("schoolName", getUserSchool())
   fetch(url)
   .then(response => response.json())
   .then((courses) => {
@@ -32,22 +45,40 @@ function showCourses() {
 function createListElement(course) {
   const liElement = document.createElement('li');
   const link = document.createElement('a');
-  const url = new URL("/term-live", window.location.origin);
-
+  const url = new URL("/course.html", window.location.origin);
   url.searchParams.set("course-name", course.name);
   url.searchParams.set("prof-name", course.professor);
   url.searchParams.set("num-units", course.units);
   url.searchParams.set("term", course.term);
-  const auth2 = gapi.auth2.getAuthInstance();
-  const profile = auth2.currentUser.get().getBasicProfile();
-  const userEmail = profile.getEmail();
-  const start = userEmail.indexOf('@');
-  const end = userEmail.lastIndexOf('.');
-  const school = userEmail.substring(start+1, end);
+  const school = getUserSchool();
   url.searchParams.set("school-name", school);
-
   link.setAttribute('href', url);
   link.innerText = course.name;
   liElement.appendChild(link);
   return liElement;
+}
+
+function getUserSchool() {
+  const auth2 = gapi.auth2.getAuthInstance();
+  const profile = auth2.currentUser.get().getBasicProfile();
+  const email = profile.getEmail();
+  const start = email.indexOf('@');
+  const end = email.lastIndexOf('.');
+  const school = email.substring(start+1, end);
+  return school;
+}
+
+function addCourse() {
+  const courseName = document.getElementById("course-name").value;
+  const profName = document.getElementById("prof-name").value;
+  const termName = document.getElementById("term").value;
+  const units = countAddUnits();
+  const schoolName = getUserSchool();
+  const url = new URL("/search", window.location.origin);
+  url.searchParams.set("course-name", courseName);
+  url.searchParams.set("prof-name", profName);
+  url.searchParams.set("num-units", units);
+  url.searchParams.set("term", termName);
+  url.searchParams.set("school-name", schoolName);
+  fetch(url, { method: "POST" });
 }

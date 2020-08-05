@@ -15,12 +15,11 @@
         </div>
         <div class="hidden" id="class-info">
             <div id="school-name"></div>
-            <form id="course-form" method="POST" action="/search">
+            <form id="course-form" onsubmit="addCourse()">
                 <p>Enter course info:</p>
                 <div id="class-textarea">
-                    <textarea name="course-name" id="class-name" placeholder="Class Name" maxlength=1500></textarea>
+                    <textarea name="course-name" id="course-name" placeholder="Class Name" maxlength=1500></textarea>
                     <textarea name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500></textarea>
-                    <textarea name="school-name" placeholder="School Name"></textarea>
                 </div>
                 <div id="class-selectboxes">
                     <fieldset>

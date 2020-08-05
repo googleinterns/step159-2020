@@ -5,12 +5,15 @@ public class Course {
   String professor;
   Long units;
   String term;
+  String school;
 
-  public Course(String courseName, String professorName, Long numUnits, String termName) {
+  public Course(
+      String courseName, String professorName, Long numUnits, String termName, String schoolName) {
     name = courseName;
     professor = professorName;
     units = numUnits;
     term = termName;
+    school = schoolName;
   }
 
   public String getName() {
@@ -27,5 +30,9 @@ public class Course {
 
   public String getTerm() {
     return term;
+  }
+
+  public String getSchool() {
+    return school;
   }
 }

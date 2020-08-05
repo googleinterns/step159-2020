@@ -88,6 +88,8 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
+    String school = request.getParameter("school-name");
+    Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     return filters;
   }
 
@@ -115,7 +117,8 @@ public class SearchServlet extends HttpServlet {
       String professor = (String) entity.getProperty("professor");
       Long numUnits = (Long) entity.getProperty("units");
       String term = (String) entity.getProperty("term");
-      Course course = new Course(name, professor, numUnits, term);
+      String school = (String) entity.getProperty("school");
+      Course course = new Course(name, professor, numUnits, term, school);
       courses.add(course);
     }
     return courses;
@@ -128,17 +131,20 @@ public class SearchServlet extends HttpServlet {
     String prof = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
     String term = request.getParameter("term");
+    String school = request.getParameter("school-name");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
     AddSchoolData addSchool = new AddSchoolData();
     addSchool.addSchoolData(datastore, request);
+
     Entity newCourse = new Entity("Course-Info");
     newCourse.setProperty("name", name);
     newCourse.setProperty("professor", prof);
     newCourse.setProperty("units", units);
     newCourse.setProperty("term", term);
+    newCourse.setProperty("school", school);
     datastore.put(newCourse);
-
     response.sendRedirect("/index.html");
   }
 }
