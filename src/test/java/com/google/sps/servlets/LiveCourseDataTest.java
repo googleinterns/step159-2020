@@ -36,7 +36,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public final class LiveCourseDataTest {
@@ -65,15 +64,14 @@ public final class LiveCourseDataTest {
   @Test
   public void FindingExisitngTermEntity() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    request =
-        createRequest(
-            request, /*schoolName*/
-            "MIT", /*courseName*/
-            "6.006", /*termName*/
-            "Spring 2020", /*units*/
-            "12", /*profName*/
-            "Jason Ku");
-    requestB = createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
+    createRequest(
+        request, /*schoolName*/
+        "MIT", /*courseName*/
+        "6.006", /*termName*/
+        "Spring 2020", /*units*/
+        "12", /*profName*/
+        "Jason Ku");
+    createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
     String expectedTermName = "Spring 2020";
 
     schoolData.addSchoolData(db, request);
@@ -103,20 +101,18 @@ public final class LiveCourseDataTest {
     assertEquals(expectedDifficultyList, actualDifficultyList);
   }
 
-  private HttpServletRequest createRequest(
+  private void createRequest(
       HttpServletRequest request,
       String schoolName,
       String courseName,
       String termName,
       String units,
       String profName) {
-    request = Mockito.mock(HttpServletRequest.class);
     when(request.getParameter("school-name")).thenReturn(schoolName);
     when(request.getParameter("course-name")).thenReturn(courseName);
     when(request.getParameter("term")).thenReturn(termName);
     when(request.getParameter("units")).thenReturn(units);
     when(request.getParameter("professor-name")).thenReturn(profName);
-    return request;
   }
 
   private List<Entity> findQueryMatch(
