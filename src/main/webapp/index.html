@@ -1,102 +1,69 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Capstone</title>
-    <link rel="stylesheet" href="style.css" />
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <script src="script.js"></script>
-    <script src="graphScript.js"></script>
-  </head>
-  <body>
-    <p>Hello</p>
-    <div id="hours-chart" style="width: 900px; height: 500px"></div>
-    <div id="difficulty-chart" style="width: 900px; height: 500px"></div>
-
-    <p>Rate your classes and professors!</p>
-    <form action="/data" method="POST">
-      <p>Rate your class:</p>
-      <div id="class-id"></div>
-      <button onclick="getClassID()">Get class ID</button>
-      <br /><br />
-
-      <textarea name="class-input">Write opinion on class here.</textarea>
-      <br /><br />
-
-      <p>How would you rate this class?</p>
-      <input
-        type="radio"
-        id="excellent"
-        name="rating-class"
-        value="excellent"
-      />
-      <label for="excellent">Excellent.</label>
-      <input
-        type="radio"
-        id="acceptable"
-        name="rating-class"
-        value="acceptable"
-      />
-      <label for="acceptable">Acceptable.</label>
-      <input type="radio" id="neutral" name="rating-class" value="neutral" />
-      <label for="neutral">Neutral.</label>
-      <input type="radio" id="not-good" name="rating-class" value="not-good" />
-      <label for="not-good">Not good.</label>
-      <input type="radio" id="terrible" name="rating-class" value="terrible" />
-      <label for="terrible">Terrible.</label>
-
-      <br /><br />
-      <textarea name="prof-input">Write opinion on professor here.</textarea>
-      <br /><br />
-
-      <p>How would you rate the professor?</p>
-      <input
-        type="radio"
-        id="excellent"
-        name="rating-professor"
-        value="excellent"
-      />
-      <label for="excellent">Excellent.</label>
-      <input
-        type="radio"
-        id="acceptable"
-        name="rating-professor"
-        value="acceptable"
-      />
-      <label for="acceptable">Acceptable.</label>
-      <input
-        type="radio"
-        id="neutral"
-        name="rating-professor"
-        value="neutral"
-      />
-      <label for="neutral">Neutral.</label>
-      <input
-        type="radio"
-        id="not-good"
-        name="rating-professor"
-        value="not-good"
-      />
-      <label for="not-good">Not good.</label>
-      <input
-        type="radio"
-        id="terrible"
-        name="rating-professor"
-        value="terrible"
-      />
-      <label for="terrible">Terrible.</label>
-
-      <p>Do you wish to translate your comments to English?</p>
-      <input type="radio" id="yes" name="languages" value="true" />
-      <label for="yes">Yes.</label>
-      <input type="radio" id="no" name="languages" value="false" />
-      <label for="no">No.</label>
-
-      <input type="submit" />
-    </form>
-    <ul id="log"></ul>
-  </body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Search Page</title>
+        <link rel="stylesheet" href="search-style.css">
+        <script src="login-script.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <meta name="google-signin-client_id" content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com">
+        <script src="search-script.js"></script>
+    </head>
+    <body>
+        <div id="login-box">
+            <div class="g-signin2" id="login-button" data-onsuccess="onSignIn"></div>
+        </div>
+        <div class="hidden" id="class-info">
+            <div id="school-name"></div>
+            <form id="course-form" method="POST" action="/search">
+                <p>Enter course info:</p>
+                <div id="class-textarea">
+                    <textarea name="course-name" id="class-name" placeholder="Class Name" maxlength=1500></textarea>
+                    <textarea name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500></textarea>
+                    <textarea name="school-name" placeholder="School Name"></textarea>
+                </div>
+                <div id="class-selectboxes">
+                    <fieldset>
+                        <legend>How many units?</legend>      
+                        <input type="radio" name="num-units" value="1">1<br>      
+                        <input type="radio" name="num-units" value="2">2<br>      
+                        <input type="radio" name="num-units" value="3">3<br>      
+                    </fieldset> 
+                    <label for="term">Term:</label>
+                    <select id="term" name="term">
+                        <option value="Spring 2020">Spring 2020</option>
+                        <option value="Fall 2019">Fall 2019</option>
+                        <option value="Spring 2019">Spring 2019</option>
+                        <option value="Fall 2018">Fall 2018</option>
+                    </select>
+                </div>
+                <input type="submit"/>
+            </form>
+            <div id="course-search">
+                <p>What course are you searching for?</p>
+                <div id="search-textarea">
+                    <textarea id="search-course" maxlength=1500 placeholder="Class Name"></textarea>
+                    <textarea id="search-prof" maxlength=1500 placeholder="Professor"></textarea>
+                </div>
+                <div id="search-selectboxes">
+                    <select id="search-term" >
+                        <option value="">Select term...</option>
+                        <option value="Spring 2020">Spring 2020</option>
+                        <option value="Fall 2019">Fall 2019</option>
+                        <option value="Spring 2019">Spring 2019</option>
+                        <option value="Fall 2018">Fall 2018</option>
+                    </select>
+                    <fieldset>      
+                        <legend>How many units?</legend>      
+                        <input type="checkbox" name="search-units" value="1">1<br>      
+                        <input type="checkbox" name="search-units" value="2">2<br>      
+                        <input type="checkbox" name="search-units" value="3">3<br>      
+                    </fieldset>   
+                </div>   
+                <button id="search-button" onclick="showCourses()">See courses!</button>
+                <div id=search-results></div>
+            </div>
+            <button id="logout-button" onclick="signOut()">Sign out</button>
+        </div>    
+    </body>
 </html>

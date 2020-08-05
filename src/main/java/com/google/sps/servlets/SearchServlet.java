@@ -93,7 +93,7 @@ public class SearchServlet extends HttpServlet {
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
   private List<Entity> getResults(List<Filter> filters) {
-    Query courseQuery = new Query("Course");
+    Query courseQuery = new Query("Course-Info");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
         courseQuery.setFilter(filters.get(0));
@@ -127,15 +127,18 @@ public class SearchServlet extends HttpServlet {
     String name = request.getParameter("course-name");
     String prof = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
-    String term = request.getParameter("term-name");
+    String term = request.getParameter("term");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity newCourse = new Entity("Course");
+    AddSchoolData addSchool = new AddSchoolData();
+    addSchool.addSchoolData(datastore, request);
+    Entity newCourse = new Entity("Course-Info");
     newCourse.setProperty("name", name);
     newCourse.setProperty("professor", prof);
     newCourse.setProperty("units", units);
     newCourse.setProperty("term", term);
     datastore.put(newCourse);
-    response.sendRedirect("/search.html");
+
+    response.sendRedirect("/index.html");
   }
 }

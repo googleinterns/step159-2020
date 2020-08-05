@@ -12,7 +12,7 @@ label, select {
     padding: 30px;
 }
 
-#search-textarea, #search-selectboxes {
+#search-textarea, #search-selectboxes, #class-textarea, #class-selectboxes {
     display: flex;
 }
 
