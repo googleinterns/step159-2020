@@ -45,7 +45,6 @@ public class LiveCourseData extends HttpServlet {
     termDataHolder.setTermCommentsList(getDataFromTermRating(db, foundTerm, "comments-term"));
     termDataHolder.setProfessorCommentsList(
         getDataFromTermRating(db, foundTerm, "comments-professor"));
-
     return termDataHolder;
   }
 
