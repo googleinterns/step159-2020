@@ -25,9 +25,10 @@ public class LiveCourseData extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    getAllDataFromTerm(db, request);
-    response.setContentType("text/html; charset=UTF-8");
-    response.setCharacterEncoding("UTF-8");
+    TermDataHolder coursePageData = getAllDataFromTerm(db, request);
+    String coursePageDataJSON = makeJSON(coursePageData);
+    response.setContentType("application/json;");
+    response.getWriter().println(coursePageDataJSON);
     response.sendRedirect("/course.html");
   }
 
@@ -108,5 +109,15 @@ public class LiveCourseData extends HttpServlet {
     Query children = new Query(type).setAncestor(parent);
     List<Entity> result = db.prepare(children).asList(FetchOptions.Builder.withDefaults());
     return result;
+  }
+
+  private String makeJSON(Object changeItem) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String jsonString = mapper.writeValueAsString(changeItem);
+      return jsonString;
+    } catch (Exception e) {
+      return "Could not convert to JSON";
+    }
   }
 }

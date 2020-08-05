@@ -1,7 +1,7 @@
 google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(makeGraph);
 
-function makeGraph() {
+function makeGraphs() {
   fetch("/graph")
     .then((response) => response.json())
     .then((data) => {
