@@ -66,11 +66,11 @@ public final class LiveCourseDataTest {
   public void FindingExisitngTermEntity() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        request, /*schoolName*/
-        "MIT", /*courseName*/
-        "6.006", /*termName*/
-        "Spring 2020", /*units*/
-        "12", /*profName*/
+        request, /* schoolName */
+        "MIT", /* courseName */
+        "6.006", /* termName */
+        "Spring 2020", /* units */
+        "12", /* profName */
         "Jason Ku");
     createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
     String expectedTermName = "Spring 2020";
@@ -88,11 +88,11 @@ public final class LiveCourseDataTest {
   public void GettingRatingData_AllProperties() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        request, /*schoolName*/
-        "MIT", /*courseName*/
-        "6.006", /*termName*/
-        "Spring 2020", /*units*/
-        "12", /*profName*/
+        request, /* schoolName */
+        "MIT", /* courseName */
+        "6.006", /* termName */
+        "Spring 2020", /* units */
+        "12", /* profName */
         "Jason Ku");
     schoolData.addSchoolData(db, request);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
@@ -103,8 +103,8 @@ public final class LiveCourseDataTest {
         8, /* profScore */
         9, /* termPerception */
         0.82, /* professorPerception5 */
-        0.8, /*termComment */
-        "Great", /*professorComment */
+        0.8, /* termComment */
+        "Great", /* professorComment */
         "Terrible",
         parent);
 
