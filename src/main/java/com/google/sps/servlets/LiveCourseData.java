@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.sps.data.TermDataHolder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,28 @@ public class LiveCourseData extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    getTerm(db, request);
+    getAllDataFromTerm(db, request);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
     response.sendRedirect("/AddSchoolData.html");
+  }
+
+  public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {
+    TermDataHolder termDataHolder = new TermDataHolder();
+    Entity foundTerm = getTerm(db, request);
+
+    termDataHolder.setHoursList(getDataFromTermRating(db, foundTerm, "hours"));
+    termDataHolder.setDifficultyList(getDataFromTermRating(db, foundTerm, "difficulty"));
+    termDataHolder.setTermScoreList(getDataFromTermRating(db, foundTerm, "score-term"));
+    termDataHolder.setTermPerceptionList(getDataFromTermRating(db, foundTerm, "perception-term"));
+    termDataHolder.setProfessorPerceptionList(
+        getDataFromTermRating(db, foundTerm, "perception-professor"));
+    termDataHolder.setProfessorScoreList(getDataFromTermRating(db, foundTerm, "score-professor"));
+    termDataHolder.setTermCommentsList(getDataFromTermRating(db, foundTerm, "comments-term"));
+    termDataHolder.setProfessorCommentsList(
+        getDataFromTermRating(db, foundTerm, "comments-professor"));
+
+    return termDataHolder;
   }
 
   public Entity getTerm(DatastoreService db, HttpServletRequest request) {
@@ -41,12 +60,12 @@ public class LiveCourseData extends HttpServlet {
     return foundTerm;
   }
 
-  public List<Long> getDataFromTermRating(DatastoreService db, Entity term, String property) {
-    List<Long> dataList = new ArrayList();
+  private List<Object> getDataFromTermRating(DatastoreService db, Entity term, String property) {
+    List<Object> dataList = new ArrayList();
     List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
 
     for (Entity rating : termRatings) {
-      dataList.add((long) rating.getProperty(property));
+      dataList.add(rating.getProperty(property));
     }
     return dataList;
   }
