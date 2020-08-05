@@ -33,7 +33,7 @@ function showCourses() {
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
-  url.searchParams.set("schoolName", getUserSchool())
+  url.searchParams.set("schoolName", school)
   fetch(url)
   .then(response => response.json())
   .then((courses) => {
