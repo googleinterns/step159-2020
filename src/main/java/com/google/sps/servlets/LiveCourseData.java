@@ -28,7 +28,7 @@ public class LiveCourseData extends HttpServlet {
     getAllDataFromTerm(db, request);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
-    response.sendRedirect("/AddSchoolData.html");
+    response.sendRedirect("/course.html");
   }
 
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {

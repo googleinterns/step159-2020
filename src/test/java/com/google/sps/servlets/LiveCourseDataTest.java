@@ -96,14 +96,24 @@ public final class LiveCourseDataTest {
         "Jason Ku");
     schoolData.addSchoolData(db, request);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
-    addRatingEntity(db, 12, 7, 5, 5, 5, 5, "Great", "Terrible", parent);
+    addRatingEntity(
+        db, /* hours */
+        12, /* difficulty */
+        7, /* termScore */
+        8, /* profScore */
+        9, /* termPerception */
+        0.82, /* professorPerception5 */
+        0.8, /*termComment */
+        "Great", /*professorComment */
+        "Terrible",
+        parent);
 
     List<Object> expectedHoursList = new ArrayList(Arrays.asList((long) 12));
     List<Object> expectedDifficultyList = new ArrayList(Arrays.asList((long) 7));
-    List<Object> expectedTermScoreList = new ArrayList(Arrays.asList((long) 5));
-    List<Object> expecyedProfessorScoreList = new ArrayList(Arrays.asList((long) 5));
-    List<Object> expectedTermPerceptionList = new ArrayList(Arrays.asList((long) 5));
-    List<Object> expectedProfessorPerceptionList = new ArrayList(Arrays.asList((long) 5));
+    List<Object> expectedTermScoreList = new ArrayList(Arrays.asList((long) 8));
+    List<Object> expecyedProfessorScoreList = new ArrayList(Arrays.asList((long) 9));
+    List<Object> expectedTermPerceptionList = new ArrayList(Arrays.asList((double) 0.82));
+    List<Object> expectedProfessorPerceptionList = new ArrayList(Arrays.asList((double) 0.8));
     List<Object> expectedTermCommentsList = new ArrayList(Arrays.asList("Terrible"));
     List<Object> expectedProfessorCommentsList = new ArrayList(Arrays.asList("Great"));
 
@@ -145,22 +155,22 @@ public final class LiveCourseDataTest {
       DatastoreService db,
       int hours,
       int difficulty,
-      int tScore,
-      int pScore,
-      int termPer,
-      int profPer,
-      String profCom,
-      String termCom,
+      int termScore,
+      int profScore,
+      double termPerception,
+      double profPerception,
+      String profComments,
+      String termComments,
       Key parent) {
     Entity entity = new Entity("Rating", parent);
     entity.setProperty("hours", hours);
     entity.setProperty("difficulty", difficulty);
-    entity.setProperty("score-term", tScore);
-    entity.setProperty("score-professor", pScore);
-    entity.setProperty("perception-term", termPer);
-    entity.setProperty("perception-professor", profPer);
-    entity.setProperty("comments-term", termCom);
-    entity.setProperty("comments-professor", profCom);
+    entity.setProperty("score-term", termScore);
+    entity.setProperty("score-professor", profScore);
+    entity.setProperty("perception-term", termPerception);
+    entity.setProperty("perception-professor", profPerception);
+    entity.setProperty("comments-term", termComments);
+    entity.setProperty("comments-professor", profComments);
     db.put(entity);
   }
 
