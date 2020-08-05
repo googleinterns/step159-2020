@@ -88,7 +88,7 @@ public final class LiveCourseDataTest {
   public void GettingRatingData_AllProperties() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        /* requestServeltrequest */ request, /* schoolName */
+        /* requestServelt */ request, /* schoolName */
         "MIT", /* courseName */
         "6.006", /* termName */
         "Spring 2020", /* units */
