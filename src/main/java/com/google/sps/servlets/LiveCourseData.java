@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,7 +30,6 @@ public class LiveCourseData extends HttpServlet {
     String coursePageDataJSON = makeJSON(coursePageData);
     response.setContentType("application/json;");
     response.getWriter().println(coursePageDataJSON);
-    response.sendRedirect("/course.html");
   }
 
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {
