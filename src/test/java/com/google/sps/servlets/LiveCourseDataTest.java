@@ -102,7 +102,7 @@ public final class LiveCourseDataTest {
         7, /* termScore */
         8, /* profScore */
         9, /* termPerception */
-        0.82, /* professorPerception5 */
+        0.82, /* professorPerception */
         0.8, /* termComment */
         "Great", /* professorComment */
         "Terrible",
