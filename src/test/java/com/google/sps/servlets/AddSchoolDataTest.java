@@ -90,8 +90,7 @@ public final class AddSchoolDataTest {
     assertEquals(expectedTermEntity.getProperty("term"), termQuery.getProperty("term"));
 
     Entity profQuery =
-        findQueryMatch(db, "Professor", "professor-name", request.getParameter("professor-name"))
-            .get(0);
+        findQueryMatch(db, "Professor", "professor-name", request.getParameter("prof-name")).get(0);
     Entity expectedProfessorEntity = new Entity("Professor");
     expectedProfessorEntity.setProperty("professor-name", "Jason Ku");
     assertEquals(
@@ -319,8 +318,8 @@ public final class AddSchoolDataTest {
     when(request.getParameter("school-name")).thenReturn(schoolName);
     when(request.getParameter("course-name")).thenReturn(courseName);
     when(request.getParameter("term")).thenReturn(termName);
-    when(request.getParameter("units")).thenReturn(units);
-    when(request.getParameter("professor-name")).thenReturn(profName);
+    when(request.getParameter("num-units")).thenReturn(units);
+    when(request.getParameter("prof-name")).thenReturn(profName);
     return request;
   }
 }

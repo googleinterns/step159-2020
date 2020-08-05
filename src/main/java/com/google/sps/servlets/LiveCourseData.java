@@ -53,8 +53,8 @@ public class LiveCourseData extends HttpServlet {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
-    String profName = request.getParameter("professor-name");
-    Long units = Long.parseLong(request.getParameter("units"));
+    String profName = request.getParameter("prof-name");
+    Long units = Long.parseLong(request.getParameter("num-units"));
 
     Entity foundTerm = findTerm(db, schoolName, courseName, termName, units, profName);
     return foundTerm;
