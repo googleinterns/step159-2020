@@ -1,23 +1,23 @@
-function countSearchUnits() {
+function collectUnitsFromSearch() {
   const inputElems = document.getElementsByName("search-units");
-  const arr = []
-  for (let i = 0; i < inputElems.length; i++) {       
-    if (inputElems[i].checked){
-      arr.push(inputElems[i].value);
+  const addedUnits = []
+  for (let elem of inputElems) {       
+    if (elem.checked){
+      addedUnits.push(elem.value);
     }
   }
-  return arr;
+  return addedUnits;
 }
 
-function countAddUnits() {
+function collectUnitsFromInput() {
   const inputElems = document.getElementsByName("num-units");
-  const arr = []
-  for (let i = 0; i < inputElems.length; i++) {       
-    if (inputElems[i].checked){
-      arr.push(inputElems[i].value);
+  const addedUnits = []
+  for (let elem of inputElems) {       
+    if (elem.checked){
+      addedUnits.push(elem.value);
     }
   }
-  return arr;
+  return addedUnits;
 }
 
 function showCourses() {
@@ -25,7 +25,7 @@ function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
-  const units = countSearchUnits();
+  const units = collectUnitsFromSearch();
   const school = getUserSchool();
   courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
@@ -72,7 +72,7 @@ function addCourse() {
   const courseName = document.getElementById("course-name").value;
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
-  const units = countAddUnits();
+  const units = collectUnitsFromInput();
   const schoolName = getUserSchool();
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
