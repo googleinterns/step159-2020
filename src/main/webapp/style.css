@@ -6,3 +6,9 @@ label, select {
     margin-bottom: 20px;
 }
 
+#login-box {
+    margin:auto;
+    width: 120px;
+    padding: 30px;
+}
+

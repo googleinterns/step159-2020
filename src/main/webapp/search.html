@@ -10,8 +10,9 @@
         <script src="searchScript.js"></script>
     </head>
     <body>
-        <div id="login-box"></div>
-        <div class="g-signin2" id="login-button" data-onsuccess="onSignIn"></div>
+        <div id="login-box">
+            <div class="g-signin2" id="login-button" data-onsuccess="onSignIn"></div>
+        </div>
         <div class="hidden" id="class-info">
             <div id="school-name"></div>
             <form id="course-form" method="POST" action="/search">
