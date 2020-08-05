@@ -71,7 +71,7 @@ public class SearchServlet extends HttpServlet {
       filters.add(profFilter);
     }
 
-    if (!request.getParameter("term").equals("select")) {
+    if (!request.getParameter("term").isEmpty()) {
       String term = request.getParameter("term");
       Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
       filters.add(termFilter);
@@ -88,12 +88,14 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
+    String school = request.getParameter("school-name");
+    Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     return filters;
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
   private List<Entity> getResults(List<Filter> filters) {
-    Query courseQuery = new Query("Course");
+    Query courseQuery = new Query("Course-Info");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
         courseQuery.setFilter(filters.get(0));
@@ -115,7 +117,8 @@ public class SearchServlet extends HttpServlet {
       String professor = (String) entity.getProperty("professor");
       Long numUnits = (Long) entity.getProperty("units");
       String term = (String) entity.getProperty("term");
-      Course course = new Course(name, professor, numUnits, term);
+      String school = (String) entity.getProperty("school");
+      Course course = new Course(name, professor, numUnits, term, school);
       courses.add(course);
     }
     return courses;
@@ -127,15 +130,21 @@ public class SearchServlet extends HttpServlet {
     String name = request.getParameter("course-name");
     String prof = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
-    String term = request.getParameter("term-name");
+    String term = request.getParameter("term");
+    String school = request.getParameter("school-name");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity newCourse = new Entity("Course");
+
+    AddSchoolData addSchool = new AddSchoolData();
+    addSchool.addSchoolData(datastore, request);
+
+    Entity newCourse = new Entity("Course-Info");
     newCourse.setProperty("name", name);
     newCourse.setProperty("professor", prof);
     newCourse.setProperty("units", units);
     newCourse.setProperty("term", term);
+    newCourse.setProperty("school", school);
     datastore.put(newCourse);
-    response.sendRedirect("/search.html");
+    response.sendRedirect("/index.html");
   }
 }
