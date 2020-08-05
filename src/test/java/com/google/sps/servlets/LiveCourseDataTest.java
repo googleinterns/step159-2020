@@ -88,7 +88,7 @@ public final class LiveCourseDataTest {
   public void GettingRatingData_AllProperties() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        request, /* schoolName */
+        /* requestServeltrequest */ request, /* schoolName */
         "MIT", /* courseName */
         "6.006", /* termName */
         "Spring 2020", /* units */
@@ -97,7 +97,7 @@ public final class LiveCourseDataTest {
     schoolData.addSchoolData(db, request);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
     addRatingEntity(
-        db, /* hours */
+        /* database */ db, /* hours */
         12, /* difficulty */
         7, /* termScore */
         8, /* profScore */
