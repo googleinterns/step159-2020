@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -10,19 +11,22 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.cloud.language.v1.AnalyzeSentimentResponse;
+import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(JUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public final class DataServletTest {
 
   private static final LocalServiceTestHelper helper =
@@ -30,14 +34,13 @@ public final class DataServletTest {
 
   private DataServlet newTermRating;
   private Entity termEntity;
-  private LanguageServiceClient languageServiceClient;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
-    newTermRating = new DataServlet();
-    // termEntity = new Entity("Term");
+    languageService = Mockito.mock(LanguageServiceClient.class);
+    newTermRating = new DataServlet(languageService);
   }
 
   @AfterEach
@@ -46,14 +49,13 @@ public final class DataServletTest {
   }
 
   @Mock HttpServletRequest request;
+  @Mock LanguageServiceClient languageService;
 
   @Test
-  public void AddingNewTermRating_NoTranslation() throws IOException {
-
+  public void addTermRating_newRatingNoTranslation() throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    request = Mockito.mock(HttpServletRequest.class);
 
-    // First Term Rating for this term.
+    request = Mockito.mock(HttpServletRequest.class);
     when(request.getParameter("term-input")).thenReturn("I do not like this.");
     when(request.getParameter("rating-term")).thenReturn("1");
     when(request.getParameter("hoursOfWork")).thenReturn("8");
@@ -61,37 +63,41 @@ public final class DataServletTest {
     when(request.getParameter("prof-input")).thenReturn("The professor was amazing.");
     when(request.getParameter("rating-professor")).thenReturn("3");
     when(request.getParameter("ID")).thenReturn("numberOneId");
+
     Entity termEntity = new Entity("Term");
     datastore.put(termEntity);
     Key termKey = termEntity.getKey();
+
     when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
+
+    Document document =
+        Document.newBuilder()
+            .setContent("I do not like this.")
+            .setType(Document.Type.PLAIN_TEXT)
+            .build();
+    AnalyzeSentimentResponse response =
+        AnalyzeSentimentResponse.newBuilder()
+            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.8999999761581421))
+            .build();
+    when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
     newTermRating.addTermRating(request);
 
     Entity termRatingQuery =
         newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
-
     assertEquals("I do not like this.", termRatingQuery.getProperty("comments-term"));
-
     assertEquals("numberOneId", termRatingQuery.getProperty("reviewer-id"));
-
     assertEquals(Long.valueOf(1), termRatingQuery.getProperty("perception-term"));
-
     assertEquals(Long.valueOf(8), termRatingQuery.getProperty("hours"));
-
     assertEquals(Long.valueOf(4), termRatingQuery.getProperty("difficulty"));
-
     assertEquals("The professor was amazing.", termRatingQuery.getProperty("comments-professor"));
-
     assertEquals(Long.valueOf(3), termRatingQuery.getProperty("perception-professor"));
-
     assertEquals(-0.8999999761581421, termRatingQuery.getProperty("score-term"));
-
-    assertEquals(0.8999999761581421, termRatingQuery.getProperty("score-professor"));
+    assertEquals(-0.8999999761581421, termRatingQuery.getProperty("score-professor"));
   }
 
   @Test
-  public void OverwritingExistingTermRating_NoTranslation() throws IOException {
+  public void addTermRating_overwritingExistingTermRatingNoTranslation() throws IOException {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     request = Mockito.mock(HttpServletRequest.class);
@@ -106,7 +112,19 @@ public final class DataServletTest {
     Entity termEntity = new Entity("Term");
     datastore.put(termEntity);
     Key termKey = termEntity.getKey();
+
     when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
+
+    Document document =
+        Document.newBuilder()
+            .setContent("I don't like this class.")
+            .setType(Document.Type.PLAIN_TEXT)
+            .build();
+    AnalyzeSentimentResponse response =
+        AnalyzeSentimentResponse.newBuilder()
+            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.699999988079071))
+            .build();
+    when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
     newTermRating.addTermRating(request);
 
@@ -122,26 +140,15 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingQuery =
-        newTermRating
-            .queryEntities("Rating", "reviewer-id", request.getParameter("numberOneId"))
-            .get(0);
-
+        newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
     assertEquals("I don't like this class.", termRatingQuery.getProperty("comments-term"));
-
     assertEquals("numberOneId", termRatingQuery.getProperty("reviewer-id"));
-
     assertEquals(Long.valueOf(1), termRatingQuery.getProperty("perception-term"));
-
     assertEquals(Long.valueOf(10), termRatingQuery.getProperty("hours"));
-
     assertEquals(Long.valueOf(5), termRatingQuery.getProperty("difficulty"));
-
     assertEquals("This teacher was wonderful.", termRatingQuery.getProperty("comments-professor"));
-
     assertEquals(Long.valueOf(3), termRatingQuery.getProperty("perception-professor"));
-
     assertEquals(-0.699999988079071, termRatingQuery.getProperty("score-term"));
-
-    assertEquals(0.800000011920929, termRatingQuery.getProperty("score-professor"));
+    assertEquals(-0.699999988079071, termRatingQuery.getProperty("score-professor"));
   }
 }

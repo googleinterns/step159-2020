@@ -29,7 +29,15 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
-  // private DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+  private final LanguageServiceClient languageService;
+
+  public DataServlet() throws IOException {
+    this.languageService = LanguageServiceClient.create();
+  }
+
+  public DataServlet(LanguageServiceClient languageService) {
+    this.languageService = languageService;
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -70,13 +78,10 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Gets user email.
+    // Gets user ID from URL.
     String userId = request.getParameter("ID");
-    // Gets term key from Course object.
+    // Gets term key from URL.
     Key currentTermKey = KeyFactory.stringToKey(request.getParameter("term"));
-    // Entity currentTerm = new Entity("Term");
-    // Key currentTermKey = currentTerm.getKey();
-    // datastore.put(currentTerm);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
@@ -101,11 +106,9 @@ public class DataServlet extends HttpServlet {
   private float getSentimentScore(String feedback) throws IOException {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-
-    LanguageServiceClient languageService = LanguageServiceClient.create();
-    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    Sentiment sentiment = this.languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
-    languageService.close();
+    this.languageService.close();
     return score;
   }
 
