@@ -43,15 +43,15 @@ public final class LiveCourseDataTest {
   private static final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
-  private AddSchoolData newSchoolObject;
-  private LiveCourseData LiveData;
+  private AddSchoolData schoolData;
+  private LiveCourseData liveCourseData;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
-    newSchoolObject = new AddSchoolData();
-    LiveData = new LiveCourseData();
+    schoolData = new AddSchoolData();
+    liveCourseData = new LiveCourseData();
   }
 
   @AfterEach
@@ -76,10 +76,10 @@ public final class LiveCourseDataTest {
     requestB = createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
     String expectedTermName = "Spring 2020";
 
-    newSchoolObject.addSchoolData(db, request);
-    newSchoolObject.addSchoolData(db, requestB);
+    schoolData.addSchoolData(db, request);
+    schoolData.addSchoolData(db, requestB);
     Key expectedParent = findQueryMatch(db, "Course", "course-name", "6.006").get(0).getKey();
-    Entity found = LiveData.getTerm(db, request);
+    Entity found = liveCourseData.getTerm(db, request);
 
     assertEquals(expectedParent, found.getParent());
     assertEquals(expectedTermName, found.getProperty("term"));
@@ -89,14 +89,15 @@ public final class LiveCourseDataTest {
   public void GettingRatingData_Hours_Difficulty() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     Entity parent = addTermEntity(db);
-    addRatingEntity(db, 12, 7, parent.getKey());
+    addRatingEntity(db, /* hours */ 12, /* difficulty */ 7, parent.getKey());
     addRatingEntity(db, 7, 4, parent.getKey());
 
     List<Long> expectedHoursList = new ArrayList(Arrays.asList((long) 12, (long) 7));
     List<Long> expectedDifficultyList = new ArrayList(Arrays.asList((long) 7, (long) 4));
 
-    List<Long> actualHoursList = LiveData.getTermData(db, parent, "hours");
-    List<Long> actualDifficultyList = LiveData.getTermData(db, parent, "difficulty");
+    List<Long> actualHoursList = liveCourseData.getDataFromTermRating(db, parent, "hours");
+    List<Long> actualDifficultyList =
+        liveCourseData.getDataFromTermRating(db, parent, "difficulty");
 
     assertEquals(expectedHoursList, actualHoursList);
     assertEquals(expectedDifficultyList, actualDifficultyList);

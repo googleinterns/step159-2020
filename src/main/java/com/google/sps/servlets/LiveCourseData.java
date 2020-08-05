@@ -41,7 +41,7 @@ public class LiveCourseData extends HttpServlet {
     return foundTerm;
   }
 
-  public List<Long> getTermData(DatastoreService db, Entity term, String property) {
+  public List<Long> getDataFromTermRating(DatastoreService db, Entity term, String property) {
     List<Long> dataList = new ArrayList();
     List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
 
