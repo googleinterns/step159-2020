@@ -1,8 +1,15 @@
 .hidden {
-    display: none;
+  display: none;
 }
 
-label, select {
-    margin-bottom: 20px;
+label,
+select {
+  margin-bottom: 20px;
 }
 
+p,
+textarea {
+  display: flex;
+  margin: 20px;
+  padding: 20px;
+}
