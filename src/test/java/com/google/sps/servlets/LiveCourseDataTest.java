@@ -66,12 +66,12 @@ public final class LiveCourseDataTest {
   public void FindingExisitngTermEntity() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        request, /*schoolName*/
-        "MIT", /*courseName*/
-        "6.006", /*termName*/
-        "Spring 2020", /*units*/
-        "12", /*profName*/
-        "Jason Ku");
+        /* requestServelt */ request,
+        /* schoolName */ "MIT",
+        /* courseName */ "6.006",
+        /* termName */ "Spring 2020",
+        /* units */ "12",
+        /* profName */ "Jason Ku");
     createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
     String expectedTermName = "Spring 2020";
 
@@ -88,25 +88,25 @@ public final class LiveCourseDataTest {
   public void GettingRatingData_AllProperties() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
-        request, /*schoolName*/
-        "MIT", /*courseName*/
-        "6.006", /*termName*/
-        "Spring 2020", /*units*/
-        "12", /*profName*/
-        "Jason Ku");
+        /* requestServelt */ request,
+        /* schoolName */ "MIT",
+        /* courseName */ "6.006",
+        /* termName */ "Spring 2020",
+        /* units */ "12",
+        /* profName */ "Jason Ku");
     schoolData.addSchoolData(db, request);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
     addRatingEntity(
-        db, /* hours */
-        12, /* difficulty */
-        7, /* termScore */
-        8, /* profScore */
-        9, /* termPerception */
-        0.82, /* professorPerception5 */
-        0.8, /*termComment */
-        "Great", /*professorComment */
-        "Terrible",
-        parent);
+        /* database */ db,
+        /* hours */ 12,
+        /* difficulty */ 7,
+        /* termScore */ 8,
+        /* profScore */ 9,
+        /* termPerception */ 0.82,
+        /* professorPerception */ 0.8,
+        /* termComment */ "Great",
+        /* professorComment */ "Terrible",
+        /* parentEntity */ parent);
 
     List<Object> expectedHoursList = new ArrayList(Arrays.asList((long) 12));
     List<Object> expectedDifficultyList = new ArrayList(Arrays.asList((long) 7));
