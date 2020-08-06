@@ -125,3 +125,7 @@ function passData(){
     url.searchParams.set("rating-prof", ratingProf);
     fetch(url, { method: "POST" });
 }
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
