@@ -327,4 +327,3 @@ public final class AddSchoolDataTest {
     return request;
   }
 }
-
