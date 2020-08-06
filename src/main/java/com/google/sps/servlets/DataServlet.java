@@ -76,7 +76,7 @@ public class DataServlet extends HttpServlet {
     Long workHours = Long.parseLong(request.getParameter("hoursOfWork"));
     Long difficulty = Long.parseLong(request.getParameter("difficulty"));
     String professorFeedback = request.getParameter("prof-input");
-    Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
+    Long professorRating = Long.parseLong(request.getParameter("rating-prof"));
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);

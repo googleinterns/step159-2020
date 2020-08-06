@@ -29,7 +29,7 @@ function populateData(){
 
 function makeGraph(dataObject){
     const tempHoursList = dataObject.hoursList;
-    const hoursList = [["hours"]].concat(tempHoursList);
+    const hoursList = [["hours"],[3],[8]].concat(tempHoursList);
     const hourData = new google.visualization.arrayToDataTable(hoursList)
     const hourOptions = {
         title: "Hours Spent per Week",
@@ -45,7 +45,7 @@ function makeGraph(dataObject){
 
 
     const tempDiffList = dataObject.hoursList;
-    const diffList = [["difficulty"]].concat(tempDiffList);
+    const diffList = [["difficulty"],[1],[4]].concat(tempDiffList);
     const diffData = new google.visualization.arrayToDataTable(diffList)
     const diffOptions = {
         title: "Difficulty of Class",
@@ -61,7 +61,7 @@ function makeGraph(dataObject){
 
 
     const tempTermPerceptionList = dataObject.termPerceptionList;
-    const termPerceptionList = [["Term Perception"]].concat(tempTermPerceptionList);
+    const termPerceptionList = [["Term Perception"],[11],[5]].concat(tempTermPerceptionList);
     const termPerceptionData = new google.visualization.arrayToDataTable(termPerceptionList);
     const termPerceptionOptions = {
         title: "Perception of Term Reviews",
@@ -77,7 +77,7 @@ function makeGraph(dataObject){
 
 
     const tempProfPerceptionList = dataObject.termPerceptionList;
-    const profPerceptionList = [["Professor Perception"]].concat(tempProfPerceptionList);
+    const profPerceptionList = [["Professor Perception"],[2],[9]].concat(tempProfPerceptionList);
     const profPerceptionData = new google.visualization.arrayToDataTable(profPerceptionList);
     const profPerceptionOptions = {
         title: "Perception of Professor Reviews",

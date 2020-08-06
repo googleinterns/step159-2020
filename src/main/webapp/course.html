@@ -9,7 +9,7 @@
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script src="courseLoader.js"></script>
-    <!-- <link rel="stylesheet" href="course-style.css"/> -->
+    <link rel="stylesheet" href="course-style.css"/>
   </head>
   <body onload="fillTitles()">
     <nav class="navbar navbar-dark bg-dark">
@@ -122,7 +122,7 @@
     </div>
 
 
-    <div class = "container-xl form-container">
+    <!-- <div class = "container-xl form-container">
       <h1 class="text-center"> Your Review </h1>
       <form action="/data" method="POST">
           <div class="form-row">
@@ -177,8 +177,82 @@
           </div>
           <input type="submit" />
         </form>
-    </div>
+    </div> -->
 
+    <div id="form-container">
+      <form action="/data" method="POST" id="termForm">
+        <div class="container">
+          <p>Rate your term and professors!</p>
+        </div>
+
+        <div class="container">
+          <p>Rate your term:</p>
+          <p>Rate your professor</p>
+        </div>
+
+        <div class="container">
+          <textarea
+            name="term-input"
+            maxlength="1500"
+            placeholder="Write opinion on term here"
+          ></textarea>
+          <textarea
+            name="prof-input"
+            maxlength="1500"
+            placeholder="Write opinion on professor here"
+          ></textarea>
+        </div>
+
+        <div class="container">
+          <p>How would you rate this term?</p>
+          <p>How would you rate the professor?</p>
+        </div>
+
+        <div class="container">
+          <input
+            type="number"
+            id="rating-term"
+            name="rating-term"
+            min="0"
+            max="5"
+            placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
+          />
+          <input
+            type="number"
+            id="rating-prof"
+            name="rating-prof"
+            min="0"
+            max="5"
+            placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
+          />
+        </div>
+
+        <div class="container">
+          <p>How many hours per week did you spend on this term?</p>
+          <p>How difficult did you find this term?</p>
+        </div>
+
+        <div class="container">
+          <input
+            type="number"
+            id="hoursOfWork"
+            name="hoursOfWork"
+            min="1"
+            placeholder="Hours (include in-class time)"
+          />
+          <input
+            type="number"
+            id="difficulty"
+            name="difficulty"
+            min="0"
+            max="5"
+            placeholder="Difficulty (From 0 = Very Easy to 5 = Very Hard)"
+          />
+        </div>
+        <input type="submit" />
+      </form>
+    </div>
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
