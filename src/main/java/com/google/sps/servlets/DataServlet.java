@@ -87,7 +87,7 @@ public class DataServlet extends HttpServlet {
                 request.getParameter("school-name"),
                 request.getParameter("course-name"),
                 request.getParameter("term"),
-                request.getParameter("num-units"),
+                Long.parseLong(request.getParameter("num-units")),
                 request.getParameter("prof-name"))
             .getKey();
 
@@ -127,7 +127,7 @@ public class DataServlet extends HttpServlet {
       String termName,
       Long units,
       String profName) {
-    Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
+    Key schoolKey = queryEntities(db, "School", "school-name", schoolName).get(0).getKey();
 
     List<Filter> filters = new ArrayList();
     Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
