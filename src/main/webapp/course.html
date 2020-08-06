@@ -18,8 +18,8 @@
 
     <div class="jumbotron jumbotron-fluid my-0">
       <div class="container">
-        <h1 class="display-4 text-center course-name" id = "course-name">Course Name</h1>
-        <p class="lead text-center term-name" id="term-name">Term Name</p>
+        <h1 class="display-4 text-center" id = "course-name">Course Name</h1>
+        <p class="lead text-center" id="term-name">Term Name</p>
       </div>
     </div>
 
@@ -27,19 +27,20 @@
       <div class="flex-child" id="hours-chart" >
         Flex Column 1
       </div>
-      <div class="flex-child" id="difficulty-chart">
+      <div class="flex-child" id="diff-chart">
         Flex Column 2
       </div>
     </div>
 
     <div class="flex-container">
-      <div class="flex-child" id="hours-chart2" >
+      <div class="flex-child" id="prof-chart" >
         Flex Column 1
       </div>
-      <div class="flex-child" id="difficulty-chart2">
+      <div class="flex-child" id="term-chart">
         Flex Column 2
       </div>
     </div>
+
     <div class="my-3 p-3 bg-white course-comments">
         <h1 class="border-bottom border-gray p-5 mb-0 text-center">Course Comments</h1>
         <div class="media text-muted pt-3">
@@ -118,6 +119,64 @@
             Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
         </p>
         </div>
+    </div>
+
+
+    <div class = "container-xl form-container">
+      <h1 class="text-center"> Your Review </h1>
+      <form action="/data" method="POST">
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>Rate your term</p>
+                  <textarea class="form-control" name="term-input" maxlength="1500">Write opinion on term here.</textarea>
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How would you rate this term?</p>
+                  <input
+                    type="rating-term"
+                    id="rating-term"
+                    name="rating-term"
+                    min="0"
+                    max="5"
+                    class="form-control"
+                  />
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How many hours/week did you spend on this class?</p>
+                  <input class="form-control" type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How difficult did you find this term?</p>
+                  <input class="form-control" type="number" id="difficulty" name="difficulty" min="0" max="5" />
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>Rate your term</p>
+                  <textarea class="form-control" name="prof-input" maxlength="1500">Write opinion on professor here.</textarea>
+              </div>
+          </div>
+          <div class="form-row">
+              <div class="form-group col-md-12">
+                  <p>How would you rate this term?</p>
+                  <input
+                    type="rating-prof"
+                    id="rating-prof"
+                    name="rating-prof"
+                    min="0"
+                    max="5"
+                    class="form-control"
+                   />
+              </div>
+          </div>
+          <input type="submit" />
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

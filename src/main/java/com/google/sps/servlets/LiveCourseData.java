@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.sps.data.TermDataHolder;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -65,7 +66,7 @@ public class LiveCourseData extends HttpServlet {
     List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
 
     for (Entity rating : termRatings) {
-      dataList.add(rating.getProperty(property));
+      dataList.add(Arrays.asList(rating.getProperty(property)));
     }
     return dataList;
   }
