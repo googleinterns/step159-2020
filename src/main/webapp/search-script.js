@@ -80,7 +80,7 @@ function addCourse() {
   url.searchParams.set("num-units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", schoolName);
-  fetch(url, { method: "POST" });
+  fetch(url, {method:"POST"});
 }
 
 function onSignIn(googleUser) {
@@ -88,6 +88,14 @@ function onSignIn(googleUser) {
   document.getElementById("class-info").classList.remove("hidden");
   document.getElementById("login-box").classList.add("hidden");
   document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
+  // TODO: Figure out how to handle unverified emails on the front-end.
+  const token = googleUser.getAuthResponse().id_token;
+  const url = new URL("/secure", window.location.origin);
+  url.searchParams.set("token", token);
+  fetch(url, {method:"POST"})
+    .then(response => response.json())
+    .then((email) => 
+        document.getElementById("school-name").innerHTML += email); 
 }
 
 function signOut() {

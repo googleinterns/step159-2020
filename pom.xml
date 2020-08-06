@@ -62,12 +62,6 @@
         <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.4.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-testing</artifactId>
       <version>1.9.80</version>
@@ -100,6 +94,11 @@
 	  <groupId>com.googlecode.json-simple</groupId>
 	  <artifactId>json-simple</artifactId>
 	  <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-gson</artifactId>
+      <version>1.23.0</version>
     </dependency>
     <dependency>
      <groupId>com.google.api-client</groupId>
