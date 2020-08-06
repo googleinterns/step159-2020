@@ -1,18 +1,19 @@
-package com.google.sps.servlets;
-
-import com.google.appengine.api.datastore.Key;
+package com.google.sps.data;
 
 public class Course {
   String name;
   String professor;
   Long units;
-  Key term;
+  String term;
+  String school;
 
-  public Course(String name, String professor, Long units, Key term) {
-    name = name;
-    professor = professor;
-    units = units;
-    term = term;
+  public Course(
+      String courseName, String professorName, Long numUnits, String termName, String schoolName) {
+    name = courseName;
+    professor = professorName;
+    units = numUnits;
+    term = termName;
+    school = schoolName;
   }
 
   public String getName() {
@@ -27,7 +28,11 @@ public class Course {
     return units;
   }
 
-  public Key getTerm() {
+  public String getTerm() {
     return term;
+  }
+
+  public String getSchool() {
+    return school;
   }
 }

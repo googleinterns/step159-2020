@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/graph")
 public class ChartsServlet extends HttpServlet {
   private List<Object> entryList = new ArrayList<>();
-  GraphDataObject newEntry = new GraphDataObject("Hours", "Difficulty");
+  GraphDataObject staticEntry = new GraphDataObject("Hours", "Difficulty");
 
   @Override
   public void init() {
@@ -24,20 +24,20 @@ public class ChartsServlet extends HttpServlet {
 
     while (scannerHours.hasNextLine()) {
       String line = scannerHours.nextLine();
-      newEntry.addHour(line);
+      staticEntry.addHour(line);
     }
     scannerHours.close();
 
     while (scannerDifficulty.hasNextLine()) {
       String line = scannerDifficulty.nextLine();
-      newEntry.addDifficulty(line);
+      staticEntry.addDifficulty(line);
     }
     scannerDifficulty.close();
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String dataJSON = makeJSON(newEntry);
+    String dataJSON = makeJSON(staticEntry);
     response.setContentType("application/json;");
     response.getWriter().println(dataJSON);
   }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>School Form</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <p>Add A Course Below</p>
+    <form action="/add-info" method="POST">
+        <p>School Name</p>
+        <textarea name="school-name"></textarea>
+        <p>Course Name</p>
+        <textarea name="course-name"></textarea>
+        <p>Term</p>
+        <textarea name="term"></textarea>
+        <p>Units</p>
+        <input type="number" name="num-units" min="1" max="24">
+        <p>Professor Name</p>
+        <textarea name="prof-name"></textarea>
+    <input type="submit" />
+    </form>
+    <ul id="log"></ul>
+  </body>
+</html> 
