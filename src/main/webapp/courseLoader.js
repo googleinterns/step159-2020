@@ -32,7 +32,7 @@ function makeGraphs(dataObject){
     const hourData = new google.visualization.arrayToDataTable(hoursList)
     const hourOptions = {
         title: "Hours Spent per Week",
-        legend: { position: "none" },
+        legend: {position: "none"},
         vAxis: {title: "# Students"},
         hAxis: {title: "Hours"},
         histogram: {
@@ -48,7 +48,7 @@ function makeGraphs(dataObject){
     const diffData = new google.visualization.arrayToDataTable(diffList)
     const diffOptions = {
         title: "Difficulty of Class",
-        legend: { position: "none" },
+        legend: {position: "none"},
         vAxis: {title: "# Students"},
         hAxis: {title: "Difficulty"},
         histogram: {
@@ -64,7 +64,7 @@ function makeGraphs(dataObject){
     const termPerceptionData = new google.visualization.arrayToDataTable(termPerceptionList);
     const termPerceptionOptions = {
         title: "Perception of Term Reviews",
-        legend: { position: "none" },
+        legend: {position: "none"},
         vAxis: {title: "Perception"},
         hAxis: {title: "Comment Quantity"},
         histogram: {
@@ -80,7 +80,7 @@ function makeGraphs(dataObject){
     const profPerceptionData = new google.visualization.arrayToDataTable(profPerceptionList);
     const profPerceptionOptions = {
         title: "Perception of Professor Reviews",
-        legend: { position: "none" },
+        legend: {position: "none"},
         vAxis: {title: "Perception"},
         hAxis: {title: "Comment Quantity"},
         histogram: {
