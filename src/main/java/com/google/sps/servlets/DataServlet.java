@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -22,7 +23,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 
 /** An item on a todo list. */
 @WebServlet("/data")
@@ -30,7 +30,7 @@ public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
   private final LanguageServiceClient languageService;
-  private final DatastoreService db;
+  private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
   public DataServlet() throws IOException {
     this.languageService = LanguageServiceClient.create();
@@ -127,8 +127,9 @@ public class DataServlet extends HttpServlet {
       String courseName,
       String termName,
       Long units,
-      String profName) {
-    Key schoolKey = queryEntities(db, "School", "school-name", schoolName).get(0).getKey();
+      String profName)
+      throws IOException {
+    Key schoolKey = queryEntities("School", "school-name", schoolName).get(0).getKey();
 
     List<Filter> filters = new ArrayList();
     Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
