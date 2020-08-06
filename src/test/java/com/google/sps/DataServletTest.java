@@ -78,7 +78,12 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingEntity =
-        newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
+        newTermRating
+            .queryEntities(
+                /* entityName */ "Rating", /* propertyName */
+                "reviewer-id", /* propertyValue */
+                "numberOneId")
+            .get(0);
     assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
     assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
@@ -128,7 +133,12 @@ public final class DataServletTest {
     newTermRating.addTermRating(request);
 
     Entity termRatingEntity =
-        newTermRating.queryEntities("Rating", "reviewer-id", "numberOneId").get(0);
+        newTermRating
+            .queryEntities(
+                /* entityName */ "Rating", /* propertyName */
+                "reviewer-id", /* propertyValue */
+                "numberOneId")
+            .get(0);
     assertEquals("I don't like this class.", termRatingEntity.getProperty("comments-term"));
     assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
