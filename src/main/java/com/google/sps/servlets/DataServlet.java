@@ -62,10 +62,17 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     addTermRating(request);
-    String url = request.getPathInfo() + "?" + request.getQueryString();
-    response.setContentType("text/html; charset=UTF-8");
-    response.setCharacterEncoding("UTF-8");
-    response.sendRedirect(url);
+
+    // String s = "school-name=" + request.getParameter("school-name");
+    // String c = "course-name=" + request.getParameter("course-name");
+    // String t = "term=" + request.getParameter("term");
+    // String u = "num-units=" + request.getParameter("num-units");
+    // String p = "prof-name=" + request.getParameter("prof-name");
+
+    // String url = "course.html" + "?" + s + c + t + u + p;
+    // response.setContentType("text/html; charset=UTF-8");
+    // response.setCharacterEncoding("UTF-8");
+    // response.sendRedirect(url);
   }
 
   public void addTermRating(HttpServletRequest request) throws IOException {
@@ -80,9 +87,10 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Gets user ID from URL.
-    String userId = request.getParameter("ID");
-    // Quick change, will modify tests as well after the demo.
+    // // Gets user ID from URL.
+    // String userId = request.getParameter("ID");
+    // // Quick change, will modify tests as well after the demo.
+
     Key currentKey =
         findTerm(
                 db,
@@ -93,8 +101,8 @@ public class DataServlet extends HttpServlet {
                 request.getParameter("prof-name"))
             .getKey();
 
-    // Check whether user has reviewed that term.
-    List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
+    // // Check whether user has reviewed that term.
+    List<Entity> termRatingQueryList = new ArrayList();
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
@@ -102,7 +110,7 @@ public class DataServlet extends HttpServlet {
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
-    termRatingEntity.setProperty("reviewer-id", userId);
+    // termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);
     termRatingEntity.setProperty("hours", workHours);

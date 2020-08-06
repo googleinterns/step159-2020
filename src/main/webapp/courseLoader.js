@@ -103,17 +103,25 @@ function passData(){
     const units = urlParams.get("num-units")
     const schoolName = urlParams.get("school-name")
 
-    const termInput = document.getElementbyName("term-input");
-    const profInput = document.getElementbyName("prof-input");
-    const ratingTerm = document.getElementbyId("rating-term");
-    const ratingProf = document.getElementbyId("rating-prof");
-    const hours = document.getElementbyId("hoursOfWork");
-    const diff = document.getElementbyId("difficulty");
+    const termInput = document.getElementsByName("term-input")[0].value;
+    const profInput = document.getElementsByName("prof-input")[0].value;
+    const ratingTerm = document.getElementById("rating-term").value;
+    const ratingProf = document.getElementById("rating-prof").value;
+    const hours = document.getElementById("hoursOfWork").value;
+    const diff = document.getElementById("difficulty").value;
 
-
-  fetch(`/data?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&rating-term=${ratingTerm}&rating-prof=${ratingProf}&hoursOfWork=${hours}&difficulty=${difficulty}&term-input=${termInput}&prof-input=${profInput}`,{method: "POST"})
-    .then((response) => response.json())
-    .then((data => {
-        console.log("YES")
-    }));
+    const url = new URL("/data", window.location.origin);
+    url.searchParams.set("course-name", courseName);
+    url.searchParams.set("prof-name", profName);
+    url.searchParams.set("num-units", units);
+    url.searchParams.set("term", term);
+    url.searchParams.set("school-name", schoolName);
+    
+    url.searchParams.set("hourOfWork", hours);
+    url.searchParams.set("difficulty", diff);
+    url.searchParams.set("term-input", termInput);
+    url.searchParams.set("prof-input", profInput);
+    url.searchParams.set("rating-term", ratingTerm);
+    url.searchParams.set("rating-prof", ratingProf);
+    fetch(url, { method: "POST" });
 }
