@@ -29,16 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
-  private final LanguageServiceClient languageService;
+  //   private LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-  public DataServlet() throws IOException {
-    this.languageService = LanguageServiceClient.create();
-  }
+  //   public DataServlet() throws IOException {
+  //     this.languageService = LanguageServiceClient.create();
+  //   }
 
-  public DataServlet(LanguageServiceClient languageService) {
-    this.languageService = languageService;
-  }
+  //   public DataServlet(LanguageServiceClient languageService) {
+  //     this.languageService = languageService;
+  //   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -62,7 +62,6 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     addTermRating(request);
-
     String url = request.getPathInfo() + "?" + request.getQueryString();
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
@@ -90,7 +89,7 @@ public class DataServlet extends HttpServlet {
                 request.getParameter("school-name"),
                 request.getParameter("course-name"),
                 request.getParameter("term"),
-                Long.parseLong(request.getParameter("num-units")),
+                Long.valueOf(request.getParameter("num-units")),
                 request.getParameter("prof-name"))
             .getKey();
 
@@ -115,11 +114,12 @@ public class DataServlet extends HttpServlet {
   }
 
   private float getSentimentScore(String feedback) throws IOException {
+    LanguageServiceClient languageService = LanguageServiceClient.create();
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-    Sentiment sentiment = this.languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
-    this.languageService.close();
+    languageService.close();
     return score;
   }
 

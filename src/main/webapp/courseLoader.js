@@ -91,4 +91,29 @@ function makeGraph(dataObject){
     const profPerceptionChart = new google.visualization.Histogram(document.getElementById("prof-chart"));
     profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
 }
-setTimeout(function() { populateData(); }, 3000);
+
+setTimeout(function() { populateData(); }, 0);
+
+function passData(){
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const courseName = urlParams.get("course-name");
+    const term = urlParams.get("term");
+    const profName = urlParams.get("prof-name");
+    const units = urlParams.get("num-units")
+    const schoolName = urlParams.get("school-name")
+
+    const termInput = document.getElementbyName("term-input");
+    const profInput = document.getElementbyName("prof-input");
+    const ratingTerm = document.getElementbyId("rating-term");
+    const ratingProf = document.getElementbyId("rating-prof");
+    const hours = document.getElementbyId("hoursOfWork");
+    const diff = document.getElementbyId("difficulty");
+
+
+  fetch(`/data?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&rating-term=${ratingTerm}&rating-prof=${ratingProf}&hoursOfWork=${hours}&difficulty=${difficulty}&term-input=${termInput}&prof-input=${profInput}`,{method: "POST"})
+    .then((response) => response.json())
+    .then((data => {
+        console.log("YES")
+    }));
+}
