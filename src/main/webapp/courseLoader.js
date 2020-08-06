@@ -1,5 +1,5 @@
-
 google.charts.load("current", { packages: ["corechart"] });
+google.charts.setOnLoadCallback(makeGraphs);
 
 function fillTitles() {
     const queryString = window.location.search;
@@ -26,8 +26,7 @@ function populateData(){
     }));
 }
 
-
-function makeGraph(dataObject){
+function makeGraphs(dataObject){
     const tempHoursList = dataObject.hoursList;
     const hoursList = [["hours"],[3],[8]].concat(tempHoursList);
     const hourData = new google.visualization.arrayToDataTable(hoursList)
@@ -91,8 +90,6 @@ function makeGraph(dataObject){
     const profPerceptionChart = new google.visualization.Histogram(document.getElementById("prof-chart"));
     profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
 }
-
-setTimeout(function() { populateData(); }, 0);
 
 function passData(){
     const queryString = window.location.search;
