@@ -22,13 +22,13 @@ function populateData(){
   fetch(`/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`)
     .then((response) => response.json())
     .then((data => {
-        makeGraph(data);
+        makeGraphs(data);
     }));
 }
 
 function makeGraphs(dataObject){
     const tempHoursList = dataObject.hoursList;
-    const hoursList = [["hours"],[3],[8]].concat(tempHoursList);
+    const hoursList = [["hours"], /* dummyHourRating */ [3], /* dummyHourRating */ [8]].concat(tempHoursList);
     const hourData = new google.visualization.arrayToDataTable(hoursList)
     const hourOptions = {
         title: "Hours Spent per Week",
@@ -36,7 +36,7 @@ function makeGraphs(dataObject){
         vAxis: {title: "# Students"},
         hAxis: {title: "Hours"},
         histogram: {
-        hideBucketItems: true
+          hideBucketItems: true
         }
       };
     const hourChart = new google.visualization.Histogram(document.getElementById("hours-chart"));
@@ -44,7 +44,7 @@ function makeGraphs(dataObject){
 
 
     const tempDiffList = dataObject.hoursList;
-    const diffList = [["difficulty"],[1],[4]].concat(tempDiffList);
+    const diffList = [["difficulty"], /* dummyDifficultyRating */ [1], /* dummyDifficultyRating */ [4]].concat(tempDiffList);
     const diffData = new google.visualization.arrayToDataTable(diffList)
     const diffOptions = {
         title: "Difficulty of Class",
@@ -52,7 +52,7 @@ function makeGraphs(dataObject){
         vAxis: {title: "# Students"},
         hAxis: {title: "Difficulty"},
         histogram: {
-        hideBucketItems: true
+          hideBucketItems: true
         }
       };
     const diffChart = new google.visualization.Histogram(document.getElementById("diff-chart"));
@@ -60,7 +60,7 @@ function makeGraphs(dataObject){
 
 
     const tempTermPerceptionList = dataObject.termPerceptionList;
-    const termPerceptionList = [["Term Perception"],[11],[5]].concat(tempTermPerceptionList);
+    const termPerceptionList = [["Term Perception"], /* dummyPerceptionRating */ [11], /* dummyPerceptionRating */ [5]].concat(tempTermPerceptionList);
     const termPerceptionData = new google.visualization.arrayToDataTable(termPerceptionList);
     const termPerceptionOptions = {
         title: "Perception of Term Reviews",
@@ -68,15 +68,15 @@ function makeGraphs(dataObject){
         vAxis: {title: "Perception"},
         hAxis: {title: "Comment Quantity"},
         histogram: {
-        hideBucketItems: true
-        }
-      };
+          hideBucketItems: true
+       }
+    };
     const termPerceptionChart = new google.visualization.Histogram(document.getElementById("term-chart"));
     termPerceptionChart.draw(termPerceptionData, termPerceptionOptions);
 
 
     const tempProfPerceptionList = dataObject.termPerceptionList;
-    const profPerceptionList = [["Professor Perception"],[2],[9]].concat(tempProfPerceptionList);
+    const profPerceptionList = [["Professor Perception"], /* dummyPerceptionRating */ [2], /* dummyPerceptionRating */ [9]].concat(tempProfPerceptionList);
     const profPerceptionData = new google.visualization.arrayToDataTable(profPerceptionList);
     const profPerceptionOptions = {
         title: "Perception of Professor Reviews",
@@ -84,12 +84,15 @@ function makeGraphs(dataObject){
         vAxis: {title: "Perception"},
         hAxis: {title: "Comment Quantity"},
         histogram: {
-        hideBucketItems: true
+          hideBucketItems: true
         }
       };
     const profPerceptionChart = new google.visualization.Histogram(document.getElementById("prof-chart"));
     profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
 }
+
+
+//TODO : Move params into request body
 
 function passData(){
     const queryString = window.location.search;
@@ -100,8 +103,8 @@ function passData(){
     const units = urlParams.get("num-units")
     const schoolName = urlParams.get("school-name")
 
-    const termInput = document.getElementsByName("term-input")[0].value;
-    const profInput = document.getElementsByName("prof-input")[0].value;
+    const termInput = document.getElementById("term-input")[0].value;
+    const profInput = document.getElementById("prof-input")[0].value;
     const ratingTerm = document.getElementById("rating-term").value;
     const ratingProf = document.getElementById("rating-prof").value;
     const hours = document.getElementById("hoursOfWork").value;
