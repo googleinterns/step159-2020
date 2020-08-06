@@ -62,6 +62,12 @@
         <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-testing</artifactId>
       <version>1.9.80</version>
@@ -96,15 +102,15 @@
 	  <version>1.1.1</version>
     </dependency>
     <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-translate</artifactId>
-      <version>1.95.0</version>
-    </dependency>
-    <dependency>
      <groupId>com.google.api-client</groupId>
      <artifactId>google-api-client</artifactId>
      <version>1.30.9</version>
-   </dependency>
+    </dependency>
+	<dependency>
+		<groupId>com.google.code.findbugs</groupId>
+		 <artifactId>jsr305</artifactId>
+		 <version>3.0.2</version>
+	</dependency>
   </dependencies>
  
   <build>
@@ -116,10 +122,14 @@
         <artifactId>appengine-maven-plugin</artifactId>
         <version>2.2.0</version>
         <configuration>
-          <!-- TODO: set project ID. -->
           <deploy.projectId>nina-laura-dagm-step-2020</deploy.projectId>
           <deploy.version>1</deploy.version>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
       </plugin>
     <plugin>
       <groupId>com.cosium.code</groupId>
