@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -13,6 +14,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.sps.data.TermDataHolder;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +27,10 @@ public class LiveCourseData extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    TermDataHolder courseData = getAllDataFromTerm(db, request);
+    TermDataHolder coursePageData = getAllDataFromTerm(db, request);
+    String coursePageDataJSON = makeJSON(coursePageData);
+    response.setContentType("application/json;");
+    response.getWriter().println(coursePageDataJSON);
   }
 
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {
@@ -61,7 +66,7 @@ public class LiveCourseData extends HttpServlet {
     List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
 
     for (Entity rating : termRatings) {
-      dataList.add(rating.getProperty(property));
+      dataList.add(Arrays.asList(rating.getProperty(property)));
     }
     return dataList;
   }
@@ -105,5 +110,15 @@ public class LiveCourseData extends HttpServlet {
     Query children = new Query(type).setAncestor(parent);
     List<Entity> result = db.prepare(children).asList(FetchOptions.Builder.withDefaults());
     return result;
+  }
+
+  private String makeJSON(Object changeItem) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String jsonString = mapper.writeValueAsString(changeItem);
+      return jsonString;
+    } catch (Exception e) {
+      return "Could not convert to JSON";
+    }
   }
 }
