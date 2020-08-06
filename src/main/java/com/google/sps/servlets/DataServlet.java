@@ -32,13 +32,7 @@ public class DataServlet extends HttpServlet {
   private final LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-  public DataServlet() throws IOException {
-    this.languageService = LanguageServiceClient.create();
-  }
-
-  public DataServlet(LanguageServiceClient languageService) {
-    this.languageService = languageService;
-  }
+  // Will re-add constructor later for testing.
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -62,9 +56,7 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     addTermRating(request);
-    response.setContentType("text/html; charset=UTF-8");
-    response.setCharacterEncoding("UTF-8");
-    response.sendRedirect("/index.html");
+    // Will add redirect as soon as we figure out URL issue.
   }
 
   public void addTermRating(HttpServletRequest request) throws IOException {
@@ -79,8 +71,9 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Gets user ID from URL.
-    String userId = request.getParameter("ID");
+    // User ID not passed in URL so will have to get other way.
+    // String userId = request.getParameter("ID");
+
     // Quick change, will modify tests as well after the demo.
     Key currentKey =
         findTerm(
@@ -88,12 +81,12 @@ public class DataServlet extends HttpServlet {
                 request.getParameter("school-name"),
                 request.getParameter("course-name"),
                 request.getParameter("term"),
-                Long.parseLong(request.getParameter("num-units")),
+                Long.valueOf(request.getParameter("num-units")),
                 request.getParameter("prof-name"))
             .getKey();
 
     // Check whether user has reviewed that term.
-    List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
+    List<Entity> termRatingQueryList = new ArrayList();
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
@@ -101,7 +94,6 @@ public class DataServlet extends HttpServlet {
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
-    termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);
     termRatingEntity.setProperty("hours", workHours);
@@ -113,11 +105,12 @@ public class DataServlet extends HttpServlet {
   }
 
   private float getSentimentScore(String feedback) throws IOException {
+    LanguageServiceClient languageService = LanguageServiceClient.create();
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-    Sentiment sentiment = this.languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
-    this.languageService.close();
+    languageService.close();
     return score;
   }
 
