@@ -1,67 +1,145 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Capstone</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
     <script
       type="text/javascript"
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
-    <script src="script.js"></script>
+    <script src="courseLoader.js"></script>
+    <link rel="stylesheet" href="course-style.css"/>
   </head>
-  <body>
-    <p>Hello</p>
-    <div id="hours-chart" style="width: 900px; height: 500px"></div>
-    <div id="difficulty-chart" style="width: 900px; height: 500px"></div>
+  <body onload="fillTitles()">
+    <nav class="navbar navbar-dark bg-dark">
+      <span class="navbar-brand mb-0 h1">App Name</span>
+    </nav>
 
-    <p>Rate your term and professors!</p>
-    <form action="/data" method="POST">
-      <p>Rate your term:</p>
+    <div class="jumbotron jumbotron-fluid my-0">
+      <div class="container">
+        <h1 class="display-4 text-center" id = "course-name">Course Name</h1>
+        <p class="lead text-center" id="term-name">Term Name</p>
+      </div>
+    </div>
 
-      <textarea name="term-input" maxlength="1500">
-      Write opinion on term here.
-      </textarea>
+    <div class="flex-container">
+      <div class="flex-child" id="hours-chart" ></div>
+      <div class="flex-child" id="diff-chart"></div>
+    </div>
 
-      <p>How would you rate this term?</p>
-      <input
-        type="number"
-        id="rating-term"
-        name="rating-term"
-        min="0"
-        max="5"
-      />
-      <label for="rating-term">
-        Term Rating (From 0 = Terrible to 5 = Excellent)
-      </label>
+    <div class="flex-container">
+      <div class="flex-child" id="prof-chart" ></div>
+      <div class="flex-child" id="term-chart"></div>
+    </div>
 
-      <p>How many hours per week did you spend on this term?</p>
-      <input type="number" id="hoursOfWork" name="hoursOfWork" min="1" />
-      <label for="hoursOfWork">Hours (include in-class time)</label>
+    <div class="my-3 p-3 bg-white course-comments">
+        <h1 class="border-bottom border-gray p-5 mb-0 text-center">Course Comments</h1>
+        <div class="media text-muted pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">@username</strong>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+        </div>
+        <div class="media text-muted pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">@username</strong>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+        </div>
+    </div>
 
-      <p>How difficult did you find this term?</p>
-      <input type="number" id="difficulty" name="difficulty" min="0" max="5" />
-      <label for="difficulty">
-        Difficulty (From 0 = Very Easy to 5 = Very Hard)
-      </label>
+    <div class="my-3 p-3 bg-white prof-comments">
+        <h1 class="border-bottom border-gray p-5 mb-0 text-center">Professor Comments</h1>
+        <div class="media text-muted pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">@username</strong>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+        </div>
+        <div class="media text-muted pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">@username</strong>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </div>
+    </div>
 
-      <textarea name="prof-input" maxlength="1500">
-      Write opinion on professor here.
-      </textarea>
+    <div id="form-container">
+      <form id="term-form">
+        <div class="container pb-5">
+          <h1 class="text-center">Rate your term and professors!</h1>
+        </div>
 
-      <p>How would you rate the professor?</p>
-      <input
-        type="number"
-        id="rating-prof"
-        name="rating-prof"
-        min="0"
-        max="5"
-      />
-      <label for="rating-prof">
-        Professor Rating (From 0 = Terrible to 5 = Excellent)
-      </label>
-      <input type="submit" />
-    </form>
-    <ul id="log"></ul>
+        <div class="container">
+          <p>Rate your term:</p>
+          <p>Rate your professor</p>
+        </div>
+
+        <div class="container">
+          <textarea
+            name="term-input"
+            maxlength="1500"
+            placeholder="Write opinion on term here"
+          ></textarea>
+          <textarea
+            name="prof-input"
+            maxlength="1500"
+            placeholder="Write opinion on professor here"
+          ></textarea>
+        </div>
+
+        <div class="container">
+          <p>How would you rate this term?</p>
+          <p>How would you rate the professor?</p>
+        </div>
+
+        <div class="container">
+          <input
+            type="number"
+            id="rating-term"
+            name="rating-term"
+            min="0"
+            max="5"
+            placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
+          />
+          <input
+            type="number"
+            id="rating-prof"
+            name="rating-prof"
+            min="0"
+            max="5"
+            placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
+          />
+        </div>
+
+        <div class="container">
+          <p>How many hours per week did you spend on this term?</p>
+          <p>How difficult did you find this term?</p>
+        </div>
+
+        <div class="container pb-5">
+          <input
+            type="number"
+            id="hoursOfWork"
+            name="hoursOfWork"
+            min="1"
+            placeholder="Hours (include in-class time)"
+          />
+          <input
+            type="number"
+            id="difficulty"
+            name="difficulty"
+            min="0"
+            max="5"
+            placeholder="Difficulty (From 0 = Very Easy to 5 = Very Hard)"
+          />
+        </div>
+      </form>
+      <button onclick="passData()" type="button" class="btn btn-lg btn-outline-success">Submit</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
   </body>
-</html>
+</html> 
