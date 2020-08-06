@@ -68,16 +68,18 @@ public final class SearchServletTest {
             /* name */ "CS 105",
             /* professor */ "Smith",
             /* term */ "Spring 2020",
-            /* units */ "1,2,3");
+            /* units */ "1,2,3"
+            /* school */ ,
+            "stanford");
     List<Course> expectedCourses = new ArrayList<>();
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 1);
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020"));
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 1, "stanford");
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 2);
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020"));
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 2, "stanford");
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 106", "Smith", "Spring 2020", 3);
+    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford");
 
     List<Course> courses = searchObject.getHelper(request);
     assertEqualsCourseArrays(courses, expectedCourses);
@@ -88,53 +90,53 @@ public final class SearchServletTest {
   public void GetCourses_NoParamsSet() {
 
     request =
-        createRequest(request, /*name*/ "", /*professor*/ "", /*term*/ "select", /*units*/ "");
+        createRequest(
+            request,
+            /* name */ "",
+            /* professor */ "",
+            /* term */ "",
+            /* units */ "",
+            /* school */ "stanford");
     List<Course> expectedCourses = new ArrayList<>();
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 1);
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020"));
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 1, "stanford");
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 2);
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020"));
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 2, "stanford");
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 106", "Smith", "Spring 2020", 3);
-    expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020"));
+    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford");
+    expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020", "stanford"));
 
     List<Course> courses = searchObject.getHelper(request);
     assertEqualsCourseArrays(courses, expectedCourses);
   }
 
-  private void addCourseEntityWithList(
-      String name, String professor, String term, int units, List<Entity> entities, boolean toAdd) {
+  private void addCourseEntity(
+      String name, String professor, String term, int units, String school) {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    Entity entity = new Entity("Course");
+    Entity entity = new Entity("Course-Info");
     entity.setProperty("name", name);
     entity.setProperty("professor", professor);
     entity.setProperty("units", units);
     entity.setProperty("term", term);
-    db.put(entity);
-    if (toAdd) {
-      entities.add(entity);
-    }
-  }
-
-  private void addCourseEntity(String name, String professor, String term, int units) {
-    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    Entity entity = new Entity("Course");
-    entity.setProperty("name", name);
-    entity.setProperty("professor", professor);
-    entity.setProperty("units", units);
-    entity.setProperty("term", term);
+    entity.setProperty("school", school);
     db.put(entity);
   }
 
   private HttpServletRequest createRequest(
-      HttpServletRequest request, String name, String professor, String term, String units) {
+      HttpServletRequest request,
+      String name,
+      String professor,
+      String term,
+      String units,
+      String school) {
     request = Mockito.mock(HttpServletRequest.class);
     when(request.getParameter("courseName")).thenReturn(name);
     when(request.getParameter("profName")).thenReturn(professor);
     when(request.getParameter("term")).thenReturn(term);
     when(request.getParameter("units")).thenReturn(units);
+    when(request.getParameter("school-name")).thenReturn(school);
     return request;
   }
 
@@ -147,6 +149,7 @@ public final class SearchServletTest {
       assertEquals(actual.getProfessor(), expected.getProfessor());
       assertEquals(actual.getUnits(), expected.getUnits());
       assertEquals(actual.getTerm(), expected.getTerm());
+      assertEquals(actual.getSchool(), expected.getSchool());
     }
   }
 }

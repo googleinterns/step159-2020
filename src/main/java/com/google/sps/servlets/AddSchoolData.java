@@ -43,8 +43,8 @@ public class AddSchoolData extends HttpServlet {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
-    String profName = request.getParameter("professor-name");
-    Long units = Long.parseLong(request.getParameter("units"));
+    String profName = request.getParameter("prof-name");
+    Long units = Long.parseLong(request.getParameter("num-units"));
 
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
     Boolean isNewCourse = isNewCourseDetector(courseName);
@@ -152,11 +152,11 @@ public class AddSchoolData extends HttpServlet {
       if (course != null) {
         db.put(course);
       }
-      if (term != null) {
-        db.put(term);
-      }
       if (professor != null) {
         db.put(professor);
+      }
+      if (term != null) {
+        db.put(term);
       }
     } catch (DatastoreFailureException | IllegalArgumentException e) {
       throw e;
