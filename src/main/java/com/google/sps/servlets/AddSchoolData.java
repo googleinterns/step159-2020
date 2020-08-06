@@ -152,11 +152,11 @@ public class AddSchoolData extends HttpServlet {
       if (course != null) {
         db.put(course);
       }
-      if (term != null) {
-        db.put(term);
-      }
       if (professor != null) {
         db.put(professor);
+      }
+      if (term != null) {
+        db.put(term);
       }
     } catch (DatastoreFailureException | IllegalArgumentException e) {
       throw e;
