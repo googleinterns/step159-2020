@@ -108,21 +108,24 @@ public final class LiveCourseDataTest {
         /* professorComment */ "Terrible",
         /* parentEntity */ parent);
 
-    List<Object> expectedHoursList = new ArrayList(Arrays.asList((long) 12));
-    List<Object> expectedDifficultyList = new ArrayList(Arrays.asList((long) 7));
-    List<Object> expectedTermScoreList = new ArrayList(Arrays.asList((long) 8));
-    List<Object> expecyedProfessorScoreList = new ArrayList(Arrays.asList((long) 9));
-    List<Object> expectedTermPerceptionList = new ArrayList(Arrays.asList((double) 0.82));
-    List<Object> expectedProfessorPerceptionList = new ArrayList(Arrays.asList((double) 0.8));
-    List<Object> expectedTermCommentsList = new ArrayList(Arrays.asList("Terrible"));
-    List<Object> expectedProfessorCommentsList = new ArrayList(Arrays.asList("Great"));
+    List<Object> expectedHoursList = new ArrayList(Arrays.asList(Arrays.asList((long) 12)));
+    List<Object> expectedDifficultyList = new ArrayList(Arrays.asList(Arrays.asList((long) 7)));
+    List<Object> expectedTermScoreList = new ArrayList(Arrays.asList(Arrays.asList((long) 8)));
+    List<Object> expectedProfessorScoreList = new ArrayList(Arrays.asList(Arrays.asList((long) 9)));
+    List<Object> expectedTermPerceptionList =
+        new ArrayList(Arrays.asList(Arrays.asList((double) 0.82)));
+    List<Object> expectedProfessorPerceptionList =
+        new ArrayList(Arrays.asList(Arrays.asList((double) 0.8)));
+    List<Object> expectedTermCommentsList = new ArrayList(Arrays.asList(Arrays.asList("Terrible")));
+    List<Object> expectedProfessorCommentsList =
+        new ArrayList(Arrays.asList(Arrays.asList("Great")));
 
     TermDataHolder answer = liveCourseData.getAllDataFromTerm(db, request);
 
     assertEquals(expectedHoursList, answer.getHoursList());
     assertEquals(expectedDifficultyList, answer.getDifficultyList());
     assertEquals(expectedTermScoreList, answer.getTermScoreList());
-    assertEquals(expecyedProfessorScoreList, answer.getProfessorScoreList());
+    assertEquals(expectedProfessorScoreList, answer.getProfessorScoreList());
     assertEquals(expectedTermPerceptionList, answer.getTermPerceptionList());
     assertEquals(expectedProfessorPerceptionList, answer.getProfessorPerceptionList());
     assertEquals(expectedTermCommentsList, answer.getTermCommentsList());
