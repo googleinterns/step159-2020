@@ -62,17 +62,6 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     addTermRating(request);
-
-    // String s = "school-name=" + request.getParameter("school-name");
-    // String c = "course-name=" + request.getParameter("course-name");
-    // String t = "term=" + request.getParameter("term");
-    // String u = "num-units=" + request.getParameter("num-units");
-    // String p = "prof-name=" + request.getParameter("prof-name");
-
-    // String url = "course.html" + "?" + s + c + t + u + p;
-    // response.setContentType("text/html; charset=UTF-8");
-    // response.setCharacterEncoding("UTF-8");
-    // response.sendRedirect(url);
   }
 
   public void addTermRating(HttpServletRequest request) throws IOException {
