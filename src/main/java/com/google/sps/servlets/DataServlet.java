@@ -5,7 +5,6 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -30,6 +29,7 @@ public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
   private final LanguageServiceClient languageService;
+  private final DatastoreService db;
 
   public DataServlet() throws IOException {
     this.languageService = LanguageServiceClient.create();
@@ -80,8 +80,16 @@ public class DataServlet extends HttpServlet {
 
     // Gets user ID from URL.
     String userId = request.getParameter("ID");
-    // Gets term key from URL.
-    Key currentTermKey = KeyFactory.stringToKey(request.getParameter("term"));
+    // Quick change, will modify tests as well after the demo.
+    Key currentKey =
+        findTerm(
+                db,
+                request.getParameter("school-name"),
+                request.getParameter("course-name"),
+                request.getParameter("term"),
+                request.getParameter("num-units"),
+                request.getParameter("prof-name"))
+            .getKey();
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = queryEntities("Rating", "reviewer-id", userId);
@@ -110,6 +118,33 @@ public class DataServlet extends HttpServlet {
     float score = sentiment.getScore();
     this.languageService.close();
     return score;
+  }
+
+  private Entity findTerm(
+      DatastoreService db,
+      String schoolName,
+      String courseName,
+      String termName,
+      Long units,
+      String profName) {
+    Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
+
+    List<Filter> filters = new ArrayList();
+    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
+    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
+    filters.add(courseFilter);
+    filters.add(unitFilter);
+
+    Query courseQuery =
+        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
+    Key courseKey =
+        db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
+
+    Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
+    Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
+    Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
+
+    return foundTerm;
   }
 
   public List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
