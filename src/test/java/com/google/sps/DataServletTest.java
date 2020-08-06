@@ -80,9 +80,9 @@ public final class DataServletTest {
     Entity termRatingEntity =
         newTermRating
             .queryEntities(
-                /* entityName */ "Rating", /* propertyName */
-                "reviewer-id", /* propertyValue */
-                "numberOneId")
+                /* entityName */ "Rating",
+                /* propertyName */ "reviewer-id",
+                /* propertyValue */ "numberOneId")
             .get(0);
     assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
     assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
@@ -135,9 +135,9 @@ public final class DataServletTest {
     Entity termRatingEntity =
         newTermRating
             .queryEntities(
-                /* entityName */ "Rating", /* propertyName */
-                "reviewer-id", /* propertyValue */
-                "numberOneId")
+                /* entityName */ "Rating",
+                /* propertyName */ "reviewer-id",
+                /* propertyValue */ "numberOneId")
             .get(0);
     assertEquals("I don't like this class.", termRatingEntity.getProperty("comments-term"));
     assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
