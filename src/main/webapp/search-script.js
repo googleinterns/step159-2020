@@ -82,3 +82,18 @@ function addCourse() {
   url.searchParams.set("school-name", schoolName);
   fetch(url, { method: "POST" });
 }
+
+function onSignIn(googleUser) {
+  const profile = googleUser.getBasicProfile();
+  document.getElementById("class-info").classList.remove("hidden");
+  document.getElementById("login-box").classList.add("hidden");
+  document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
+}
+
+function signOut() {
+  const auth2 = gapi.auth2.getAuthInstance();
+  const profile = auth2.currentUser.get().getBasicProfile();
+  auth2.signOut();
+  document.getElementById("class-info").classList.add("hidden");
+  document.getElementById("login-box").classList.remove("hidden");
+}
