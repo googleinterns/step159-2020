@@ -26,6 +26,10 @@ function populateData(){
     }));
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+  populateData();
+});
+
 function makeGraphs(dataObject){
     const tempHoursList = dataObject.hoursList;
     const hoursList = [["hours"], /* dummyHourRating */ [3], /* dummyHourRating */ [8]].concat(tempHoursList);
@@ -43,7 +47,7 @@ function makeGraphs(dataObject){
     hourChart.draw(hourData, hourOptions);
 
 
-    const tempDiffList = dataObject.hoursList;
+    const tempDiffList = dataObject.difficultyList;
     const diffList = [["difficulty"], /* dummyDifficultyRating */ [1], /* dummyDifficultyRating */ [4]].concat(tempDiffList);
     const diffData = new google.visualization.arrayToDataTable(diffList)
     const diffOptions = {
