@@ -83,38 +83,35 @@ function addCourse() {
   fetch(url, {method:"POST"});
 }
 
-function onSignIn(googleUser) {
+async function onSignIn(googleUser) {
   const profile = googleUser.getBasicProfile();
-  document.getElementById("class-info").classList.remove("hidden");
-  document.getElementById("login-box").classList.add("hidden");
-  document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
   const token = googleUser.getAuthResponse().id_token;
-  const url = new URL("/secure", window.location.origin);
+  const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
   fetch(url, {method:"POST"})
     .then(response => response.json()) 
     .then((id) => {
-        if (id == "Unsecure email.") {
-            signOut();
-            const box = document.getElementById("login-box");
-            box.innerHTML = "Email not verified. Try again.";
+        if (id.verified) { // Successful sign-in.
+            document.getElementById("class-info").classList.remove("hidden");
+            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;    
+        } else { 
+            document.getElementById("login-box").innerHTML = "Email not verified. Try again.";
         }
     });
 }
 
-/* Returns the backend-generated ID of a user. */
-function verify() {
+/* Returns a Promise for the backend-generated ID of a user. */
+async function verify() {
     const auth2 = gapi.auth2.getAuthInstance();
     const googleUser = auth2.currentUser.get();
     const token = googleUser.getAuthResponse().id_token;
-    const url = new URL("/secure", window.location.origin);
+    const url = new URL("/login", window.location.origin);
     url.searchParams.set("token", token);
-    fetch(url, {method:"POST"})
-        .then(response => response.json())
-        .then((id) => {
-            return id;
-        });
-             
+    const response = await fetch(url, {method:"POST"})
+    const userInfo = await response.json();
+    const id = userInfo.id;
+    return id;   
 }
 
 function signOut() {

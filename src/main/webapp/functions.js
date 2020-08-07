@@ -38,7 +38,3 @@ function makeGraph() {
       diffChart.draw(difficultyData, diffOptions);
     });
 }
-
-function loadBody() {
-  verifyLogin();
-}
