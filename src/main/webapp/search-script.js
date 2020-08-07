@@ -88,7 +88,6 @@ function onSignIn(googleUser) {
   document.getElementById("class-info").classList.remove("hidden");
   document.getElementById("login-box").classList.add("hidden");
   document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
-  // TODO: Figure out how to handle unverified emails on the front-end.
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/secure", window.location.origin);
   url.searchParams.set("token", token);
@@ -103,6 +102,7 @@ function onSignIn(googleUser) {
     });
 }
 
+/* Returns the backend-generated ID of a user. */
 function verify() {
     const auth2 = gapi.auth2.getAuthInstance();
     const googleUser = auth2.currentUser.get();
