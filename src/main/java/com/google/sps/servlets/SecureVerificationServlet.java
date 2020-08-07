@@ -31,7 +31,7 @@ public class SecureVerificationServlet extends HttpServlet {
       if (idToken != null) {
         Payload payload = idToken.getPayload();
         String userId = payload.getSubject();
-        String userJson = new Gson().toJson(payload.getEmail());
+        String userJson = new Gson().toJson(userId);
         response.setContentType("application/json;");
         response.getWriter().println(userJson);
       }

@@ -93,9 +93,28 @@ function onSignIn(googleUser) {
   const url = new URL("/secure", window.location.origin);
   url.searchParams.set("token", token);
   fetch(url, {method:"POST"})
-    .then(response => response.json())
-    .then((email) => 
-        document.getElementById("school-name").innerHTML += email); 
+    .then(response => response.json()) 
+    .then((id) => {
+        if (id == "Unsecure email.") {
+            signOut();
+            const box = document.getElementById("login-box");
+            box.innerHTML = "Email not verified. Try again.";
+        }
+    });
+}
+
+function verify() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    const googleUser = auth2.currentUser.get();
+    const token = googleUser.getAuthResponse().id_token;
+    const url = new URL("/secure", window.location.origin);
+    url.searchParams.set("token", token);
+    fetch(url, {method:"POST"})
+        .then(response => response.json())
+        .then((id) => {
+            return id;
+        });
+             
 }
 
 function signOut() {
