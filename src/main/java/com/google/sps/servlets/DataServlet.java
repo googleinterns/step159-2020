@@ -16,6 +16,7 @@ import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +24,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** An item on a todo list. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
-  private final LanguageServiceClient languageService;
+  private LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+  private String schoolName, courseName, profName, termName, termFeedback, professorFeedback;
+  private Long units, termRating, professorRating, workHours, difficulty;
 
   // Will re-add constructor later for testing.
 
@@ -61,12 +67,39 @@ public class DataServlet extends HttpServlet {
 
   public void addTermRating(HttpServletRequest request) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    String termFeedback = request.getParameter("term-input");
-    Long termRating = Long.parseLong(request.getParameter("rating-term"));
-    Long workHours = Long.parseLong(request.getParameter("hoursOfWork"));
-    Long difficulty = Long.parseLong(request.getParameter("difficulty"));
-    String professorFeedback = request.getParameter("prof-input");
-    Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
+    // String termFeedback = request.getParameter("term-input");
+    // Long termRating = Long.parseLong(request.getParameter("rating-term"));
+    // Long workHours = Long.parseLong(request.getParameter("hoursOfWork"));
+    // Long difficulty = Long.parseLong(request.getParameter("difficulty"));
+    // String professorFeedback = request.getParameter("prof-input");
+    // Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
+    StringBuffer jb = new StringBuffer();
+    String line = null;
+    try {
+      BufferedReader reader = request.getReader();
+      while ((line = reader.readLine()) != null) jb.append(line);
+    } catch (Exception exception) {
+      /*report an error*/
+    }
+
+    try {
+      JSONObject jsonObject = HTTP.toJSONObject(jb.toString());
+
+      schoolName = jsonObject.getString("school-name");
+      courseName = jsonObject.getString("course-name");
+      profName = jsonObject.getString("prof-name");
+      termName = jsonObject.getString("term");
+      units = (long) jsonObject.getFloat("units");
+      termFeedback = jsonObject.getString("term-input");
+      professorFeedback = jsonObject.getString("prof-input");
+      termRating = (long) jsonObject.getFloat("term-rating");
+      professorRating = (long) jsonObject.getFloat("prof-rating");
+      workHours = (long) jsonObject.getFloat("hours");
+      difficulty = (long) jsonObject.getFloat("difficulty");
+    } catch (JSONException exception) {
+      // Did not work.
+      throw new IOException("Error parsing JSON request string");
+    }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
@@ -75,7 +108,7 @@ public class DataServlet extends HttpServlet {
     // String userId = request.getParameter("ID");
 
     // Quick change, will modify tests as well after the demo.
-    Key currentKey =
+    currentTermKey =
         findTerm(
                 db,
                 request.getParameter("school-name"),

@@ -1,15 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
+      integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
+      crossorigin="anonymous"
+    />
     <script
       type="text/javascript"
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script src="courseLoader.js"></script>
-    <link rel="stylesheet" href="course-style.css"/>
+    <link rel="stylesheet" href="course-style.css" />
   </head>
   <body onload="fillTitles()">
     <nav class="navbar navbar-dark bg-dark">
@@ -18,54 +26,67 @@
 
     <div class="jumbotron jumbotron-fluid my-0">
       <div class="container">
-        <h1 class="display-4 text-center" id = "course-name">Course Name</h1>
+        <h1 class="display-4 text-center" id="course-name">Course Name</h1>
         <p class="lead text-center" id="term-name">Term Name</p>
       </div>
     </div>
 
     <div class="flex-container">
-      <div class="flex-child" id="hours-chart" ></div>
+      <div class="flex-child" id="hours-chart"></div>
       <div class="flex-child" id="diff-chart"></div>
     </div>
 
     <div class="flex-container">
-      <div class="flex-child" id="prof-chart" ></div>
+      <div class="flex-child" id="prof-chart"></div>
       <div class="flex-child" id="term-chart"></div>
     </div>
 
     <div class="my-3 p-3 bg-white course-comments">
-        <h1 class="border-bottom border-gray p-5 mb-0 text-center">Course Comments</h1>
-        <div class="media text-muted pt-3">
+      <h1 class="border-bottom border-gray p-5 mb-0 text-center">
+        Course Comments
+      </h1>
+      <div class="media text-muted pt-3">
         <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-            <strong class="d-block text-gray-dark">@username</strong>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+          <strong class="d-block text-gray-dark">@username</strong>
+          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
+          massa justo sit amet risus.
         </p>
-        </div>
-        <div class="media text-muted pt-3">
+      </div>
+      <div class="media text-muted pt-3">
         <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-            <strong class="d-block text-gray-dark">@username</strong>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+          <strong class="d-block text-gray-dark">@username</strong>
+          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
+          massa justo sit amet risus.
         </p>
-        </div>
+      </div>
     </div>
 
     <div class="my-3 p-3 bg-white prof-comments">
-        <h1 class="border-bottom border-gray p-5 mb-0 text-center">Professor Comments</h1>
-        <div class="media text-muted pt-3">
+      <h1 class="border-bottom border-gray p-5 mb-0 text-center">
+        Professor Comments
+      </h1>
+      <div class="media text-muted pt-3">
         <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-            <strong class="d-block text-gray-dark">@username</strong>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+          <strong class="d-block text-gray-dark">@username</strong>
+          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
+          massa justo sit amet risus.
         </p>
-        </div>
-        <div class="media text-muted pt-3">
+      </div>
+      <div class="media text-muted pt-3">
         <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-            <strong class="d-block text-gray-dark">@username</strong>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-        </div>
+          <strong class="d-block text-gray-dark">@username</strong>
+          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
+          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
+          massa justo sit amet risus.
+        </p>
+      </div>
     </div>
 
     <div id="form-container">
-      <form id="term-form">
+      <div id="termForm">
         <div class="container pb-5">
           <h1 class="text-center">Rate your term and professors!</h1>
         </div>
@@ -77,13 +98,13 @@
 
         <div class="container">
           <textarea
-            id = "term-input"
+            id="term-input"
             name="term-input"
             maxlength="1500"
             placeholder="Write opinion on term here"
           ></textarea>
           <textarea
-            id = "prof-input"
+            id="prof-input"
             name="prof-input"
             maxlength="1500"
             placeholder="Write opinion on professor here"
@@ -136,12 +157,39 @@
             placeholder="Difficulty (From 0 = Very Easy to 5 = Very Hard)"
           />
         </div>
-      </form>
-      <button onclick="passData()" type="button" class="btn btn-lg btn-outline-success">Submit</button>
+
+        <div id="hidden_values">
+          <input type="hidden" id="school-name" name="school-name" value="" />
+          <input type="hidden" id="course-name" name="course-name" value="" />
+          <input type="hidden" id="term" name="term" value="" />
+          <input type="hidden" id="prof-name" name="prof-name" value="" />
+          <input type="hidden" id="num-units" name="num-units" value="" />
+        </div>
+
+        <button
+          onclick="postDataForm()"
+          type="button"
+          class="btn btn-lg btn-outline-success"
+        >
+          Submit
+        </button>
+      </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"
+      integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
+      crossorigin="anonymous"
+    ></script>
   </body>
-</html> 
+</html>
