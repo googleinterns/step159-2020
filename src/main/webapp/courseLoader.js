@@ -149,8 +149,8 @@ function storeData() {
   data["units"] = units;
   data["school-name"] = schoolName;
 
-  const termInput = document.getElementsByName("term-input")[0].value;
-  const profInput = document.getElementsByName("prof-input")[0].value;
+  const termInput = document.getElementById("term-input").value;
+  const profInput = document.getElementById("prof-input").value;
   const ratingTerm = document.getElementById("rating-term").value;
   const ratingProf = document.getElementById("rating-prof").value;
   const hours = document.getElementById("hoursOfWork").value;
