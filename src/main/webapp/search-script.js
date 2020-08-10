@@ -88,17 +88,15 @@ async function onSignIn(googleUser) {
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
-  fetch(url, {method:"POST"})
-    .then(response => response.json()) 
-    .then((id) => {
-        if (id.verified) { // Successful sign-in.
-            document.getElementById("class-info").classList.remove("hidden");
-            document.getElementById("login-box").classList.add("hidden");
-            document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;    
-        } else { 
-            document.getElementById("login-box").innerHTML = "Email not verified. Try again.";
-        }
-    });
+  const response = await fetch(url, {method:"POST"});
+  const id = await response.json();
+    if (id.verified) { // Successful sign-in.
+        document.getElementById("class-info").classList.remove("hidden");
+        document.getElementById("login-box").classList.add("hidden");
+        document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;   
+    } else { 
+        document.getElementById("login-box").innerHTML = "Email not verified. Try again.";
+    }
 }
 
 /* Returns a Promise for the backend-generated ID of a user. */
