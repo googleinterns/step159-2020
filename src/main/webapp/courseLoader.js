@@ -1,4 +1,3 @@
-let termData;
 google.charts.load("current", { packages: ["corechart"] });
 
 function fillTitles() {
@@ -24,8 +23,7 @@ function populateData() {
   )
     .then((response) => response.json())
     .then((data) => {
-      termData = data;
-      makeGraphs(termData);
+      makeGraphs(data);
     });
 }
 
@@ -33,8 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
   populateData();
 });
 
-function createComment(commentText, flag) {
-  const commentContainer = flag
+function createComment(commentText, isCourse) {
+  const commentContainer = isCourse
     ? document.getElementById("course-comments")
     : document.getElementById("prof-comments");
 
@@ -57,21 +55,21 @@ function createComment(commentText, flag) {
   commentContainer.appendChild(commentWrapper);
 }
 
-function loadComments(commentList, flag) {
+function loadComments(commentList, isCourse) {
   for (let comment of commentList) {
-    createComment(comment, flag);
+    createComment(comment, isCourse);
   }
 }
 
-function makeGraphs(dataObject) {
-  const termCommentsList = dataObject.termCommentsList;
+function makeGraphs(termDataObject) {
+  const termCommentsList = termDataObject.termCommentsList;
   const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
     termCommentsList
   );
-  loadComments(dummyComments, /* true means course comments */ true);
-  loadComments(dummyComments, /* false means professor comments */ false);
+  loadComments(dummyComments, /* isCourse*/ true);
+  loadComments(dummyComments, /* isCourse*/ false);
 
-  const tempHoursList = dataObject.hoursList;
+  const tempHoursList = termDataObject.hoursList;
   const hoursList = [
     ["hours"],
     /* dummyHourRating */ [3],
@@ -93,7 +91,7 @@ function makeGraphs(dataObject) {
   );
   hourChart.draw(hourData, hourOptions);
 
-  const tempDiffList = dataObject.difficultyList;
+  const tempDiffList = termDataObject.difficultyList;
   const diffList = [
     ["difficulty"],
     /* dummyDifficultyRating */ [1],
@@ -114,7 +112,7 @@ function makeGraphs(dataObject) {
   );
   diffChart.draw(diffData, diffOptions);
 
-  const tempTermPerceptionList = dataObject.termPerceptionList;
+  const tempTermPerceptionList = termDataObject.termPerceptionList;
   const termPerceptionList = [
     ["Term Perception"],
     /* dummyPerceptionRating */ [11],
@@ -172,8 +170,8 @@ function passData() {
   const units = urlParams.get("num-units");
   const schoolName = urlParams.get("school-name");
 
-  const termInput = document.getElementById("term-input")[0].value;
-  const profInput = document.getElementById("prof-input")[0].value;
+  const termInput = document.getElementById("term-input").value;
+  const profInput = document.getElementById("prof-input").value;
   const ratingTerm = document.getElementById("rating-term").value;
   const ratingProf = document.getElementById("rating-prof").value;
   const hours = document.getElementById("hoursOfWork").value;
