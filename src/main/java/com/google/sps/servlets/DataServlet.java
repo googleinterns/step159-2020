@@ -24,7 +24,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,18 +61,14 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
     addTermRating(request);
-    // Will add redirect as soon as we figure out URL issue.
+    response.setContentType("text/html; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
   }
 
   public void addTermRating(HttpServletRequest request) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    // String termFeedback = request.getParameter("term-input");
-    // Long termRating = Long.parseLong(request.getParameter("rating-term"));
-    // Long workHours = Long.parseLong(request.getParameter("hoursOfWork"));
-    // Long difficulty = Long.parseLong(request.getParameter("difficulty"));
-    // String professorFeedback = request.getParameter("prof-input");
-    // Long professorRating = Long.parseLong(request.getParameter("rating-professor"));
-    StringBuffer jb = new StringBuffer();
+
+    StringBuilder jb = new StringBuilder();
     String line = null;
     try {
       BufferedReader reader = request.getReader();
@@ -83,8 +78,7 @@ public class DataServlet extends HttpServlet {
     }
 
     try {
-      JSONObject jsonObject = HTTP.toJSONObject(jb.toString());
-
+      JSONObject jsonObject = new JSONObject(jb.toString());
       schoolName = jsonObject.getString("school-name");
       courseName = jsonObject.getString("course-name");
       profName = jsonObject.getString("prof-name");
@@ -92,31 +86,20 @@ public class DataServlet extends HttpServlet {
       units = (long) jsonObject.getFloat("units");
       termFeedback = jsonObject.getString("term-input");
       professorFeedback = jsonObject.getString("prof-input");
-      termRating = (long) jsonObject.getFloat("term-rating");
-      professorRating = (long) jsonObject.getFloat("prof-rating");
+      termRating = (long) jsonObject.getFloat("rating-term");
+      professorRating = (long) jsonObject.getFloat("rating-prof");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
     } catch (JSONException exception) {
-      // Did not work.
+      // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
     }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // User ID not passed in URL so will have to get other way.
-    // String userId = request.getParameter("ID");
-
     // Quick change, will modify tests as well after the demo.
-    currentTermKey =
-        findTerm(
-                db,
-                request.getParameter("school-name"),
-                request.getParameter("course-name"),
-                request.getParameter("term"),
-                Long.valueOf(request.getParameter("num-units")),
-                request.getParameter("prof-name"))
-            .getKey();
+    currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList = new ArrayList();

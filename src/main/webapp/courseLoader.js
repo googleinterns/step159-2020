@@ -118,51 +118,11 @@ function makeGraphs(dataObject) {
   profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
 }
 
-//TODO : Move params into request body
-
-function passData() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const term = urlParams.get("term");
-  const profName = urlParams.get("prof-name");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
-
-  document.getElementById("school-name").value = schoolName;
-  document.getElementById("course-name").value = courseName;
-  document.getElementById("term").value = term;
-  document.getElementById("prof-name").value = profName;
-  document.getElementById("num-units").value = units;
-
-  // const termInput = document.getElementById("term-input")[0].value;
-  // const profInput = document.getElementById("prof-input")[0].value;
-  // const ratingTerm = document.getElementById("rating-term").value;
-  // const ratingProf = document.getElementById("rating-prof").value;
-  // const hours = document.getElementById("hoursOfWork").value;
-  // const diff = document.getElementById("difficulty").value;
-
-  // const url = new URL("/data", window.location.origin);
-  // url.searchParams.set("course-name", courseName);
-  // url.searchParams.set("prof-name", profName);
-  // url.searchParams.set("num-units", units);
-  // url.searchParams.set("term", term);
-  // url.searchParams.set("school-name", schoolName);
-
-  // url.searchParams.set("hourOfWork", hours);
-  // url.searchParams.set("difficulty", diff);
-  // url.searchParams.set("term-input", termInput);
-  // url.searchParams.set("prof-input", profInput);
-  // url.searchParams.set("rating-term", ratingTerm);
-  // url.searchParams.set("rating-prof", ratingProf);
-
-  // fetch(url, { method: "POST" });
-}
-
 async function postData(url, data = {}) {
   // Default options are marked with *
   const response = await fetch(url, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
+    cache: "no-cache",
     credentials: "same-origin", // include, *same-origin, omit
     headers: {
       "Content-Type": "application/json",
@@ -195,6 +155,7 @@ function storeData() {
   const ratingProf = document.getElementById("rating-prof").value;
   const hours = document.getElementById("hoursOfWork").value;
   const diff = document.getElementById("difficulty").value;
+  document.getElementById("termForm").reset();
 
   data["term-input"] = termInput;
   data["prof-input"] = profInput;
@@ -252,11 +213,5 @@ function newURL(
 
 function postDataForm() {
   const urlAndData = storeData();
-
   postData(urlAndData[0], urlAndData[1]);
 }
-
-// postData('https://example.com/answer', { answer: 42 })
-//   .then(data => {
-//     console.log(data); // JSON data parsed by `data.json()` call
-//   });
