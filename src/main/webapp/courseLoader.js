@@ -1,24 +1,21 @@
 let termData;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const courseName = urlParams.get("course-name");
+const profName = urlParams.get("prof-name");
+const term = urlParams.get("term");
+const units = urlParams.get("num-units");
+const schoolName = urlParams.get("school-name");
+
 google.charts.load("current", { packages: ["corechart"] });
+google.charts.load("current", { packages: ["bar"] });
 
 function fillTitles() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const term = urlParams.get("term");
   document.getElementById("course-name").innerHTML = courseName;
   document.getElementById("term-name").innerHTML = term;
 }
 
 function populateData() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const term = urlParams.get("term");
-  const profName = urlParams.get("prof-name");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
-
   fetch(
     `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`
   )
@@ -164,16 +161,8 @@ function makeGraphs(dataObject) {
 //TODO : Move params into request body
 
 function passData() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const term = urlParams.get("term");
-  const profName = urlParams.get("prof-name");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
-
-  const termInput = document.getElementById("term-input")[0].value;
-  const profInput = document.getElementById("prof-input")[0].value;
+  const termInput = document.getElementById("term-input").value;
+  const profInput = document.getElementById("prof-input").value;
   const ratingTerm = document.getElementById("rating-term").value;
   const ratingProf = document.getElementById("rating-prof").value;
   const hours = document.getElementById("hoursOfWork").value;
@@ -198,3 +187,44 @@ function passData() {
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 });
+
+async function CreateTermCompChart() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const term = urlParams.get("term");
+
+  const currentTerm = term.split(/(\s+)/).filter((e) => e.trim().length > 0);
+  let prevTerm1;
+  let prevTerm2;
+
+  if (currentTerm[0] == "Spring") {
+    prevTerm1 = `Fall ${currentTerm[1]}`;
+    prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
+  } else {
+    prevTerm1 = `Spring ${currentTerm[1]}`;
+    prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
+  }
+
+  const prevTermData1 = await getPreviousTermData(prevTerm1);
+  const prevTermData2 = await getPreviousTermData(prevTerm2);
+
+  const average = (list) =>
+    list.reduce((prev, curr) => prev + curr) / list.length;
+
+  const currentTermScoreAvg = average(termData.termScoreList);
+  const avgTermScorePrev1 = average(prevTermData1.termScoreList);
+  const avgTermScorePrev2 = average(prevTermData2.termScoreList);
+
+  console.log(avgTermScorePrev1, "hey");
+  console.log(avgTermScorePrev2, "hey");
+  console.log(currentTermScoreAvg, "hey");
+}
+
+CreateTermCompChart();
+
+async function getPreviousTermData(term) {
+  const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`;
+  const response = await fetch(url);
+  const prevTermData = await response.json();
+  return prevTermData;
+}
