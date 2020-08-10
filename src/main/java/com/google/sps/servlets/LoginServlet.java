@@ -21,28 +21,37 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
-
     UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
+    boolean loggedIn = userService.isUserLoggedIn();
+    String urlToRedirect = "/search.html";
+
+    JSONObject userDetails = new JSONObject();
+    userDetails.put("loggedIn", loggedIn);
+    if (loggedIn) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/login";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      userDetails.put("userEmail", userEmail);
+      String logoutURL = userService.createLogoutURL(urlToRedirect);
+      userDetails.put("logoutURL", logoutURL);
+      // TODO: Implement OAuth for more robust email checking.
+      int start = userEmail.indexOf('@');
+      int end = userEmail.lastIndexOf('.');
+      if (start != -1 && end != -1) {
+        String schoolName = userEmail.substring(start + 1, end);
+        userDetails.put("schoolName", schoolName);
+      }
 
-      response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/index.html";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-
-      response.getWriter().println("<p>Hello stranger.</p>");
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      String loginURL = userService.createLoginURL(urlToRedirect);
+      userDetails.put("loginURL", loginURL);
     }
+    response.setContentType("application/json;");
+    response.getWriter().println(userDetails);
   }
 }
