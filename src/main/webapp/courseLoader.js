@@ -187,7 +187,7 @@ function newURL(
   url.searchParams.set("term", term);
   url.searchParams.set("school-name", schoolName);
 
-  url.searchParams.set("hourOfWork", hours);
+  url.searchParams.set("hour", hours);
   url.searchParams.set("difficulty", difficulty);
   url.searchParams.set("term-input", termInput);
   url.searchParams.set("prof-input", profInput);
