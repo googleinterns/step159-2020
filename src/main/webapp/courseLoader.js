@@ -45,6 +45,8 @@
       ["hours"],
       /* dummyHourRating */ [3],
       /* dummyHourRating */ [8],
+      /* dummyDifficultyRating */ [6],
+      /* dummyDifficultyRating */ [1],
     ].concat(tempHoursList);
 
     const hourData = new google.visualization.arrayToDataTable(hoursList);
@@ -67,6 +69,8 @@
       ["difficulty"],
       /* dummyDifficultyRating */ [1],
       /* dummyDifficultyRating */ [4],
+      /* dummyDifficultyRating */ [7],
+      /* dummyDifficultyRating */ [5],
     ].concat(tempDiffList);
     const diffData = new google.visualization.arrayToDataTable(diffList);
     const diffOptions = {
@@ -83,30 +87,8 @@
     );
     diffChart.draw(diffData, diffOptions);
 
-    const tempTermPerceptionList = termDataObject.termPerceptionList;
-    const termPerceptionList = [
-      ["Term Perception"],
-      /* dummyPerceptionRating */ [11],
-      /* dummyPerceptionRating */ [5],
-    ].concat(tempTermPerceptionList);
-    const termPerceptionData = new google.visualization.arrayToDataTable(
-      termPerceptionList
-    );
-    const termPerceptionOptions = {
-      title: "Perception of Term Reviews",
-      legend: { position: "none" },
-      vAxis: { title: "Perception" },
-      hAxis: { title: "Comment Quantity" },
-      histogram: {
-        hideBucketItems: true,
-      },
-    };
-    const termPerceptionChart = new google.visualization.Histogram(
-      document.getElementById("term-chart")
-    );
-    termPerceptionChart.draw(termPerceptionData, termPerceptionOptions);
-
     makeTermRatingChart();
+    makeTermPerceptionChart();
   }
 
   async function makeTermRatingChart() {
@@ -160,6 +142,59 @@
       document.getElementById("term-rating-comp")
     );
     chart.draw(comparisonData, google.charts.Bar.convertOptions(options));
+  }
+
+  async function makeTermPerceptionChart() {
+    const currentTerm = term.split(/(\s+)/).filter((e) => e.trim().length > 0);
+    let prevTerm1;
+    let prevTerm2;
+
+    if (currentTerm[0] == "Spring") {
+      prevTerm1 = `Fall ${currentTerm[1]}`;
+      prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
+    } else {
+      prevTerm1 = `Spring ${currentTerm[1]}`;
+      prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
+    }
+
+    const prevTermData1 = await getPreviousTermData(prevTerm1);
+    const prevTermData2 = await getPreviousTermData(prevTerm2);
+
+    const average = (list) =>
+      list.reduce((prev, curr) => prev + curr) / list.length;
+
+    const currentPerceptionRatingAvg = average(
+      /* adds dummy data */ [17, 8, 5].concat(termData.termPerceptionList)
+    );
+    const prevPerceptionRatingAvg = average(
+      /* adds dummy data */ [14, 7, 13].concat(prevTermData1.termPerceptionList)
+    );
+    const prevPerceptionRatingAvg2 = average(
+      /* adds dummy data */ [5, 6, 9].concat(prevTermData2.termPerceptionList)
+    );
+
+    const perceptionData = google.visualization.arrayToDataTable([
+      ["year", `${currentTerm[0]}  ${currentTerm[1]}`, prevTerm1, prevTerm2],
+      [
+        currentTerm[1],
+        currentPerceptionRatingAvg,
+        prevPerceptionRatingAvg,
+        prevPerceptionRatingAvg2,
+      ],
+    ]);
+
+    const options = {
+      title: "Average Term Perception Comparison",
+      height: 450,
+      bars: "horizontal",
+      bar: { groupWidth: "30%" },
+      hAxis: { title: "Avg Term Perception" },
+    };
+
+    const chart = new google.charts.Bar(
+      document.getElementById("term-perception-comp")
+    );
+    chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
   }
 
   async function getPreviousTermData(prevTerm) {
