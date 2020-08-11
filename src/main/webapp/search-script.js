@@ -1,8 +1,8 @@
 function collectUnitsFromSearch() {
   const inputElems = document.getElementsByName("search-units");
-  const addedUnits = []
-  for (let elem of inputElems) {       
-    if (elem.checked){
+  const addedUnits = [];
+  for (let elem of inputElems) {
+    if (elem.checked) {
       addedUnits.push(elem.value);
     }
   }
@@ -11,9 +11,9 @@ function collectUnitsFromSearch() {
 
 function collectUnitsFromInput() {
   const inputElems = document.getElementsByName("num-units");
-  const addedUnits = []
-  for (let elem of inputElems) {       
-    if (elem.checked){
+  const addedUnits = [];
+  for (let elem of inputElems) {
+    if (elem.checked) {
       addedUnits.push(elem.value);
     }
   }
@@ -33,18 +33,20 @@ function showCourses() {
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
-  url.searchParams.set("schoolName", school)
+  url.searchParams.set("schoolName", school);
   fetch(url)
-  .then(response => response.json())
-  .then((courses) => {
-    courses.forEach(course => courseResults.appendChild(createListElement(course)));
-  });
+    .then((response) => response.json())
+    .then((courses) => {
+      courses.forEach((course) =>
+        courseResults.appendChild(createListElement(course))
+      );
+    });
 }
 
 /* Creates an <li> element containing the course link and name. */
 function createListElement(course) {
-  const liElement = document.createElement('li');
-  const link = document.createElement('a');
+  const liElement = document.createElement("li");
+  const link = document.createElement("a");
   const url = new URL("/course.html", window.location.origin);
   url.searchParams.set("course-name", course.name);
   url.searchParams.set("prof-name", course.professor);
@@ -52,7 +54,7 @@ function createListElement(course) {
   url.searchParams.set("term", course.term);
   const school = getUserSchool();
   url.searchParams.set("school-name", school);
-  link.setAttribute('href', url);
+  link.setAttribute("href", url);
   link.innerText = course.name;
   liElement.appendChild(link);
   return liElement;
@@ -62,9 +64,9 @@ function getUserSchool() {
   const auth2 = gapi.auth2.getAuthInstance();
   const profile = auth2.currentUser.get().getBasicProfile();
   const email = profile.getEmail();
-  const start = email.indexOf('@');
-  const end = email.lastIndexOf('.');
-  const school = email.substring(start+1, end);
+  const start = email.indexOf("@");
+  const end = email.lastIndexOf(".");
+  const school = email.substring(start + 1, end);
   return school;
 }
 

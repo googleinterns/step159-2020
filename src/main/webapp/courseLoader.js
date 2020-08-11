@@ -132,7 +132,25 @@ async function postRatingProperties(url, data = {}) {
   return response.json(); // Parses JSON response into native JavaScript objects and returns a Promise.
 }
 
-function getRatingPropertiesToStore() {
+function onLoad() {
+  gapi.load("auth2", function () {
+    gapi.auth2.init();
+  });
+}
+
+async function verify() {
+  const auth2 = gapi.auth2.getAuthInstance();
+  const googleUser = auth2.currentUser.get();
+  const token = googleUser.getAuthResponse().id_token;
+  const url = new URL("/login", window.location.origin);
+  url.searchParams.set("token", token);
+  const response = await fetch(url, { method: "POST" });
+  const userInfo = await response.json();
+  const id = userInfo.id;
+  return id;
+}
+
+async function getRatingPropertiesToStore() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const ratingProperties = {
@@ -147,9 +165,10 @@ function getRatingPropertiesToStore() {
     ratingProf: document.getElementById("rating-prof").value,
     hours: document.getElementById("hours").value,
     difficulty: document.getElementById("difficulty").value,
+    userId: await verify(),
   };
-
   document.getElementById("term-form").reset();
+
   const url = newURL(
     ratingProperties.schoolName,
     ratingProperties.courseName,
