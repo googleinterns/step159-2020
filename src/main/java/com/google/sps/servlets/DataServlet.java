@@ -32,19 +32,17 @@ import org.json.JSONObject;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
-  private LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+  private LanguageServiceClient languageService;
 
   // Will re-add constructor later for testing.
-  public class DataServlet {
 
-    public DataServlet() {
-      this.languageService = LanguageServiceClient.create();
-    }
+  public DataServlet() throws IOException {
+    this.languageService = LanguageServiceClient.create();
+  }
 
-    public DataServlet(LanguageServiceClient languageService) {
-      this.languageService = languageService;
-    }
+  public DataServlet(LanguageServiceClient languageService) {
+    this.languageService = languageService;
   }
 
   @Override
@@ -147,11 +145,11 @@ public class DataServlet extends HttpServlet {
   }
 
   private float getSentimentScore(String feedback) throws IOException {
-    LanguageServiceClient languageService = LanguageServiceClient.create();
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
     Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
+    // Won't be closing languageService as we want to use constructor.
     return score;
   }
 

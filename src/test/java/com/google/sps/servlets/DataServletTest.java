@@ -17,6 +17,7 @@ import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,27 +49,29 @@ public final class DataServletTest {
     helper.tearDown();
   }
 
-  @Mock HttpServletRequest request;
+  @Mock JSONObject jsonObject;
   @Mock LanguageServiceClient languageService;
+  @Mock HttpServletRequest request;
 
   @Test
   public void addTermRating_newRating() throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
+    jsonObject = Mockito.mock(JSONObject.class);
     request = Mockito.mock(HttpServletRequest.class);
 
     when(jsonObject.getString("schoolName")).thenReturn("google");
     when(jsonObject.getString("courseName")).thenReturn("6.006");
     when(jsonObject.getString("profName")).thenReturn("Srini");
     when(jsonObject.getString("term")).thenReturn("Spring 2020");
-    when(jsonObject.getFloat("units")).thenReturn(3);
+    when(jsonObject.getFloat("units")).thenReturn((float) 3);
     when(jsonObject.getString("termInput")).thenReturn("I do not like this.");
     when(jsonObject.getString("profInput")).thenReturn("The professor was amazing.");
-    when(jsonObject.getFloat("ratingTerm")).thenReturn(1);
-    when(jsonObject.getFloat("ratingProf")).thenReturn(3);
-    when(jsonObject.getFloat("hours")).thenReturn(8);
-    when(jsonObject.getFloat("difficulty")).thenReturn(4);
-    when(jsonObject.getFloat("hours")).thenReturn(8);
+    when(jsonObject.getFloat("ratingTerm")).thenReturn((float) 1);
+    when(jsonObject.getFloat("ratingProf")).thenReturn((float) 3);
+    when(jsonObject.getFloat("hours")).thenReturn((float) 8);
+    when(jsonObject.getFloat("difficulty")).thenReturn((float) 4);
+    when(jsonObject.getFloat("hours")).thenReturn((float) 8);
     when(jsonObject.getString("ID")).thenReturn("9223372036854775807");
 
     AnalyzeSentimentResponse response =
