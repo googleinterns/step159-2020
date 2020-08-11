@@ -35,15 +35,7 @@ public class DataServlet extends HttpServlet {
   private LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
   private String schoolName, courseName, profName, termName, termFeedback, professorFeedback;
-  private Long units, termRating, professorRating, workHours, difficulty;
-
-  //   public DataServlet() {
-  //     this.languageService = LanguageServiceClient.create();
-  //   }
-
-  //   public DataServlet(LanguageServiceClient languageService) {
-  //     this.languageService = languageService;
-  //   }
+  private Long units, termRating, professorRating, workHours, difficulty, userId;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -96,6 +88,7 @@ public class DataServlet extends HttpServlet {
       professorRating = (long) jsonObject.getFloat("rating-prof");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
+      userId = (long) jsonObject.getFloat("ID");
     } catch (JSONException exception) {
       // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
@@ -108,7 +101,11 @@ public class DataServlet extends HttpServlet {
     currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
-    List<Entity> termRatingQueryList = new ArrayList();
+    List<Entity> termRatingQueryList =
+        queryEntities(
+            /* entityName */ "Rating",
+            /* propertyName */ "reviewer-id",
+            /* propertyValue */ userId);
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
@@ -116,6 +113,7 @@ public class DataServlet extends HttpServlet {
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
+    termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);
     termRatingEntity.setProperty("hours", workHours);

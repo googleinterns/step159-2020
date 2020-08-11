@@ -126,7 +126,7 @@ async function postData(url, data = {}) {
     credentials: "same-origin", // include, *same-origin, omit
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: JSON.stringify(data), // body data type must match "Content-Type" header
   });
@@ -184,7 +184,6 @@ async function storeData() {
 
   const userId = await verify();
   data["ID"] = userId;
-  console.log(userId);
 
   const url = newURL(
     schoolName,
