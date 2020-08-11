@@ -125,15 +125,10 @@
       prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
     }
 
-    let prevTermData1;
-    let prevTermData2;
-    await Promise.all([
+    const [prevTermData1, prevTermData2] = await Promise.all([
       getPreviousTermData(prevTerm1),
       getPreviousTermData(prevTerm2),
-    ]).then((values) => {
-      prevTermData1 = values[0];
-      prevTermData2 = values[1];
-    });
+    ]);
 
     const average = (list) =>
       list.reduce((prev, curr) => prev + curr, 0) / list.length;
