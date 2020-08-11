@@ -1,5 +1,4 @@
 google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(makeGraphs);
 
 function fillTitles() {
   const queryString = window.location.search;
@@ -201,3 +200,139 @@ function passRatingProperties() {
   const urlAndData = getRatingPropertiesToStore();
   postRatingProperties(urlAndData[0], urlAndData[1]);
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  populateData();
+});
+
+function createComment(commentText, isCourse) {
+  const commentContainer = isCourse
+    ? document.getElementById("course-comments")
+    : document.getElementById("prof-comments");
+
+  const commentWrapper = document.createElement("div");
+  commentWrapper.setAttribute("class", "media text-muted pt-3");
+
+  const commentUser = document.createElement("strong");
+  commentUser.setAttribute("class", "d-block text-gray-dark");
+  commentUser.innerHTML = "@username";
+
+  const commentBody = document.createElement("p");
+  commentBody.setAttribute(
+    "class",
+    "media-body pb-3 mb-0 small lh-125 border-bottom border-gray"
+  );
+  commentBody.innerHTML = commentText;
+
+  commentBody.insertAdjacentElement("afterbegin", commentUser);
+  commentWrapper.appendChild(commentBody);
+  commentContainer.appendChild(commentWrapper);
+}
+
+function loadComments(commentList, isCourse) {
+  for (let comment of commentList) {
+    createComment(comment, isCourse);
+  }
+}
+
+function makeGraphs(termDataObject) {
+  const termCommentsList = termDataObject.termCommentsList;
+  const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
+    termCommentsList
+  );
+  loadComments(dummyComments, /* isCourse*/ true);
+  loadComments(dummyComments, /* isCourse*/ false);
+
+  const tempHoursList = termDataObject.hoursList;
+  const hoursList = [
+    ["hours"],
+    /* dummyHourRating */ [3],
+    /* dummyHourRating */ [8],
+  ].concat(tempHoursList);
+
+  const hourData = new google.visualization.arrayToDataTable(hoursList);
+  const hourOptions = {
+    title: "Hours Spent per Week",
+    legend: { position: "none" },
+    vAxis: { title: "# Students" },
+    hAxis: { title: "Hours" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const hourChart = new google.visualization.Histogram(
+    document.getElementById("hours-chart")
+  );
+  hourChart.draw(hourData, hourOptions);
+
+  const tempDiffList = termDataObject.difficultyList;
+  const diffList = [
+    ["difficulty"],
+    /* dummyDifficultyRating */ [1],
+    /* dummyDifficultyRating */ [4],
+  ].concat(tempDiffList);
+  const diffData = new google.visualization.arrayToDataTable(diffList);
+  const diffOptions = {
+    title: "Difficulty of Class",
+    legend: { position: "none" },
+    vAxis: { title: "# Students" },
+    hAxis: { title: "Difficulty" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const diffChart = new google.visualization.Histogram(
+    document.getElementById("diff-chart")
+  );
+  diffChart.draw(diffData, diffOptions);
+
+  const tempTermPerceptionList = termDataObject.termPerceptionList;
+  const termPerceptionList = [
+    ["Term Perception"],
+    /* dummyPerceptionRating */ [11],
+    /* dummyPerceptionRating */ [5],
+  ].concat(tempTermPerceptionList);
+  const termPerceptionData = new google.visualization.arrayToDataTable(
+    termPerceptionList
+  );
+  const termPerceptionOptions = {
+    title: "Perception of Term Reviews",
+    legend: { position: "none" },
+    vAxis: { title: "Perception" },
+    hAxis: { title: "Comment Quantity" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const termPerceptionChart = new google.visualization.Histogram(
+    document.getElementById("term-chart")
+  );
+  termPerceptionChart.draw(termPerceptionData, termPerceptionOptions);
+
+  const tempProfPerceptionList = dataObject.termPerceptionList;
+  const profPerceptionList = [
+    ["Professor Perception"],
+    /* dummyPerceptionRating */ [2],
+    /* dummyPerceptionRating */ [9],
+  ].concat(tempProfPerceptionList);
+  const profPerceptionData = new google.visualization.arrayToDataTable(
+    profPerceptionList
+  );
+  const profPerceptionOptions = {
+    title: "Perception of Professor Reviews",
+    legend: { position: "none" },
+    vAxis: { title: "Perception" },
+    hAxis: { title: "Comment Quantity" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const profPerceptionChart = new google.visualization.Histogram(
+    document.getElementById("prof-chart")
+  );
+  profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
+}
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
