@@ -23,6 +23,8 @@
       .then((response) => response.json())
       .then((data) => {
         makeGraphs(data);
+        makeTermRatingChart(data), makeTermPerceptionChart(data);
+        loadAllComments(data);
       });
   }
 
@@ -31,14 +33,16 @@
     populateData();
   });
 
-  function makeGraphs(termDataObject) {
+  function loadAllComments(termDataObject) {
     const termCommentsList = termDataObject.termCommentsList;
     const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
       termCommentsList
     );
     loadComments(dummyComments, /* isCourse */ true);
     loadComments(dummyComments, /* isCourse */ false);
+  }
 
+  function makeGraphs(termDataObject) {
     const tempHoursList = termDataObject.hoursList;
     const hoursList = [
       ["hours"],
@@ -81,11 +85,6 @@
       document.getElementById("diff-chart")
     );
     diffChart.draw(diffData, diffOptions);
-
-    return [
-      makeTermRatingChart(termDataObject),
-      makeTermPerceptionChart(termDataObject),
-    ];
   }
 
   async function makeTermRatingChart(termDataObject) {
