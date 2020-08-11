@@ -69,7 +69,9 @@ public class DataServlet extends HttpServlet {
     String line = null;
     try {
       BufferedReader reader = request.getReader();
-      while ((line = reader.readLine()) != null) stringBuilder.append(line);
+      while ((line = reader.readLine()) != null) {
+        stringBuilder.append(line);
+      }
     } catch (Exception exception) {
       /*report an error*/
       throw new IOException("Error reading body of request");
