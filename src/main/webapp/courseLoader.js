@@ -162,15 +162,15 @@
     chart.draw(comparisonData, google.charts.Bar.convertOptions(options));
   }
 
-  async function getPreviousTermData(term) {
-    const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`;
+  async function getPreviousTermData(prevTerm) {
+    const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${prevTerm}&prof-name=${profName}&num-units=${units}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
     return prevTermData;
   }
 
-  function createComment(commentText, flag) {
-    const commentContainer = flag
+  function createComment(commentText, isCourse) {
+    const commentContainer = isCourse
       ? document.getElementById("course-comments")
       : document.getElementById("prof-comments");
 
@@ -193,9 +193,9 @@
     commentContainer.appendChild(commentWrapper);
   }
 
-  function loadComments(commentList, flag) {
+  function loadComments(commentList, isCourse) {
     for (let comment of commentList) {
-      createComment(comment, flag);
+      createComment(comment, isCourse);
     }
   }
 
