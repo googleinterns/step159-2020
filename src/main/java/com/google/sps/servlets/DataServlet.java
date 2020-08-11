@@ -36,6 +36,9 @@ public class DataServlet extends HttpServlet {
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
   // Will re-add constructor later for testing.
+  public DataServlet() {
+    this.languageService = LanguageServiceClient.create();
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -86,6 +89,7 @@ public class DataServlet extends HttpServlet {
     Long professorRating = null;
     Long workHours = null;
     Long difficulty = null;
+    String userId = null;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
@@ -99,7 +103,7 @@ public class DataServlet extends HttpServlet {
       professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
-      userId = (long) jsonObject.getFloat("ID");
+      userId = jsonObject.getString("ID");
     } catch (JSONException exception) {
       // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
@@ -116,7 +120,7 @@ public class DataServlet extends HttpServlet {
         queryEntities(
             /* entityName */ "Rating",
             /* propertyName */ "reviewer-id",
-            /* propertyValue */ String.valueOf(userId));
+            /* propertyValue */ userId);
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
@@ -141,7 +145,6 @@ public class DataServlet extends HttpServlet {
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
     Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
-    languageService.close();
     return score;
   }
 

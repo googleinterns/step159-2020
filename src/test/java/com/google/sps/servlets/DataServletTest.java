@@ -56,18 +56,20 @@ public final class DataServletTest {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     request = Mockito.mock(HttpServletRequest.class);
-    Entity termEntity = new Entity("Term");
-    datastore.put(termEntity);
-    Key termKey = termEntity.getKey();
 
-    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
-    when(request.getParameter("term-input")).thenReturn("I do not like this.");
-    when(request.getParameter("rating-term")).thenReturn("1");
-    when(request.getParameter("hoursOfWork")).thenReturn("8");
-    when(request.getParameter("difficulty")).thenReturn("4");
-    when(request.getParameter("prof-input")).thenReturn("The professor was amazing.");
-    when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("ID")).thenReturn("numberOneId");
+    when(jsonObject.getString("schoolName")).thenReturn("google");
+    when(jsonObject.getString("courseName")).thenReturn("6.006");
+    when(jsonObject.getString("profName")).thenReturn("Srini");
+    when(jsonObject.getString("term")).thenReturn("Spring 2020");
+    when(jsonObject.getFloat("units")).thenReturn(3);
+    when(jsonObject.getString("termInput")).thenReturn("I do not like this.");
+    when(jsonObject.getString("profInput")).thenReturn("The professor was amazing.");
+    when(jsonObject.getFloat("ratingTerm")).thenReturn(1);
+    when(jsonObject.getFloat("ratingProf")).thenReturn(3);
+    when(jsonObject.getFloat("hours")).thenReturn(8);
+    when(jsonObject.getFloat("difficulty")).thenReturn(4);
+    when(jsonObject.getFloat("hours")).thenReturn(8);
+    when(jsonObject.getString("ID")).thenReturn("9223372036854775807");
 
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
@@ -82,10 +84,10 @@ public final class DataServletTest {
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
-                /* propertyValue */ "numberOneId")
+                /* propertyValue */ "923372036854775807")
             .get(0);
     assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
-    assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
+    assertEquals("923372036854775807", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
     assertEquals(Long.valueOf(8), termRatingEntity.getProperty("hours"));
     assertEquals(Long.valueOf(4), termRatingEntity.getProperty("difficulty"));
@@ -149,4 +151,5 @@ public final class DataServletTest {
     assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-term"));
     assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-professor"));
   }
+  // Let's add two more test cases YAY! :)
 }
