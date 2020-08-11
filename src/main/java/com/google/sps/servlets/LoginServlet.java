@@ -1,8 +1,11 @@
+package com.google.sps.servlets;
+
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.sps.data.LoginObject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -17,29 +20,38 @@ public class LoginServlet extends HttpServlet {
   private String clientId =
       "12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"; // Client ID.
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public LoginObject postHelper(HttpServletRequest request) throws IOException {
     String idTokenString = request.getParameter("token");
+    System.out.println(idTokenString);
+    String id = "NOT FOUND";
+    Boolean success = false;
     UrlFetchTransport transport = UrlFetchTransport.getDefaultInstance();
     GsonFactory json = GsonFactory.getDefaultInstance();
     GoogleIdTokenVerifier verifier =
         new GoogleIdTokenVerifier.Builder(transport, json)
             .setAudience(Collections.singletonList(clientId))
             .build();
-    JSONObject js = new JSONObject();
     try {
       GoogleIdToken idToken = verifier.verify(idTokenString);
       if (idToken != null) {
         Payload payload = idToken.getPayload();
         String userId = payload.getSubject();
-        js.put("id", userId);
-        js.put("verified", true);
-        response.setContentType("application/json;");
-        response.getWriter().println(js);
+        id = userId;
+        success = true;
       }
-    } catch (GeneralSecurityException e) {
-      js.put("verified", false);
-      response.getWriter().println(js);
+      return new LoginObject(id, success);
+    } catch (GeneralSecurityException | IllegalArgumentException e) {
+      return new LoginObject(id, success);
     }
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    LoginObject login = postHelper(request);
+    JSONObject js = new JSONObject();
+    js.put("id", login.getId());
+    js.put("verified", login.getSuccess());
+    response.setContentType("application/json;");
+    response.getWriter().println(js);
   }
 }
