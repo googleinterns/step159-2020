@@ -160,32 +160,6 @@
     profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
   }
 
-  //TODO : Move params into request body
-
-  function passData() {
-    const termInput = document.getElementById("term-input").value;
-    const profInput = document.getElementById("prof-input").value;
-    const ratingTerm = document.getElementById("rating-term").value;
-    const ratingProf = document.getElementById("rating-prof").value;
-    const hours = document.getElementById("hoursOfWork").value;
-    const diff = document.getElementById("difficulty").value;
-
-    const url = new URL("/data", window.location.origin);
-    url.searchParams.set("course-name", courseName);
-    url.searchParams.set("prof-name", profName);
-    url.searchParams.set("num-units", units);
-    url.searchParams.set("term", term);
-    url.searchParams.set("school-name", schoolName);
-
-    url.searchParams.set("hourOfWork", hours);
-    url.searchParams.set("difficulty", diff);
-    url.searchParams.set("term-input", termInput);
-    url.searchParams.set("prof-input", profInput);
-    url.searchParams.set("rating-term", ratingTerm);
-    url.searchParams.set("rating-prof", ratingProf);
-    fetch(url, { method: "POST" });
-  }
-
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
