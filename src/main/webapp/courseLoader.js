@@ -1,4 +1,7 @@
 (() => {
+  google.charts.load("current", { packages: ["corechart"] });
+  google.charts.load("current", { packages: ["bar"] });
+
   let termData;
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -7,9 +10,6 @@
   const term = urlParams.get("term");
   const units = urlParams.get("num-units");
   const schoolName = urlParams.get("school-name");
-
-  google.charts.load("current", { packages: ["corechart"] });
-  google.charts.load("current", { packages: ["bar"] });
 
   function fillTitles() {
     document.getElementById("course-name").innerHTML = courseName;
@@ -33,12 +33,12 @@
   });
 
   function makeGraphs(termDataObject) {
-    const termCommentsList = termDataObject.termCommentsList;
+    const termCommentsList = termData.termCommentsList;
     const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
       termCommentsList
     );
-    loadComments(dummyComments, /* true means course comments */ true);
-    loadComments(dummyComments, /* false means professor comments */ false);
+    loadComments(dummyComments, /* isCourse */ true);
+    loadComments(dummyComments, /* isCourse */ false);
 
     const tempHoursList = termDataObject.hoursList;
     const hoursList = [
