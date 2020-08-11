@@ -22,9 +22,6 @@ public class LoginServlet extends HttpServlet {
 
   public LoginObject postHelper(HttpServletRequest request) throws IOException {
     String idTokenString = request.getParameter("token");
-    System.out.println(idTokenString);
-    String id = "NOT FOUND";
-    Boolean success = false;
     UrlFetchTransport transport = UrlFetchTransport.getDefaultInstance();
     GsonFactory json = GsonFactory.getDefaultInstance();
     GoogleIdTokenVerifier verifier =
@@ -36,12 +33,13 @@ public class LoginServlet extends HttpServlet {
       if (idToken != null) {
         Payload payload = idToken.getPayload();
         String userId = payload.getSubject();
-        id = userId;
-        success = true;
+        return new LoginObject(userId, true);
       }
-      return new LoginObject(id, success);
-    } catch (GeneralSecurityException | IllegalArgumentException e) {
-      return new LoginObject(id, success);
+      return new LoginObject("NULL TOKEN", false);
+    } catch (GeneralSecurityException e) {
+      return new LoginObject("SECURITY ERROR", false);
+    } catch (IllegalArgumentException e) {
+      return new LoginObject("ARGUMENT ERROR", false);
     }
   }
 
