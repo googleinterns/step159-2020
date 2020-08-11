@@ -105,7 +105,7 @@ public class DataServlet extends HttpServlet {
         queryEntities(
             /* entityName */ "Rating",
             /* propertyName */ "reviewer-id",
-            /* propertyValue */ userId);
+            /* propertyValue */ String.valueOf(userId));
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
