@@ -88,6 +88,7 @@ public class DataServlet extends HttpServlet {
     Long professorRating = null;
     Long workHours = null;
     Long difficulty = null;
+    String userId = newString();
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
@@ -101,7 +102,7 @@ public class DataServlet extends HttpServlet {
       professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
-      userId = (long) jsonObject.getFloat("ID");
+      userId = jsonObject.getString("ID");
     } catch (JSONException exception) {
       // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
@@ -118,7 +119,7 @@ public class DataServlet extends HttpServlet {
         queryEntities(
             /* entityName */ "Rating",
             /* propertyName */ "reviewer-id",
-            /* propertyValue */ String.valueOf(userId));
+            /* propertyValue */ userId);
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
