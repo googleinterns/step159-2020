@@ -37,127 +37,124 @@
     </div>
 
     <div class="flex-container">
-      <div class="flex-child" id="prof-chart"></div>
+      <div class="flex-child-p" id="term-rating-comp"></div>
       <div class="flex-child" id="term-chart"></div>
     </div>
 
-    <div class="my-3 p-3 bg-white course-comments">
-      <h1 class="border-bottom border-gray p-5 mb-0 text-center">
-        Course Comments
-      </h1>
-      <div class="media text-muted pt-3">
-        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-          <strong class="d-block text-gray-dark">@username</strong>
-          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
-          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-          massa justo sit amet risus.
-        </p>
-      </div>
-      <div class="media text-muted pt-3">
-        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-          <strong class="d-block text-gray-dark">@username</strong>
-          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
-          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-          massa justo sit amet risus.
-        </p>
+    <div class="plr-20 container-fluid">
+      <div class="my-3 p-3 bg-white" id="course-comments">
+        <h1 class="border-bottom border-gray p-5 mb-0 text-center">
+          Course Comments
+        </h1>
       </div>
     </div>
 
-    <div class="my-3 p-3 bg-white prof-comments">
-      <h1 class="border-bottom border-gray p-5 mb-0 text-center">
-        Professor Comments
-      </h1>
-      <div class="media text-muted pt-3">
-        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-          <strong class="d-block text-gray-dark">@username</strong>
-          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
-          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-          massa justo sit amet risus.
-        </p>
-      </div>
-      <div class="media text-muted pt-3">
-        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-          <strong class="d-block text-gray-dark">@username</strong>
-          Donec id elit non mi porta gravida at eget metus. Fusce dapibus,
-          tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-          massa justo sit amet risus.
-        </p>
+    <div class="plr-20 container-fluid">
+      <div class="my-3 p-3 bg-white" id="prof-comments">
+        <h1 class="border-bottom border-gray pb-5 mb-0 text-center">
+          Professor Comments
+        </h1>
       </div>
     </div>
 
-    <div id="form-container">
-      <form id="term-form">
-        <div class="container pb-5">
-          <h1 class="text-center">Rate your term and professors!</h1>
-        </div>
+    <div class="container-fluid bg-light p-5">
+      <div class="container-xl my-4">
+        <h1 class="p-4 text-center">Add Your Review</h1>
+        <form id="term-form">
+          <div class="row">
+            <div class="col">
+              <p class="lead">Review your term</p>
+              <textarea
+                id="term-input"
+                name="term-input"
+                maxlength="1500"
+                type="text"
+                class="form-control mb-5"
+                rows="5"
+                placeholder="Write Opinion Here"
+              ></textarea>
+            </div>
+            <div class="col">
+              <p class="lead">Review your professor</p>
+              <textarea
+                id="prof-input"
+                name="prof-input"
+                maxlength="1500"
+                type="text"
+                class="form-control mb-5"
+                rows="5"
+                placeholder="Write Opinion Here"
+              ></textarea>
+            </div>
+          </div>
 
-        <div class="container">
-          <p>Rate your term:</p>
-          <p>Rate your professor</p>
-        </div>
+          <div class="row">
+            <div class="col">
+              <p
+                class="lead"
+                data-toggle="tooltip"
+                title="From 0 is Terrible to 5 is Excellent"
+                data-placement="left"
+              >
+                Rate your term
+              </p>
+              <input
+                id="rating-term"
+                name="rating-term"
+                min="0"
+                max="5"
+                type="number"
+                class="form-control mb-5"
+                placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
+              />
+            </div>
+            <div class="col">
+              <p
+                class="lead"
+                data-toggle="tooltip"
+                title="From 0 is Terrible to 5 is Excellent"
+                data-placement="right"
+              >
+                Rate your professor
+              </p>
+              <input
+                id="rating-prof"
+                name="rating-prof"
+                min="0"
+                max="5"
+                type="number"
+                class="form-control mb-5"
+                placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
+              />
+            </div>
+          </div>
 
-        <div class="container">
-          <textarea
-            id="term-input"
-            name="term-input"
-            maxlength="1500"
-            placeholder="Write opinion on term here"
-          ></textarea>
-          <textarea
-            id="prof-input"
-            name="prof-input"
-            maxlength="1500"
-            placeholder="Write opinion on professor here"
-          ></textarea>
-        </div>
-
-        <div class="container">
-          <p>How would you rate this term?</p>
-          <p>How would you rate the professor?</p>
-        </div>
-
-        <div class="container">
-          <input
-            type="number"
-            id="rating-term"
-            name="rating-term"
-            min="0"
-            max="5"
-            placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
-          />
-          <input
-            type="number"
-            id="rating-prof"
-            name="rating-prof"
-            min="0"
-            max="5"
-            placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
-          />
-        </div>
-
-        <div class="container">
-          <p>How many hours per week did you spend on this term?</p>
-          <p>How difficult did you find this term?</p>
-        </div>
-
-        <div class="container pb-5">
-          <input
-            type="number"
-            id="hours"
-            name="hours"
-            min="1"
-            placeholder="Hours (include in-class time)"
-          />
-          <input
-            type="number"
-            id="difficulty"
-            name="difficulty"
-            min="0"
-            max="5"
-            placeholder="Difficulty (From 0 = Very Easy to 5 = Very Hard)"
-          />
-        </div>
-
+          <div class="row">
+            <div class="col">
+              <p class="lead">Hours/Week on this Course</p>
+              <input
+                id="hours-work"
+                name="hoursOfWork"
+                min="0"
+                type="number"
+                class="form-control mb-5"
+                placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
+              />
+            </div>
+            <div class="col">
+              <p class="lead">How Difficulty was this Course?</p>
+              <input
+                id="difficulty"
+                name="difficulty"
+                min="0"
+                max="5"
+                type="number"
+                class="form-control mb-5"
+                placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
+              />
+            </div>
+          </div>
+        </form>
         <button
           onclick="passRatingProperties()"
           type="button"
@@ -165,9 +162,8 @@
         >
           Submit
         </button>
-      </form>
+      </div>
     </div>
-
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
