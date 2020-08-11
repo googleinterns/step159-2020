@@ -82,36 +82,18 @@
     );
     diffChart.draw(diffData, diffOptions);
 
-    makeTermPerceptionChart(termDataObject);
-    return makeTermRatingChart(termDataObject);
+    return [
+      makeTermRatingChart(termDataObject),
+      makeTermPerceptionChart(termDataObject),
+    ];
   }
 
   async function makeTermRatingChart(termDataObject) {
-    //splits term name into [season,year]
-    const currentTerm = term
-      .split(/(\s+)/)
-      .filter((entry) => entry.trim() != "");
-    let prevTerm1;
-    let prevTerm2;
-
-    //TODO: Make this work for all term types
-    if (currentTerm[0] == "Spring") {
-      prevTerm1 = `Fall ${currentTerm[1]}`;
-      prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
-    } else {
-      prevTerm1 = `Spring ${currentTerm[1]}`;
-      prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
-    }
-
-    let prevTermData1;
-    let prevTermData2;
-    await Promise.all([
+    const [prevTerm1, prevTerm2] = findPrevTerms(term);
+    const [prevTermData1, prevTermData2] = await Promise.all([
       getPreviousTermData(prevTerm1),
       getPreviousTermData(prevTerm2),
-    ]).then((values) => {
-      prevTermData1 = values[0];
-      prevTermData2 = values[1];
-    });
+    ]);
 
     const average = (list) =>
       list.reduce((prev, curr) => prev + curr, 0) / list.length;
@@ -127,13 +109,8 @@
     );
 
     const comparisonData = google.visualization.arrayToDataTable([
-      ["year", `${currentTerm[0]}  ${currentTerm[1]}`, prevTerm1, prevTerm2],
-      [
-        currentTerm[1],
-        currentTermRatingAvg,
-        prevTermRatingAvg,
-        prevTermRatingAvg2,
-      ],
+      [" ", term, prevTerm1, prevTerm2],
+      [" ", currentTermRatingAvg, prevTermRatingAvg, prevTermRatingAvg2],
     ]);
 
     const options = {
@@ -151,20 +128,12 @@
   }
 
   async function makeTermPerceptionChart(termDataObject) {
-    const currentTerm = term.split(/(\s+)/).filter((e) => e.trim().length > 0);
-    let prevTerm1;
-    let prevTerm2;
+    const [prevTerm1, prevTerm2] = findPrevTerms(term);
 
-    if (currentTerm[0] == "Spring") {
-      prevTerm1 = `Fall ${currentTerm[1]}`;
-      prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
-    } else {
-      prevTerm1 = `Spring ${currentTerm[1]}`;
-      prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
-    }
-
-    const prevTermData1 = await getPreviousTermData(prevTerm1);
-    const prevTermData2 = await getPreviousTermData(prevTerm2);
+    const [prevTermData1, prevTermData2] = await Promise.all([
+      getPreviousTermData(prevTerm1),
+      getPreviousTermData(prevTerm2),
+    ]);
 
     const average = (list) =>
       list.reduce((prev, curr) => prev + curr) / list.length;
@@ -180,9 +149,9 @@
     );
 
     const perceptionData = google.visualization.arrayToDataTable([
-      ["year", `${currentTerm[0]}  ${currentTerm[1]}`, prevTerm1, prevTerm2],
+      [" ", term, prevTerm1, prevTerm2],
       [
-        currentTerm[1],
+        " ",
         currentPerceptionRatingAvg,
         prevPerceptionRatingAvg,
         prevPerceptionRatingAvg2,
@@ -201,6 +170,25 @@
       document.getElementById("term-perception-comp")
     );
     chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
+  }
+
+  function findPrevTerms(termName) {
+    //TODO: Make this work for all term types
+
+    const currentTerm = termName
+      .split(/(\s+)/)
+      .filter((entry) => entry.trim() != "");
+    let prevTerm1;
+    let prevTerm2;
+
+    if (currentTerm[0] == "Spring") {
+      prevTerm1 = `Fall ${currentTerm[1]}`;
+      prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
+    } else {
+      prevTerm1 = `Spring ${currentTerm[1]}`;
+      prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
+    }
+    return [prevTerm1, prevTerm2];
   }
 
   async function getPreviousTermData(prevTerm) {
