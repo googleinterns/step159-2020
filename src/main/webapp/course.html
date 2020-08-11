@@ -95,7 +95,7 @@
     </div>
 
     <div id="form-container">
-      <form id="termForm">
+      <form id="term-form">
         <div class="container pb-5">
           <h1 class="text-center">Rate your term and professors!</h1>
         </div>
@@ -152,8 +152,8 @@
         <div class="container pb-5">
           <input
             type="number"
-            id="hoursOfWork"
-            name="hoursOfWork"
+            id="hours"
+            name="hours"
             min="1"
             placeholder="Hours (include in-class time)"
           />
@@ -168,7 +168,7 @@
         </div>
 
         <button
-          onclick="postDataForm()"
+          onclick="passRatingProperties()"
           type="button"
           class="btn btn-lg btn-outline-success"
         >

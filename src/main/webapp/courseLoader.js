@@ -1,5 +1,4 @@
 google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(makeGraphs);
 
 function fillTitles() {
   const queryString = window.location.search;
@@ -118,19 +117,18 @@ function makeGraphs(dataObject) {
   profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
 }
 
-async function postData(url, data = {}) {
-  // Default options are marked with *
+async function postRatingProperties(url, data = {}) {
+  // Default options are marked with *.
   const response = await fetch(url, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     cache: "no-cache",
-    credentials: "same-origin", // include, *same-origin, omit
+    credentials: "same-origin", // Include, *same-origin, omit.
     headers: {
       "Content-Type": "application/json",
-      // 'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
+    body: JSON.stringify(data), // Body data type must match "Content-Type" header.
   });
-  return response.json(); // parses JSON response into native JavaScript objects
+  return response.json(); // Parses JSON response into native JavaScript objects and returns a Promise.
 }
 
 function onLoad() {
@@ -151,55 +149,39 @@ async function verify() {
   return id;
 }
 
-async function storeData() {
-  var data = {};
+async function getRatingPropertiesToStore() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const term = urlParams.get("term");
-  const profName = urlParams.get("prof-name");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
-
-  data["course-name"] = courseName;
-  data["term"] = term;
-  data["prof-name"] = profName;
-  data["units"] = units;
-  data["school-name"] = schoolName;
-
-  const termInput = document.getElementsByName("term-input")[0].value;
-  const profInput = document.getElementsByName("prof-input")[0].value;
-  const ratingTerm = document.getElementById("rating-term").value;
-  const ratingProf = document.getElementById("rating-prof").value;
-  const hours = document.getElementById("hoursOfWork").value;
-  const diff = document.getElementById("difficulty").value;
-  document.getElementById("termForm").reset();
-
-  data["term-input"] = termInput;
-  data["prof-input"] = profInput;
-  data["rating-term"] = ratingTerm;
-  data["rating-prof"] = ratingProf;
-  data["hours"] = hours;
-  data["difficulty"] = diff;
-
-  const userId = await verify();
-  data["ID"] = userId;
+  const ratingProperties = {
+    courseName: urlParams.get("course-name"),
+    term: urlParams.get("term"),
+    profName: urlParams.get("prof-name"),
+    units: urlParams.get("num-units"),
+    schoolName: urlParams.get("school-name"),
+    termInput: document.getElementById("term-input").value,
+    profInput: document.getElementById("prof-input").value,
+    ratingTerm: document.getElementById("rating-term").value,
+    ratingProf: document.getElementById("rating-prof").value,
+    hours: document.getElementById("hours").value,
+    difficulty: document.getElementById("difficulty").value,
+  };
+  document.getElementById("term-form").reset();
 
   const url = newURL(
-    schoolName,
-    courseName,
-    profName,
-    units,
-    term,
-    termInput,
-    profInput,
-    ratingTerm,
-    ratingProf,
-    hours,
-    diff
+    ratingProperties.schoolName,
+    ratingProperties.courseName,
+    ratingProperties.profName,
+    ratingProperties.units,
+    ratingProperties.term,
+    ratingProperties.termInput,
+    ratingProperties.profInput,
+    ratingProperties.ratingTerm,
+    ratingProperties.ratingProf,
+    ratingProperties.hours,
+    ratingProperties.difficulty
   );
 
-  return [url, data];
+  return [url, ratingProperties];
 }
 
 function newURL(
@@ -222,7 +204,7 @@ function newURL(
   url.searchParams.set("term", term);
   url.searchParams.set("school-name", schoolName);
 
-  url.searchParams.set("hourOfWork", hours);
+  url.searchParams.set("hour", hours);
   url.searchParams.set("difficulty", difficulty);
   url.searchParams.set("term-input", termInput);
   url.searchParams.set("prof-input", profInput);
@@ -232,7 +214,143 @@ function newURL(
   return url;
 }
 
-async function postDataForm() {
-  const urlAndData = await storeData();
-  postData(urlAndData[0], urlAndData[1]);
+async function passRatingProperties() {
+  const urlAndData = await getRatingPropertiesToStore();
+  postRatingProperties(urlAndData[0], urlAndData[1]);
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  populateData();
+});
+
+function createComment(commentText, isCourse) {
+  const commentContainer = isCourse
+    ? document.getElementById("course-comments")
+    : document.getElementById("prof-comments");
+
+  const commentWrapper = document.createElement("div");
+  commentWrapper.setAttribute("class", "media text-muted pt-3");
+
+  const commentUser = document.createElement("strong");
+  commentUser.setAttribute("class", "d-block text-gray-dark");
+  commentUser.innerHTML = "@username";
+
+  const commentBody = document.createElement("p");
+  commentBody.setAttribute(
+    "class",
+    "media-body pb-3 mb-0 small lh-125 border-bottom border-gray"
+  );
+  commentBody.innerHTML = commentText;
+
+  commentBody.insertAdjacentElement("afterbegin", commentUser);
+  commentWrapper.appendChild(commentBody);
+  commentContainer.appendChild(commentWrapper);
+}
+
+function loadComments(commentList, isCourse) {
+  for (let comment of commentList) {
+    createComment(comment, isCourse);
+  }
+}
+
+function makeGraphs(termDataObject) {
+  const termCommentsList = termDataObject.termCommentsList;
+  const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
+    termCommentsList
+  );
+  loadComments(dummyComments, /* isCourse*/ true);
+  loadComments(dummyComments, /* isCourse*/ false);
+
+  const tempHoursList = termDataObject.hoursList;
+  const hoursList = [
+    ["hours"],
+    /* dummyHourRating */ [3],
+    /* dummyHourRating */ [8],
+  ].concat(tempHoursList);
+
+  const hourData = new google.visualization.arrayToDataTable(hoursList);
+  const hourOptions = {
+    title: "Hours Spent per Week",
+    legend: { position: "none" },
+    vAxis: { title: "# Students" },
+    hAxis: { title: "Hours" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const hourChart = new google.visualization.Histogram(
+    document.getElementById("hours-chart")
+  );
+  hourChart.draw(hourData, hourOptions);
+
+  const tempDiffList = termDataObject.difficultyList;
+  const diffList = [
+    ["difficulty"],
+    /* dummyDifficultyRating */ [1],
+    /* dummyDifficultyRating */ [4],
+  ].concat(tempDiffList);
+  const diffData = new google.visualization.arrayToDataTable(diffList);
+  const diffOptions = {
+    title: "Difficulty of Class",
+    legend: { position: "none" },
+    vAxis: { title: "# Students" },
+    hAxis: { title: "Difficulty" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const diffChart = new google.visualization.Histogram(
+    document.getElementById("diff-chart")
+  );
+  diffChart.draw(diffData, diffOptions);
+
+  const tempTermPerceptionList = termDataObject.termPerceptionList;
+  const termPerceptionList = [
+    ["Term Perception"],
+    /* dummyPerceptionRating */ [11],
+    /* dummyPerceptionRating */ [5],
+  ].concat(tempTermPerceptionList);
+  const termPerceptionData = new google.visualization.arrayToDataTable(
+    termPerceptionList
+  );
+  const termPerceptionOptions = {
+    title: "Perception of Term Reviews",
+    legend: { position: "none" },
+    vAxis: { title: "Perception" },
+    hAxis: { title: "Comment Quantity" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const termPerceptionChart = new google.visualization.Histogram(
+    document.getElementById("term-chart")
+  );
+  termPerceptionChart.draw(termPerceptionData, termPerceptionOptions);
+
+  const tempProfPerceptionList = dataObject.termPerceptionList;
+  const profPerceptionList = [
+    ["Professor Perception"],
+    /* dummyPerceptionRating */ [2],
+    /* dummyPerceptionRating */ [9],
+  ].concat(tempProfPerceptionList);
+  const profPerceptionData = new google.visualization.arrayToDataTable(
+    profPerceptionList
+  );
+  const profPerceptionOptions = {
+    title: "Perception of Professor Reviews",
+    legend: { position: "none" },
+    vAxis: { title: "Perception" },
+    hAxis: { title: "Comment Quantity" },
+    histogram: {
+      hideBucketItems: true,
+    },
+  };
+  const profPerceptionChart = new google.visualization.Histogram(
+    document.getElementById("prof-chart")
+  );
+  profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
+}
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});

@@ -34,8 +34,8 @@ public class DataServlet extends HttpServlet {
   private Key currentTermKey;
   private LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-  private String schoolName, courseName, profName, termName, termFeedback, professorFeedback;
-  private Long units, termRating, professorRating, workHours, difficulty, userId;
+
+  // Will re-add constructor later for testing.
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -65,27 +65,40 @@ public class DataServlet extends HttpServlet {
 
   public void addTermRating(HttpServletRequest request) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-    StringBuilder jb = new StringBuilder();
+    StringBuilder stringBuilder = new StringBuilder();
     String line = null;
     try {
       BufferedReader reader = request.getReader();
-      while ((line = reader.readLine()) != null) jb.append(line);
+      while ((line = reader.readLine()) != null) {
+        stringBuilder.append(line);
+      }
     } catch (Exception exception) {
       /*report an error*/
+      throw new IOException("Error reading body of request");
     }
 
+    String schoolName = new String();
+    String courseName = new String();
+    String profName = new String();
+    String termName = new String();
+    Long units = null;
+    String termFeedback = new String();
+    String professorFeedback = new String();
+    Long termRating = null;
+    Long professorRating = null;
+    Long workHours = null;
+    Long difficulty = null;
     try {
-      JSONObject jsonObject = new JSONObject(jb.toString());
-      schoolName = jsonObject.getString("school-name");
-      courseName = jsonObject.getString("course-name");
-      profName = jsonObject.getString("prof-name");
+      JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+      schoolName = jsonObject.getString("schoolName");
+      courseName = jsonObject.getString("courseName");
+      profName = jsonObject.getString("profName");
       termName = jsonObject.getString("term");
       units = (long) jsonObject.getFloat("units");
-      termFeedback = jsonObject.getString("term-input");
-      professorFeedback = jsonObject.getString("prof-input");
-      termRating = (long) jsonObject.getFloat("rating-term");
-      professorRating = (long) jsonObject.getFloat("rating-prof");
+      termFeedback = jsonObject.getString("termInput");
+      professorFeedback = jsonObject.getString("profInput");
+      termRating = (long) jsonObject.getFloat("ratingTerm");
+      professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
       userId = (long) jsonObject.getFloat("ID");
@@ -97,7 +110,7 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Quick change, will modify tests as well after the demo.
+    // Modifying tests right now to reflect changes.
     currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
