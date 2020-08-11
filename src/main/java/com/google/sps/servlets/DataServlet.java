@@ -37,7 +37,13 @@ public class DataServlet extends HttpServlet {
   private String schoolName, courseName, profName, termName, termFeedback, professorFeedback;
   private Long units, termRating, professorRating, workHours, difficulty;
 
-  // Will re-add constructor later for testing.
+  //   public DataServlet() {
+  //     this.languageService = LanguageServiceClient.create();
+  //   }
+
+  //   public DataServlet(LanguageServiceClient languageService) {
+  //     this.languageService = languageService;
+  //   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

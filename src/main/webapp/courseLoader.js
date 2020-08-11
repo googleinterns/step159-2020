@@ -126,14 +126,32 @@ async function postData(url, data = {}) {
     credentials: "same-origin", // include, *same-origin, omit
     headers: {
       "Content-Type": "application/json",
-      // 'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: "application/json",
     },
     body: JSON.stringify(data), // body data type must match "Content-Type" header
   });
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-function storeData() {
+function onLoad() {
+  gapi.load("auth2", function () {
+    gapi.auth2.init();
+  });
+}
+
+async function verify() {
+  const auth2 = gapi.auth2.getAuthInstance();
+  const googleUser = auth2.currentUser.get();
+  const token = googleUser.getAuthResponse().id_token;
+  const url = new URL("/login", window.location.origin);
+  url.searchParams.set("token", token);
+  const response = await fetch(url, { method: "POST" });
+  const userInfo = await response.json();
+  const id = userInfo.id;
+  return id;
+}
+
+async function storeData() {
   var data = {};
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -163,6 +181,10 @@ function storeData() {
   data["rating-prof"] = ratingProf;
   data["hours"] = hours;
   data["difficulty"] = diff;
+
+  const userId = await verify();
+  data["ID"] = userId;
+  console.log(userId);
 
   const url = newURL(
     schoolName,
@@ -211,7 +233,7 @@ function newURL(
   return url;
 }
 
-function postDataForm() {
-  const urlAndData = storeData();
+async function postDataForm() {
+  const urlAndData = await storeData();
   postData(urlAndData[0], urlAndData[1]);
 }
