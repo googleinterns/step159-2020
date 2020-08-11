@@ -1,8 +1,8 @@
+/* using IIFE https://flaviocopes.com/javascript-iife/ */
 (() => {
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
-  let termData;
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const courseName = urlParams.get("course-name");
@@ -22,8 +22,7 @@
     )
       .then((response) => response.json())
       .then((data) => {
-        termData = data;
-        makeGraphs(termData);
+        makeGraphs(data);
       });
   }
 
@@ -33,7 +32,7 @@
   });
 
   function makeGraphs(termDataObject) {
-    const termCommentsList = termData.termCommentsList;
+    const termCommentsList = termDataObject.termCommentsList;
     const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
       termCommentsList
     );
@@ -106,14 +105,18 @@
     );
     termPerceptionChart.draw(termPerceptionData, termPerceptionOptions);
 
-    makeTermRatingChart();
+    return makeTermRatingChart(termDataObject);
   }
 
-  async function makeTermRatingChart() {
-    const currentTerm = term.split(/(\s+)/).filter((e) => e.trim().length > 0);
+  async function makeTermRatingChart(termDataObject) {
+    //splits term name into [season,year]
+    const currentTerm = term
+      .split(/(\s+)/)
+      .filter((entry) => entry.trim() != "");
     let prevTerm1;
     let prevTerm2;
 
+    //TODO: Make this work for all term types
     if (currentTerm[0] == "Spring") {
       prevTerm1 = `Fall ${currentTerm[1]}`;
       prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
@@ -122,14 +125,21 @@
       prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
     }
 
-    const prevTermData1 = await getPreviousTermData(prevTerm1);
-    const prevTermData2 = await getPreviousTermData(prevTerm2);
+    let prevTermData1;
+    let prevTermData2;
+    await Promise.all([
+      getPreviousTermData(prevTerm1),
+      getPreviousTermData(prevTerm2),
+    ]).then((values) => {
+      prevTermData1 = values[0];
+      prevTermData2 = values[1];
+    });
 
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr) / list.length;
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
 
     const currentTermRatingAvg = average(
-      /* adds dummy data */ [4, 8, 17].concat(termData.termScoreList)
+      /* adds dummy data */ [4, 8, 17].concat(termDataObject.termScoreList)
     );
     const prevTermRatingAvg = average(
       /* adds dummy data */ [12, 5, 3].concat(prevTermData1.termScoreList)
