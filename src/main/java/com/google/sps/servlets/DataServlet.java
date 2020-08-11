@@ -36,8 +36,15 @@ public class DataServlet extends HttpServlet {
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
   // Will re-add constructor later for testing.
-  public DataServlet() {
-    this.languageService = LanguageServiceClient.create();
+  public class DataServlet {
+
+    public DataServlet() {
+      this.languageService = LanguageServiceClient.create();
+    }
+
+    public DataServlet(LanguageServiceClient languageService) {
+      this.languageService = languageService;
+    }
   }
 
   @Override
