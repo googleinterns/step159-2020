@@ -118,67 +118,53 @@ function makeGraphs(dataObject) {
   profPerceptionChart.draw(profPerceptionData, profPerceptionOptions);
 }
 
-async function postData(url, data = {}) {
-  // Default options are marked with *
+async function postRatingProperties(url, data = {}) {
+  // Default options are marked with *.
   const response = await fetch(url, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     cache: "no-cache",
-    credentials: "same-origin", // include, *same-origin, omit
+    credentials: "same-origin", // Include, *same-origin, omit.
     headers: {
       "Content-Type": "application/json",
-      // 'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
+    body: JSON.stringify(data), // Body data type must match "Content-Type" header.
   });
-  return response.json(); // parses JSON response into native JavaScript objects
+  return response.json(); // Parses JSON response into native JavaScript objects and returns a Promise.
 }
 
-function storeData() {
-  var data = {};
+function getRatingPropertiesToStore() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const term = urlParams.get("term");
-  const profName = urlParams.get("prof-name");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
+  const ratingProperties = {
+    courseName: urlParams.get("course-name"),
+    term: urlParams.get("term"),
+    profName: urlParams.get("prof-name"),
+    units: urlParams.get("num-units"),
+    schoolName: urlParams.get("school-name"),
+    termInput: document.getElementById("term-input").value,
+    profInput: document.getElementById("prof-input").value,
+    ratingTerm: document.getElementById("rating-term").value,
+    ratingProf: document.getElementById("rating-prof").value,
+    hours: document.getElementById("hours").value,
+    difficulty: document.getElementById("difficulty").value,
+  };
 
-  data["course-name"] = courseName;
-  data["term"] = term;
-  data["prof-name"] = profName;
-  data["units"] = units;
-  data["school-name"] = schoolName;
-
-  const termInput = document.getElementById("term-input").value;
-  const profInput = document.getElementById("prof-input").value;
-  const ratingTerm = document.getElementById("rating-term").value;
-  const ratingProf = document.getElementById("rating-prof").value;
-  const hours = document.getElementById("hoursOfWork").value;
-  const diff = document.getElementById("difficulty").value;
-  document.getElementById("termForm").reset();
-
-  data["term-input"] = termInput;
-  data["prof-input"] = profInput;
-  data["rating-term"] = ratingTerm;
-  data["rating-prof"] = ratingProf;
-  data["hours"] = hours;
-  data["difficulty"] = diff;
-
+  document.getElementById("term-form").reset();
   const url = newURL(
-    schoolName,
-    courseName,
-    profName,
-    units,
-    term,
-    termInput,
-    profInput,
-    ratingTerm,
-    ratingProf,
-    hours,
-    diff
+    ratingProperties.schoolName,
+    ratingProperties.courseName,
+    ratingProperties.profName,
+    ratingProperties.units,
+    ratingProperties.term,
+    ratingProperties.termInput,
+    ratingProperties.profInput,
+    ratingProperties.ratingTerm,
+    ratingProperties.ratingProf,
+    ratingProperties.hours,
+    ratingProperties.difficulty
   );
 
-  return [url, data];
+  return [url, ratingProperties];
 }
 
 function newURL(
@@ -211,7 +197,7 @@ function newURL(
   return url;
 }
 
-function postDataForm() {
-  const urlAndData = storeData();
-  postData(urlAndData[0], urlAndData[1]);
+function passRatingProperties() {
+  const urlAndData = getRatingPropertiesToStore();
+  postRatingProperties(urlAndData[0], urlAndData[1]);
 }
