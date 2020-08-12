@@ -3,10 +3,12 @@ package com.google.sps.data;
 public class LoginObject {
   String id;
   Boolean success;
+  String error;
 
-  public LoginObject(String idValue, Boolean successValue) {
+  public LoginObject(String idValue, Boolean successValue, String errorMessage) {
     id = idValue;
     success = successValue;
+    error = errorMessage;
   }
 
   public String getId() {
@@ -15,5 +17,9 @@ public class LoginObject {
 
   public Boolean getSuccess() {
     return success;
+  }
+
+  public String getError() {
+    return error;
   }
 }

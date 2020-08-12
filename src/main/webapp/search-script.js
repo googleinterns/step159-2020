@@ -104,13 +104,11 @@ async function verify() {
     const auth2 = gapi.auth2.getAuthInstance();
     const googleUser = auth2.currentUser.get();
     const token = googleUser.getAuthResponse().id_token;
-    console.log(token);
     const url = new URL("/login", window.location.origin);
     url.searchParams.set("token", token);
     const response = await fetch(url, {method:"POST"});
     const userInfo = await response.json();
-    const id = userInfo.id;
-    return id;   
+    return userInfo.id;
 }
 
 function signOut() {
