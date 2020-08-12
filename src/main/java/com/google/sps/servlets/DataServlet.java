@@ -173,7 +173,6 @@ public class DataServlet extends HttpServlet {
         new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
     Key courseKey =
         db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
-    System.out.println("course");
 
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
