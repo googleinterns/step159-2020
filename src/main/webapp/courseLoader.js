@@ -22,13 +22,9 @@
     )
       .then((response) => response.json())
       .then((data) => {
-        google.charts.setOnLoadCallback(function () {
+        google.charts.setOnLoadCallback(() => {
           makeGraphs(data);
-        });
-        google.charts.setOnLoadCallback(function () {
           makeTermRatingChart(data);
-        });
-        google.charts.setOnLoadCallback(function () {
           makeTermPerceptionChart(data);
         });
         loadAllComments(data);
@@ -229,22 +225,3 @@
     $('[data-toggle="tooltip"]').tooltip();
   });
 })();
-
-function findPrevTerms(termName) {
-  //TODO: Make this work for all term types
-
-  const currentTerm = termName
-    .split(/(\s+)/)
-    .filter((entry) => entry.trim() != "");
-  let prevTerm1;
-  let prevTerm2;
-
-  if (currentTerm[0] == "Spring") {
-    prevTerm1 = `Fall ${currentTerm[1]}`;
-    prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
-  } else {
-    prevTerm1 = `Spring ${currentTerm[1]}`;
-    prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
-  }
-  return [prevTerm1, prevTerm2];
-}
