@@ -7,15 +7,16 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.cloud.language.v1.AnalyzeSentimentResponse;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -55,24 +56,13 @@ public final class DataServletTest {
 
   @Test
   public void addTermRating_newRating() throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
     jsonObject = Mockito.mock(JSONObject.class);
     request = Mockito.mock(HttpServletRequest.class);
 
-    when(jsonObject.getString("schoolName")).thenReturn("google");
-    when(jsonObject.getString("courseName")).thenReturn("6.006");
-    when(jsonObject.getString("profName")).thenReturn("Srini");
-    when(jsonObject.getString("term")).thenReturn("Spring 2020");
-    when(jsonObject.getFloat("units")).thenReturn((float) 3);
-    when(jsonObject.getString("termInput")).thenReturn("I do not like this.");
-    when(jsonObject.getString("profInput")).thenReturn("The professor was amazing.");
-    when(jsonObject.getFloat("ratingTerm")).thenReturn((float) 1);
-    when(jsonObject.getFloat("ratingProf")).thenReturn((float) 3);
-    when(jsonObject.getFloat("hours")).thenReturn((float) 8);
-    when(jsonObject.getFloat("difficulty")).thenReturn((float) 4);
-    when(jsonObject.getFloat("hours")).thenReturn((float) 8);
-    when(jsonObject.getString("ID")).thenReturn("9223372036854775807");
+    // File with body request in webapp folder.
+    Reader reader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
+    BufferedReader bufferedReader = new BufferedReader(reader);
+    when(request.getReader()).thenReturn(bufferedReader);
 
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
@@ -80,17 +70,24 @@ public final class DataServletTest {
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
-    newTermRating.addTermRating(request);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    createSchoolCourseAndTermEntities(
+        datastore,
+        /* schoolName */ "google",
+        /* courseName */ "6.006",
+        /* termName */ "Spring 2020",
+        /* units */ "3");
+    newTermRating.addTermRating(request, datastore);
 
     Entity termRatingEntity =
         newTermRating
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
-                /* propertyValue */ "923372036854775807")
+                /* propertyValue */ "9223372036854775807")
             .get(0);
     assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
-    assertEquals("923372036854775807", termRatingEntity.getProperty("reviewer-id"));
+    assertEquals("9223372036854775807", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
     assertEquals(Long.valueOf(8), termRatingEntity.getProperty("hours"));
     assertEquals(Long.valueOf(4), termRatingEntity.getProperty("difficulty"));
@@ -102,21 +99,13 @@ public final class DataServletTest {
 
   @Test
   public void addTermRating_overwritingExistingTermRating() throws IOException {
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    jsonObject = Mockito.mock(JSONObject.class);
     request = Mockito.mock(HttpServletRequest.class);
-    Entity termEntity = new Entity("Term");
-    datastore.put(termEntity);
-    Key termKey = termEntity.getKey();
 
-    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
-    when(request.getParameter("term-input")).thenReturn("I really like this class.");
-    when(request.getParameter("rating-term")).thenReturn("4");
-    when(request.getParameter("hoursOfWork")).thenReturn("8");
-    when(request.getParameter("difficulty")).thenReturn("4");
-    when(request.getParameter("prof-input")).thenReturn("The professor was okay.");
-    when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("ID")).thenReturn("numberOneId");
+    // File with body request in webapp folder.
+    Reader originalRatingReader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
+    BufferedReader originalRatingBufferedReader = new BufferedReader(originalRatingReader);
+    when(request.getReader()).thenReturn(originalRatingBufferedReader);
 
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
@@ -124,28 +113,30 @@ public final class DataServletTest {
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
-    newTermRating.addTermRating(request);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    createSchoolCourseAndTermEntities(
+        datastore,
+        /* schoolName */ "google",
+        /* courseName */ "6.006",
+        /* termName */ "Spring 2020",
+        /* units */ "3");
+    newTermRating.addTermRating(request, datastore);
 
-    when(request.getParameter("term-input")).thenReturn("I don't like this class.");
-    when(request.getParameter("rating-term")).thenReturn("1");
-    when(request.getParameter("hoursOfWork")).thenReturn("10");
-    when(request.getParameter("difficulty")).thenReturn("5");
-    when(request.getParameter("prof-input")).thenReturn("This teacher was wonderful.");
-    when(request.getParameter("rating-professor")).thenReturn("3");
-    when(request.getParameter("ID")).thenReturn("numberOneId");
-    when(request.getParameter("term")).thenReturn(KeyFactory.keyToString(termKey));
+    Reader newRatingReader = new FileReader("src/main/webapp/WEB-INF/testOverwriteRating.txt");
+    BufferedReader NewRatingBufferedReader = new BufferedReader(newRatingReader);
+    when(request.getReader()).thenReturn(NewRatingBufferedReader);
 
-    newTermRating.addTermRating(request);
+    newTermRating.addTermRating(request, datastore);
 
     Entity termRatingEntity =
         newTermRating
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
-                /* propertyValue */ "numberOneId")
+                /* propertyValue */ "9223372036854775807")
             .get(0);
     assertEquals("I don't like this class.", termRatingEntity.getProperty("comments-term"));
-    assertEquals("numberOneId", termRatingEntity.getProperty("reviewer-id"));
+    assertEquals("9223372036854775807", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
     assertEquals(Long.valueOf(10), termRatingEntity.getProperty("hours"));
     assertEquals(Long.valueOf(5), termRatingEntity.getProperty("difficulty"));
@@ -154,5 +145,24 @@ public final class DataServletTest {
     assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-term"));
     assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-professor"));
   }
-  // Let's add two more test cases YAY! :)
+
+  public void createSchoolCourseAndTermEntities(
+      DatastoreService datastore,
+      String schoolName,
+      String courseName,
+      String termName,
+      String units) {
+    Entity schoolEntity = new Entity("School");
+    schoolEntity.setProperty("school-name", schoolName);
+    datastore.put(schoolEntity);
+
+    Entity courseEntity = new Entity("Course", schoolEntity.getKey());
+    courseEntity.setProperty("course-name", courseName);
+    courseEntity.setProperty("units", Long.valueOf(units));
+    datastore.put(courseEntity);
+
+    Entity termEntity = new Entity("Term", courseEntity.getKey());
+    termEntity.setProperty("term", termName);
+    datastore.put(termEntity);
+  }
 }

@@ -66,20 +66,21 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request);
+    addTermRating(request, db);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
 
-  public void addTermRating(HttpServletRequest request) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  public void addTermRating(HttpServletRequest request, DatastoreService db) throws IOException {
     StringBuilder stringBuilder = new StringBuilder();
     String line = null;
+    // Talked with Luke and as we won't do validation testing, I will not
+    // test either of the try-catch loops.
     try {
       BufferedReader reader = request.getReader();
       while ((line = reader.readLine()) != null) stringBuilder.append(line);
     } catch (Exception exception) {
-      /*report an error*/
+      // If it could not read request.
       throw new IOException("Error reading body of request");
     }
 
@@ -141,7 +142,7 @@ public class DataServlet extends HttpServlet {
     termRatingEntity.setProperty("comments-professor", professorFeedback);
     termRatingEntity.setProperty("score-professor", professorScore);
     termRatingEntity.setProperty("perception-professor", professorRating);
-    datastore.put(termRatingEntity);
+    db.put(termRatingEntity);
   }
 
   private float getSentimentScore(String feedback) throws IOException {
@@ -162,7 +163,6 @@ public class DataServlet extends HttpServlet {
       String profName)
       throws IOException {
     Key schoolKey = queryEntities("School", "school-name", schoolName).get(0).getKey();
-
     List<Filter> filters = new ArrayList();
     Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
     Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
@@ -173,6 +173,7 @@ public class DataServlet extends HttpServlet {
         new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
     Key courseKey =
         db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
+    System.out.println("course");
 
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
