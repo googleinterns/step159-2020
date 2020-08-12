@@ -22,8 +22,15 @@
     )
       .then((response) => response.json())
       .then((data) => {
-        makeGraphs(data);
-        makeTermRatingChart(data), makeTermPerceptionChart(data);
+        google.charts.setOnLoadCallback(function () {
+          makeGraphs(data);
+        });
+        google.charts.setOnLoadCallback(function () {
+          makeTermRatingChart(data);
+        });
+        google.charts.setOnLoadCallback(function () {
+          makeTermPerceptionChart(data);
+        });
         loadAllComments(data);
       });
   }
@@ -43,14 +50,14 @@
   }
 
   function makeGraphs(termDataObject) {
-    const tempHoursList = termDataObject.hoursList;
-    const hoursList = [
+    const tempHourList = termDataObject.hoursList;
+    const hourList = [
       ["hours"],
       /* dummyHourRating */ [3],
       /* dummyHourRating */ [8],
-    ].concat(tempHoursList);
+    ].concat(tempHourList);
 
-    const hourData = new google.visualization.arrayToDataTable(hoursList);
+    const hourData = new google.visualization.arrayToDataTable(hourList);
     const hourOptions = {
       title: "Hours Spent per Week",
       legend: { position: "none" },
@@ -89,8 +96,6 @@
 
   async function makeTermRatingChart(termDataObject) {
     const [prevTerm1, prevTerm2] = await getPrevTermName();
-    console.log(prevTerm1);
-    console.log(prevTerm2);
     const [prevTermData1, prevTermData2] = await Promise.all([
       getPreviousTermData(prevTerm1),
       getPreviousTermData(prevTerm2),
@@ -173,36 +178,16 @@
     chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
   }
 
-  function findPrevTerms(termName) {
-    //TODO: Make this work for all term types
-
-    const currentTerm = termName
-      .split(/(\s+)/)
-      .filter((entry) => entry.trim() != "");
-    let prevTerm1;
-    let prevTerm2;
-
-    if (currentTerm[0] == "Spring") {
-      prevTerm1 = `Fall ${currentTerm[1]}`;
-      prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
-    } else {
-      prevTerm1 = `Spring ${currentTerm[1]}`;
-      prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
-    }
-    return [prevTerm1, prevTerm2];
-  }
-
   async function getPreviousTermData(prevTerm) {
     const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${prevTerm}&prof-name=${profName}&num-units=${units}`;
     const response = await fetch(url);
-    const prevTermData = await response.json();
-    return prevTermData;
+    return response.json();
   }
 
   async function getPrevTermName() {
     const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`;
     const response = await fetch(url);
-    const prevTermData = response.json();
+    const prevTermData = await response.json();
     const [prevTermName1, prevTermName2] = [
       prevTermData[0].properties.term,
       prevTermData[1].properties.term,
@@ -244,3 +229,22 @@
     $('[data-toggle="tooltip"]').tooltip();
   });
 })();
+
+function findPrevTerms(termName) {
+  //TODO: Make this work for all term types
+
+  const currentTerm = termName
+    .split(/(\s+)/)
+    .filter((entry) => entry.trim() != "");
+  let prevTerm1;
+  let prevTerm2;
+
+  if (currentTerm[0] == "Spring") {
+    prevTerm1 = `Fall ${currentTerm[1]}`;
+    prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
+  } else {
+    prevTerm1 = `Spring ${currentTerm[1]}`;
+    prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
+  }
+  return [prevTerm1, prevTerm2];
+}
