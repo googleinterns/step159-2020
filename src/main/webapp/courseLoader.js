@@ -88,7 +88,9 @@
   }
 
   async function makeTermRatingChart(termDataObject) {
-    const [prevTerm1, prevTerm2] = findPrevTerms(term);
+    const [prevTerm1, prevTerm2] = await getPrevTermName();
+    console.log(prevTerm1);
+    console.log(prevTerm2);
     const [prevTermData1, prevTermData2] = await Promise.all([
       getPreviousTermData(prevTerm1),
       getPreviousTermData(prevTerm2),
@@ -127,7 +129,7 @@
   }
 
   async function makeTermPerceptionChart(termDataObject) {
-    const [prevTerm1, prevTerm2] = findPrevTerms(term);
+    const [prevTerm1, prevTerm2] = await getPrevTermName();
 
     const [prevTermData1, prevTermData2] = await Promise.all([
       getPreviousTermData(prevTerm1),
@@ -195,6 +197,17 @@
     const response = await fetch(url);
     const prevTermData = await response.json();
     return prevTermData;
+  }
+
+  async function getPrevTermName() {
+    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`;
+    const response = await fetch(url);
+    const prevTermData = response.json();
+    const [prevTermName1, prevTermName2] = [
+      prevTermData[0].properties.term,
+      prevTermData[1].properties.term,
+    ];
+    return [prevTermName1, prevTermName2];
   }
 
   function createComment(commentText, isCourse) {
