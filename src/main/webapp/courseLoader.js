@@ -49,8 +49,10 @@
     const tempHourList = termDataObject.hoursList;
     const hourList = [
       ["hours"],
-      /* dummyHourRating */ [3],
+      /* dummyHourRating */ [2],
       /* dummyHourRating */ [8],
+      /* dummyHourRating */ [8],
+      /* dummyHourRating */ [6],
     ].concat(tempHourList);
 
     const hourData = new google.visualization.arrayToDataTable(hourList);
@@ -73,6 +75,8 @@
       ["difficulty"],
       /* dummyDifficultyRating */ [1],
       /* dummyDifficultyRating */ [4],
+      /* dummyDifficultyRating */ [4],
+      /* dummyDifficultyRating */ [7],
     ].concat(tempDiffList);
     const diffData = new google.visualization.arrayToDataTable(diffList);
     const diffOptions = {
