@@ -36,8 +36,11 @@ function showCourses() {
   url.searchParams.set("schoolName", school)
   fetch(url)
   .then(response => response.json())
-  .then((courses) => {
-    courses.forEach(course => courseResults.appendChild(createListElement(course)));
+  .then((searchResults) => {
+    if (searchResults.hasOwnProperty("message")) {
+        courseResults += searchResults.message + "<br />"
+    }
+    searchResults.courses.forEach(course => courseResults.appendChild(createListElement(course)));
   });
 }
 
@@ -53,7 +56,7 @@ function createListElement(course) {
   const school = getUserSchool();
   url.searchParams.set("school-name", school);
   link.setAttribute('href', url);
-  link.innerText = course.name;
+  link.innerText = course.name + " - " + course.professor + " (" + course.term + ")" ;
   liElement.appendChild(link);
   return liElement;
 }

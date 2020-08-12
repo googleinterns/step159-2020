@@ -23,7 +23,6 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.gson.Gson;
 import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
 /** Servlet that stores and shows images and comments. */
 @WebServlet("/search")
@@ -41,18 +41,26 @@ public class SearchServlet extends HttpServlet {
   @Override
   /* Show courses. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<Course> courses = getHelper(request);
+    JSONObject results = getHelper(request);
 
-    String coursesJson = new Gson().toJson(courses);
+    // String coursesJson = new Gson().toJson(courses);
     response.setContentType("application/json;");
-    response.getWriter().println(coursesJson);
+    response.getWriter().println(results);
   }
 
   /* Create list of courses given request. Used for testing. */
-  public List<Course> getHelper(HttpServletRequest request) {
+  public JSONObject getHelper(HttpServletRequest request) {
+    String success = "good";
     List<Filter> filters = getFilters(request);
-    List<Entity> results = getResults(filters);
-    List<Course> courses = getCourses(results);
+    List<Entity> results = getResults(filters, false);
+    if (results.size() == 0) {
+      results = getResults(filters, true);
+      success = "okay";
+    }
+    if (results.size() == 0) {
+      success = "bad";
+    }
+    JSONObject courses = getCourses(results, success);
     return courses;
   }
 
@@ -61,6 +69,7 @@ public class SearchServlet extends HttpServlet {
     List<Filter> filters = new ArrayList<>();
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
+
       Filter nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
       filters.add(nameFilter);
     }
@@ -94,13 +103,17 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
-  private List<Entity> getResults(List<Filter> filters) {
+  private List<Entity> getResults(List<Filter> filters, boolean fuzzy) {
     Query courseQuery = new Query("Course-Info");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
         courseQuery.setFilter(filters.get(0));
       } else {
-        courseQuery.setFilter(CompositeFilterOperator.and(filters));
+        if (fuzzy) {
+          courseQuery.setFilter(CompositeFilterOperator.or(filters));
+        } else {
+          courseQuery.setFilter(CompositeFilterOperator.and(filters));
+        }
       }
     }
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -110,7 +123,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Given list of result Entity courses, format into Course objects. */
-  private List<Course> getCourses(List<Entity> results) {
+  private JSONObject getCourses(List<Entity> results, String success) {
     List<Course> courses = new ArrayList<>();
     for (Entity entity : results) {
       String name = (String) entity.getProperty("name");
@@ -121,7 +134,18 @@ public class SearchServlet extends HttpServlet {
       Course course = new Course(name, professor, numUnits, term, school);
       courses.add(course);
     }
-    return courses;
+    JSONObject json = new JSONObject();
+    if (success.equals("okay")) { // Not perfect match - add message
+      json.put(
+          "message",
+          "We couldn't find anything exactly matching your query. Here are some similar results!");
+    } else if (success.equals("bad")) {
+      json.put(
+          "message",
+          "We couldn't find anything relating to this query. Change your search parameters and try again.");
+    }
+    json.put("courses", courses);
+    return json;
   }
 
   /* Store course. */
