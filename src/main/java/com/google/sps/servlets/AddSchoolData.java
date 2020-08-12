@@ -11,6 +11,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,6 +47,8 @@ public class AddSchoolData extends HttpServlet {
     String termName = request.getParameter("term");
     String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
+
+    findTermDate(termName);
 
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
     Boolean isNewCourse = isNewCourseDetector(courseName);
@@ -140,6 +144,7 @@ public class AddSchoolData extends HttpServlet {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
     newTerm.setProperty("professorKey", professor);
+    newTerm.setProperty("timeStamp", findTermDate(term));
     return newTerm;
   }
 
@@ -161,5 +166,32 @@ public class AddSchoolData extends HttpServlet {
     } catch (DatastoreFailureException | IllegalArgumentException e) {
       throw e;
     }
+  }
+
+  private Date findTermDate(String termName) {
+    String[] termList = termName.split(" ", 5);
+
+    int termYear = Integer.parseInt(termList[1]);
+    Calendar startDay = Calendar.getInstance();
+
+    if (termList[0].equals("Spring")) {
+      startDay.set(Calendar.MONTH, 2);
+      startDay.set(Calendar.DATE, 01);
+      startDay.set(Calendar.YEAR, termYear);
+    } else if (termList[0].equals("Summer")) {
+      startDay.set(Calendar.MONTH, 5);
+      startDay.set(Calendar.DATE, 01);
+      startDay.set(Calendar.YEAR, termYear);
+    } else if (termList[0].equals("Fall")) {
+      startDay.set(Calendar.MONTH, 8);
+      startDay.set(Calendar.DATE, 01);
+      startDay.set(Calendar.YEAR, termYear);
+    } else {
+      startDay.set(Calendar.MONTH, 11);
+      startDay.set(Calendar.DATE, 01);
+      startDay.set(Calendar.YEAR, termYear);
+    }
+    Date dateTime = startDay.getTime();
+    return dateTime;
   }
 }
