@@ -110,7 +110,8 @@ public class SearchServlet extends HttpServlet {
       if (filters.size() == 1) {
         courseQuery.setFilter(filters.get(0));
       } else {
-        if (fuzzy) {
+        if (fuzzy) { // TODO: Make fuzzy matching better (ex: search for course numbers one higher
+          // or lower).
           courseQuery.setFilter(CompositeFilterOperator.or(filters));
         } else {
           courseQuery.setFilter(CompositeFilterOperator.and(filters));
