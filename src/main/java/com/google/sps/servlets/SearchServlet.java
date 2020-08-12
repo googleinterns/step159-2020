@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.gson.Gson;
 import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class SearchServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     JSONObject results = getHelper(request);
 
-    // String coursesJson = new Gson().toJson(courses);
+    // String resultsJson = new Gson().toJson(results);
     response.setContentType("application/json;");
     response.getWriter().println(results);
   }
@@ -135,7 +136,7 @@ public class SearchServlet extends HttpServlet {
       courses.add(course);
     }
     JSONObject json = new JSONObject();
-    if (success.equals("okay")) { // Not perfect match - add message
+    if (success.equals("okay")) { // Not perfect match - add message.
       json.put(
           "message",
           "We couldn't find anything exactly matching your query. Here are some similar results!");
@@ -144,7 +145,8 @@ public class SearchServlet extends HttpServlet {
           "message",
           "We couldn't find anything relating to this query. Change your search parameters and try again.");
     }
-    json.put("courses", courses);
+    String strCourses = new Gson().toJson(courses);
+    json.put("courses", strCourses);
     return json;
   }
 

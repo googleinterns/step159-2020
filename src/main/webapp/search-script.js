@@ -37,10 +37,11 @@ function showCourses() {
   fetch(url)
   .then(response => response.json())
   .then((searchResults) => {
-    if (searchResults.hasOwnProperty("message")) {
-        courseResults += searchResults.message + "<br />"
+    if (searchResults.hasOwnProperty("message")) { // TODO: Make a div for this message so specific styling is easier.
+        courseResults.innerHTML += searchResults.message + "<br />";
     }
-    searchResults.courses.forEach(course => courseResults.appendChild(createListElement(course)));
+    const courses = JSON.parse(searchResults.courses);
+    courses.forEach(course => courseResults.appendChild(createListElement(course)));
   });
 }
 
@@ -110,7 +111,7 @@ async function verify() {
     const url = new URL("/login", window.location.origin);
     url.searchParams.set("token", token);
     const response = await fetch(url, {method:"POST"});
-    const userInfo = await response.json();
+    const userInfo = response.json();
     return userInfo.id;
 }
 
