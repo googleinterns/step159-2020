@@ -78,22 +78,21 @@ public class DataServlet extends HttpServlet {
       BufferedReader reader = request.getReader();
       while ((line = reader.readLine()) != null) stringBuilder.append(line);
     } catch (Exception exception) {
-      // If it could not read request.
       throw new IOException("Error reading body of request");
     }
 
-    String schoolName = new String();
-    String courseName = new String();
-    String profName = new String();
-    String termName = new String();
-    Long units = null;
-    String termFeedback = new String();
-    String professorFeedback = new String();
-    Long termRating = null;
-    Long professorRating = null;
-    Long workHours = null;
-    Long difficulty = null;
-    String userId = new String();
+    String schoolName;
+    String courseName;
+    String profName;
+    String termName;
+    Long units;
+    String termFeedback;
+    String professorFeedback;
+    Long termRating;
+    Long professorRating;
+    Long workHours;
+    Long difficulty;
+    String userId;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
@@ -109,14 +108,12 @@ public class DataServlet extends HttpServlet {
       difficulty = (long) jsonObject.getFloat("difficulty");
       userId = jsonObject.getString("ID");
     } catch (JSONException exception) {
-      // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
     }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Modifying tests right now to reflect changes.
     currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
