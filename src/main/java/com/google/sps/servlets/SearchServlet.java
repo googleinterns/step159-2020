@@ -53,11 +53,11 @@ public class SearchServlet extends HttpServlet {
     List<Filter> filters = getFilters(request, false);
     List<Entity> results = getResults(filters);
     if (results.isEmpty()) {
-      filters = getFilters(request, true);
+      filters = getFilters(request, true); // Try fuzzy search.
       results = getResults(filters);
       success = "okay";
     }
-    if (results.isEmpty()) {
+    if (results.isEmpty()) { // Fuzzy search didn't work.
       success = "bad";
     }
     JSONObject courses = getCourses(results, success);
