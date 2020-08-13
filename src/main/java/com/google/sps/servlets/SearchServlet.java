@@ -42,23 +42,22 @@ public class SearchServlet extends HttpServlet {
   @Override
   /* Show courses. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    JSONObject results = getHelper(request);
-
-    // String resultsJson = new Gson().toJson(results);
+    JSONObject results = getMatchingCourses(request);
     response.setContentType("application/json;");
     response.getWriter().println(results);
   }
 
   /* Create list of courses given request. Used for testing. */
-  public JSONObject getHelper(HttpServletRequest request) {
+  public JSONObject getMatchingCourses(HttpServletRequest request) {
     String success = "good";
-    List<Filter> filters = getFilters(request);
-    List<Entity> results = getResults(filters, false);
-    if (results.size() == 0) {
-      results = getResults(filters, true);
+    List<Filter> filters = getFilters(request, false);
+    List<Entity> results = getResults(filters);
+    if (results.isEmpty()) {
+      filters = getFilters(request, true);
+      results = getResults(filters);
       success = "okay";
     }
-    if (results.size() == 0) {
+    if (results.isEmpty()) {
       success = "bad";
     }
     JSONObject courses = getCourses(results, success);
@@ -66,12 +65,21 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Create list of filters given parameters specified in request. */
-  private List<Filter> getFilters(HttpServletRequest request) {
+  private List<Filter> getFilters(HttpServletRequest request, boolean fuzzy) {
     List<Filter> filters = new ArrayList<>();
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
-
-      Filter nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
+      Filter nameFilter;
+      if (fuzzy) {
+        String dept = name.split(" ")[0];
+        int num = Integer.parseInt(name.split(" ")[1]); // Get course number
+        List<String> courseNums = new ArrayList<>();
+        courseNums.add(dept + " " + String.valueOf(num + 1));
+        courseNums.add(dept + " " + String.valueOf(num - 1));
+        nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
+      } else {
+        nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
+      }
       filters.add(nameFilter);
     }
 
@@ -83,11 +91,19 @@ public class SearchServlet extends HttpServlet {
 
     if (!request.getParameter("term").isEmpty()) {
       String term = request.getParameter("term");
-      Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
+      Filter termFilter;
+      if (fuzzy) {
+        List<String> terms = new ArrayList<>();
+        terms.add(getPrevTerm(term));
+        terms.add(getNextTerm(term));
+        termFilter = new FilterPredicate("term", FilterOperator.IN, terms);
+      } else {
+        termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
+      }
       filters.add(termFilter);
     }
 
-    if (!request.getParameter("units").isEmpty()) {
+    if (!request.getParameter("units").isEmpty() && !(fuzzy)) {
       List<Integer> units = new ArrayList<>();
       List<String> strUnits = Arrays.asList(request.getParameter("units").split(","));
       for (String number : strUnits) {
@@ -104,18 +120,13 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
-  private List<Entity> getResults(List<Filter> filters, boolean fuzzy) {
+  private List<Entity> getResults(List<Filter> filters) {
     Query courseQuery = new Query("Course-Info");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
         courseQuery.setFilter(filters.get(0));
       } else {
-        if (fuzzy) { // TODO: Make fuzzy matching better (ex: search for course numbers one higher
-          // or lower).
-          courseQuery.setFilter(CompositeFilterOperator.or(filters));
-        } else {
-          courseQuery.setFilter(CompositeFilterOperator.and(filters));
-        }
+        courseQuery.setFilter(CompositeFilterOperator.and(filters));
       }
     }
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -173,5 +184,26 @@ public class SearchServlet extends HttpServlet {
     newCourse.setProperty("school", school);
     datastore.put(newCourse);
     response.sendRedirect("/index.html");
+  }
+
+  // TODO: Adapt this to quarter-system schools and potentially include summer quarter.
+  private String getPrevTerm(String term) {
+    String season = term.split(" ")[0];
+    int year = Integer.parseInt(term.split(" ")[1]);
+    if (season.equals("Fall")) {
+      return "Spring " + String.valueOf(year);
+    } else { // Season is "Spring".
+      return "Fall " + String.valueOf(year - 1);
+    }
+  }
+
+  private String getNextTerm(String term) {
+    String season = term.split(" ")[0];
+    int year = Integer.parseInt(term.split(" ")[1]);
+    if (season.equals("Fall")) {
+      return "Spring " + String.valueOf(year + 1);
+    } else { // Season is "Spring"
+      return "Fall " + String.valueOf(year);
+    }
   }
 }
