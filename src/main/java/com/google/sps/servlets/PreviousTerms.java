@@ -40,7 +40,7 @@ public class PreviousTerms extends HttpServlet {
     String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
 
-    Entity foundTerm = getTerm(db, request);
+    Entity foundTerm = findTerm(db, request);
     Date startTime = (Date) foundTerm.getProperty("timeStamp");
     Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
 
@@ -65,24 +65,12 @@ public class PreviousTerms extends HttpServlet {
     return foundTerms;
   }
 
-  private Entity getTerm(DatastoreService db, HttpServletRequest request) {
+  private Entity findTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
-    String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
 
-    Entity foundTerm = findTerm(db, schoolName, courseName, termName, units, profName);
-    return foundTerm;
-  }
-
-  private Entity findTerm(
-      DatastoreService db,
-      String schoolName,
-      String courseName,
-      String termName,
-      Long units,
-      String profName) {
     Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
 
     List<Filter> filters = new ArrayList();
