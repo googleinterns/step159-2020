@@ -64,3 +64,12 @@
   font-family: monospace;
   font-size: 16px;
 }
+
+.container-chart {
+  width: 85%;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  margin-right: auto;
+  margin-left: auto;
+}
