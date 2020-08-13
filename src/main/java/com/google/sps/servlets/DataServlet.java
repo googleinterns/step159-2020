@@ -35,8 +35,6 @@ public class DataServlet extends HttpServlet {
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
 
-  // Will re-add constructor later for testing.
-
   public DataServlet() throws IOException {
     this.languageService = LanguageServiceClient.create();
   }
@@ -78,7 +76,9 @@ public class DataServlet extends HttpServlet {
     // test either of the try-catch loops.
     try {
       BufferedReader reader = request.getReader();
-      while ((line = reader.readLine()) != null) stringBuilder.append(line);
+      while ((line = reader.readLine()) != null) {
+        stringBuilder.append(line);
+      }
     } catch (Exception exception) {
       // If it could not read request.
       throw new IOException("Error reading body of request");
@@ -95,7 +95,7 @@ public class DataServlet extends HttpServlet {
     Long professorRating = null;
     Long workHours = null;
     Long difficulty = null;
-    String userId = null;
+    String userId = new String();
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
