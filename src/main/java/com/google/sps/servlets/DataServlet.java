@@ -34,9 +34,7 @@ public class DataServlet extends HttpServlet {
   private Key currentTermKey;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
-
-  // Will re-add constructor later for testing.
-
+  
   public DataServlet() throws IOException {
     this.languageService = LanguageServiceClient.create();
   }
@@ -66,7 +64,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request, db);
+    addTermRating(request, /* DatastoreService */ db);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
@@ -95,7 +93,7 @@ public class DataServlet extends HttpServlet {
     Long professorRating = null;
     Long workHours = null;
     Long difficulty = null;
-    String userId = null;
+    String userId = new String();
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
