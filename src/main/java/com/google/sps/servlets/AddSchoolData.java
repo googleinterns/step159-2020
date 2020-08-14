@@ -48,8 +48,6 @@ public class AddSchoolData extends HttpServlet {
     String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
 
-    findTermDate(termName);
-
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
     Boolean isNewCourse = isNewCourseDetector(courseName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
@@ -173,24 +171,19 @@ public class AddSchoolData extends HttpServlet {
 
     int termYear = Integer.parseInt(termList[1]);
     Calendar startDay = Calendar.getInstance();
+    startDay.set(Calendar.YEAR, termYear);
+    startDay.set(Calendar.DATE, 01);
 
     if (termList[0].equals("Spring")) {
       startDay.set(Calendar.MONTH, 2);
-      startDay.set(Calendar.DATE, 01);
-      startDay.set(Calendar.YEAR, termYear);
     } else if (termList[0].equals("Summer")) {
       startDay.set(Calendar.MONTH, 5);
-      startDay.set(Calendar.DATE, 01);
-      startDay.set(Calendar.YEAR, termYear);
     } else if (termList[0].equals("Fall")) {
       startDay.set(Calendar.MONTH, 8);
-      startDay.set(Calendar.DATE, 01);
-      startDay.set(Calendar.YEAR, termYear);
     } else {
       startDay.set(Calendar.MONTH, 11);
-      startDay.set(Calendar.DATE, 01);
-      startDay.set(Calendar.YEAR, termYear);
     }
+
     Date dateTime = startDay.getTime();
     return dateTime;
   }

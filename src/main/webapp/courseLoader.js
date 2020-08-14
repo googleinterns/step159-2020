@@ -266,7 +266,7 @@
       colors: ["#81b8ec"],
       areaOpacity: 0.75,
       lineWidth: 3,
-      chartArea: { left: 0 },
+      chartArea: { left: 20 },
       title: "Term Grade Distribution",
       legend: { position: "none" },
       titleTextStyle: {
