@@ -31,7 +31,7 @@ import org.json.JSONObject;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
-  private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+  private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
 
   public DataServlet() throws IOException {
@@ -63,12 +63,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request, /* DatastoreService */ db);
+    addTermRating(request, /* DatastoreService */ datastore);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
 
-  public void addTermRating(HttpServletRequest request, DatastoreService db) throws IOException {
+  public void addTermRating(HttpServletRequest request, DatastoreService datastore)
+      throws IOException {
     StringBuilder stringBuilder = new StringBuilder();
     String line = null;
     // Talked with Luke and as we won't do validation testing, I will not
@@ -114,7 +115,8 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
+    currentTermKey =
+        findTerm(datastore, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -137,7 +139,7 @@ public class DataServlet extends HttpServlet {
     termRatingEntity.setProperty("comments-professor", professorFeedback);
     termRatingEntity.setProperty("score-professor", professorScore);
     termRatingEntity.setProperty("perception-professor", professorRating);
-    db.put(termRatingEntity);
+    datastore.put(termRatingEntity);
   }
 
   private float getSentimentScore(String feedback) throws IOException {
@@ -150,7 +152,7 @@ public class DataServlet extends HttpServlet {
   }
 
   private Entity findTerm(
-      DatastoreService db,
+      DatastoreService datastore,
       String schoolName,
       String courseName,
       String termName,
@@ -167,11 +169,12 @@ public class DataServlet extends HttpServlet {
     Query courseQuery =
         new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
     Key courseKey =
-        db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
+        datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
 
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
-    Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
+    Entity foundTerm =
+        datastore.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
 
     return foundTerm;
   }
