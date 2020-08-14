@@ -67,6 +67,7 @@ public class PreviousTerms extends HttpServlet {
   }
 
   // Guaranted to find a match given that the term page already exists
+  // TODO: Once we refactor to use keys, have it throw an error if term not found
   private Entity findTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
