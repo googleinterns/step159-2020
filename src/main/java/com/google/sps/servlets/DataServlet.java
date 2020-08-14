@@ -24,7 +24,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /** An item on a todo list. */
@@ -96,24 +95,24 @@ public class DataServlet extends HttpServlet {
     Long workHours = null;
     Long difficulty = null;
     String userId = new String();
-    try {
-      JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      schoolName = jsonObject.getString("schoolName");
-      courseName = jsonObject.getString("courseName");
-      profName = jsonObject.getString("profName");
-      termName = jsonObject.getString("term");
-      units = (long) jsonObject.getFloat("units");
-      termFeedback = jsonObject.getString("termInput");
-      professorFeedback = jsonObject.getString("profInput");
-      termRating = (long) jsonObject.getFloat("ratingTerm");
-      professorRating = (long) jsonObject.getFloat("ratingProf");
-      workHours = (long) jsonObject.getFloat("hours");
-      difficulty = (long) jsonObject.getFloat("difficulty");
-      userId = jsonObject.getString("ID");
-    } catch (JSONException exception) {
-      // If it could not parse string.
-      throw new IOException("Error parsing JSON request string");
-    }
+    // try {
+    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+    schoolName = jsonObject.getString("schoolName");
+    courseName = jsonObject.getString("courseName");
+    profName = jsonObject.getString("profName");
+    termName = jsonObject.getString("term");
+    units = (long) jsonObject.getFloat("units");
+    termFeedback = jsonObject.getString("termInput");
+    professorFeedback = jsonObject.getString("profInput");
+    termRating = (long) jsonObject.getFloat("ratingTerm");
+    professorRating = (long) jsonObject.getFloat("ratingProf");
+    workHours = (long) jsonObject.getFloat("hours");
+    difficulty = (long) jsonObject.getFloat("difficulty");
+    userId = jsonObject.getString("ID");
+    // } catch (JSONException exception) {
+    //   // If it could not parse string.
+    //   throw new IOException("Error parsing JSON request string");
+    // }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);

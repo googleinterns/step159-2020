@@ -142,8 +142,8 @@
             <div class="col">
               <p class="lead">Hours/Week on this Course</p>
               <input
-                id="hours-work"
-                name="hoursOfWork"
+                id="hours"
+                name="hours"
                 min="0"
                 type="number"
                 class="form-control mb-5"
@@ -151,7 +151,7 @@
               />
             </div>
             <div class="col">
-              <p class="lead">How Difficulty was this Course?</p>
+              <p class="lead">How Difficult was this Course?</p>
               <input
                 id="difficulty"
                 name="difficulty"
@@ -163,14 +163,14 @@
               />
             </div>
           </div>
+          <button
+            onclick="passRatingProperties()"
+            type="button"
+            class="btn btn-lg btn-outline-success"
+          >
+            Submit
+          </button>
         </form>
-        <button
-          onclick="passRatingProperties()"
-          type="button"
-          class="btn btn-lg btn-outline-success"
-        >
-          Submit
-        </button>
       </div>
     </div>
     <script
