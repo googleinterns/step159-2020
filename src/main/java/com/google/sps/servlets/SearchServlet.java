@@ -28,6 +28,7 @@ import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,26 +43,32 @@ public class SearchServlet extends HttpServlet {
   @Override
   /* Show courses. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    JSONObject results = getMatchingCourses(request);
+    JSONObject courseResults = getMatchingCourses(request);
     response.setContentType("application/json;");
-    response.getWriter().println(results);
+    response.getWriter().println(courseResults);
   }
 
-  /* Create list of courses given request. Used for testing. */
+  enum MatchResult {
+    BAD,
+    OKAY,
+    GOOD
+  }
+
+  /* Create list of courses given request. Public for testing purposes. */
   public JSONObject getMatchingCourses(HttpServletRequest request) {
-    String success = "good";
-    List<Filter> filters = getFilters(request, false);
+
+    MatchResult success = MatchResult.GOOD;
+    List<Filter> filters = getFilters(request, /* isFuzzy = */ false);
     List<Entity> results = getResults(filters);
     if (results.isEmpty()) {
-      filters = getFilters(request, true); // Try fuzzy search.
+      filters = getFilters(request, /* isFuzzy = */ true); // Try fuzzy search.
       results = getResults(filters);
-      success = "okay";
+      success = MatchResult.OKAY;
     }
     if (results.isEmpty()) { // Fuzzy search didn't work.
-      success = "bad";
+      success = MatchResult.BAD;
     }
-    JSONObject courses = getCourses(results, success);
-    return courses;
+    return getCourses(results, success);
   }
 
   /* Create list of filters given parameters specified in request. */
@@ -72,10 +79,11 @@ public class SearchServlet extends HttpServlet {
       Filter nameFilter;
       if (fuzzy) {
         String dept = name.split(" ")[0];
-        int num = Integer.parseInt(name.split(" ")[1]); // Get course number
+        int courseNum = Integer.parseInt(name.split(" ")[1]); // Get course number
         List<String> courseNums = new ArrayList<>();
-        courseNums.add(dept + " " + String.valueOf(num + 1));
-        courseNums.add(dept + " " + String.valueOf(num - 1));
+        courseNums.add(dept + " " + String.valueOf(courseNum + 1));
+        courseNums.add(name);
+        courseNums.add(dept + " " + String.valueOf(courseNum - 1));
         nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
       } else {
         nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
@@ -95,6 +103,7 @@ public class SearchServlet extends HttpServlet {
       if (fuzzy) {
         List<String> terms = new ArrayList<>();
         terms.add(getPrevTerm(term));
+        terms.add(term);
         terms.add(getNextTerm(term));
         termFilter = new FilterPredicate("term", FilterOperator.IN, terms);
       } else {
@@ -136,7 +145,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Given list of result Entity courses, format into Course objects. */
-  private JSONObject getCourses(List<Entity> results, String success) {
+  private JSONObject getCourses(List<Entity> results, MatchResult success) {
     List<Course> courses = new ArrayList<>();
     for (Entity entity : results) {
       String name = (String) entity.getProperty("name");
@@ -147,15 +156,20 @@ public class SearchServlet extends HttpServlet {
       Course course = new Course(name, professor, numUnits, term, school);
       courses.add(course);
     }
+
+    Collections.sort(courses);
     JSONObject json = new JSONObject();
-    if (success.equals("okay")) { // Not perfect match - add message.
-      json.put(
-          "message",
-          "We couldn't find anything exactly matching your query. Here are some similar results!");
-    } else if (success.equals("bad")) {
-      json.put(
-          "message",
-          "We couldn't find anything relating to this query. Change your search parameters and try again.");
+
+    switch (success) {
+      case BAD:
+        json.put(
+            "message",
+            "We couldn't find anything relating to this query. Change your search parameters and try again.");
+      case OKAY:
+        json.put(
+            "message",
+            "We couldn't find anything exactly matching your query. Here are some similar results!");
+        break;
     }
     String strCourses = new Gson().toJson(courses);
     json.put("courses", strCourses);

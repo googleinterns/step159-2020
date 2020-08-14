@@ -22,12 +22,14 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.gson.Gson;
 import com.google.sps.data.Course;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,11 +58,10 @@ public final class SearchServletTest {
   }
 
   @Mock HttpServletRequest request;
-  @Mock HttpServletResponse response;
 
   @Test
-  /* Ensure the whole doGet process works given all search filters are set. */
-  public void GetCourses_AllParamsSet() throws IOException {
+  /* Ensure the whole doGet process works with fuzzy search given all search filters are set. */
+  public void GetCourses_AllParamsSet_FuzzyMatch() throws IOException {
 
     request =
         createRequest(
@@ -68,21 +69,31 @@ public final class SearchServletTest {
             /* name */ "CS 105",
             /* professor */ "Smith",
             /* term */ "Spring 2020",
-            /* units */ "1,2,3"
-            /* school */ ,
-            "stanford");
+            /* units */ "2",
+            /* school */ "stanford");
     List<Course> expectedCourses = new ArrayList<>();
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 1, "stanford");
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020", "stanford"));
+    addCourseEntity("CS 104", "Smith", "Fall 2019", 1, "stanford", db);
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Fall 2019", "stanford"));
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 2, "stanford");
+    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford", db);
     expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford");
+    addCourseEntity("CS 105", "Smith", "Fall 2019", 3, "stanford", db);
+    expectedCourses.add(new Course("CS 105", "Stanford", Long.valueOf(3), "Fall 2019", "stanford"));
 
-    List<Course> courses = searchObject.getHelper(request);
-    assertEqualsCourseArrays(courses, expectedCourses);
+    Collections.sort(expectedCourses);
+
+    JSONObject expected = new JSONObject();
+    expected.put("courses", new Gson().toJson(expectedCourses));
+    expected.put(
+        "message",
+        "We couldn't find anything exactly matching your query. Here are some similar results!");
+
+    JSONObject json = searchObject.getMatchingCourses(request);
+
+    assertEquals(json, expected);
   }
 
   @Test
@@ -98,23 +109,60 @@ public final class SearchServletTest {
             /* units */ "",
             /* school */ "stanford");
     List<Course> expectedCourses = new ArrayList<>();
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 1, "stanford");
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 1, "stanford", db);
     expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 105", "Smith", "Spring 2020", 2, "stanford");
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 2, "stanford", db);
     expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020", "stanford"));
 
-    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford");
+    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford", db);
     expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020", "stanford"));
 
-    List<Course> courses = searchObject.getHelper(request);
-    assertEqualsCourseArrays(courses, expectedCourses);
+    Collections.sort(expectedCourses);
+
+    JSONObject expected = new JSONObject();
+    expected.put("courses", new Gson().toJson(expectedCourses));
+    JSONObject json = searchObject.getMatchingCourses(request);
+
+    assertEquals(json, expected);
+  }
+
+  @Test
+  /* Ensure the whole doGet process works given all search filters are set. */
+  public void GetCourses_AllParamsSet_ExactMatch() throws IOException {
+
+    request =
+        createRequest(
+            request,
+            /* name */ "CS 105",
+            /* professor */ "Smith",
+            /* term */ "Spring 2020",
+            /* units */ "1,2,3"
+            /* school */ ,
+            "stanford");
+    List<Course> expectedCourses = new ArrayList<>();
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 1, "stanford", db);
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Spring 2020", "stanford"));
+
+    addCourseEntity("CS 105", "Smith", "Spring 2020", 2, "stanford", db);
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020", "stanford"));
+
+    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford", db);
+
+    Collections.sort(expectedCourses);
+
+    JSONObject expected = new JSONObject();
+    expected.put("courses", new Gson().toJson(expectedCourses));
+    JSONObject json = searchObject.getMatchingCourses(request);
+    assertEquals(json, expected);
   }
 
   private void addCourseEntity(
-      String name, String professor, String term, int units, String school) {
-    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+      String name, String professor, String term, int units, String school, DatastoreService db) {
     Entity entity = new Entity("Course-Info");
     entity.setProperty("name", name);
     entity.setProperty("professor", professor);

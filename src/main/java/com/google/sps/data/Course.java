@@ -1,6 +1,8 @@
 package com.google.sps.data;
 
-public class Course {
+import java.util.*;
+
+public class Course implements Comparable<Course> {
   String name;
   String professor;
   Long units;
@@ -34,5 +36,21 @@ public class Course {
 
   public String getSchool() {
     return school;
+  }
+
+  @Override
+  public int compareTo(Course course) {
+    return name.compareTo(course.name);
+  }
+
+  public int compare(Course one, Course two) {
+    return one.compareTo(two);
+    // if(one.name > two.name) {
+    //     return 1;
+    // } else if (one.name < two.name) {
+    //     return -1;
+    // } else {
+    // return 0;
+    // }
   }
 }
