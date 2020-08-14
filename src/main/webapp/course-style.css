@@ -73,3 +73,13 @@
   margin-right: auto;
   margin-left: auto;
 }
+
+.grade-chart {
+  height: 600px;
+  width: 85%;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  margin-right: auto;
+  margin-left: auto;
+}

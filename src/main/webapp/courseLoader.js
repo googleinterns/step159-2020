@@ -50,10 +50,41 @@
     const hourList = dummyHoursData.concat(termDataObject.hoursList);
     const hourData = new google.visualization.arrayToDataTable(hourList);
     const hourOptions = {
-      colors: ["#9dc8f1"],
+      colors: ["#f1a79d"],
       title: "Hours Spent per Week",
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
       legend: { position: "none" },
-      hAxis: { title: "Hours" },
+      hAxis: {
+        title: "Hours",
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
       histogram: {
         hideBucketItems: true,
       },
@@ -71,8 +102,39 @@
     const diffOptions = {
       colors: ["#f1d19d"],
       title: "Difficulty of Class",
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
       legend: { position: "none" },
-      hAxis: { title: "Difficulty" },
+      hAxis: {
+        title: "Difficulty",
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
       histogram: {
         hideBucketItems: true,
         bucketSize: 2,
@@ -190,67 +252,96 @@
     return [prevTermName1, prevTermName2];
   }
 
-  function makeGradeChart(termDataObject) {
-    const gradesList = dummyGradeData.concat(termDataObject.gradesList);
-    Highcharts.chart("container-bell", {
-      chart: {
-        height: 600,
-      },
-      exporting: {
-        enabled: false,
-      },
-      title: {
-        text: "Term Grade Distributions",
-        margin: 30,
-      },
-      xAxis: [
-        {
-          title: {
-            text: "",
-          },
-          alignTicks: false,
-          opposite: true,
-        },
-        {
-          title: {
-            text: "Grades",
-          },
-          alignTicks: false,
-        },
-      ],
+  function makeGradeChart() {
+    data = new google.visualization.DataTable();
+    data.addColumn("number", "X Value");
+    data.addColumn("number", "Y Value");
+    data.addColumn({ type: "boolean", role: "scope" });
+    data.addColumn({ type: "string", role: "style" });
+    data.addRows(createBellData(dummyGradeData));
 
-      yAxis: [
-        {
-          title: { text: "" },
-          opposite: true,
+    const options = {
+      height: 600,
+      width: $(window).width(),
+      colors: ["#81b8ec"],
+      areaOpacity: 0.75,
+      lineWidth: 3,
+      chartArea: { left: 0 },
+      title: "Term Grade Distribution",
+      legend: { position: "none" },
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
+      hAxis: {
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
         },
-        {
-          title: { text: "Probability Density" },
-          opposite: false,
+        title: "Grades",
+        gridlines: {
+          count: 0,
         },
-      ],
-      series: [
-        {
-          name: "Grade Distribution",
-          type: "bellcurve",
-          xAxis: 1,
-          yAxis: 1,
-          baseSeries: 1,
-          zIndex: -1,
+        minorGridlines: {
+          count: 0,
+          color: "#FFFFFF	",
         },
-        {
-          name: "Grade Data Points",
-          type: "scatter",
-          data: gradesList,
-          accessibility: {
-            exposeAsGroupOnly: true,
-          },
-          marker: {
-            radius: 1.5,
-          },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
         },
-      ],
-    });
+      },
+      vAxis: {
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+        },
+        minorGridlines: {
+          count: 0,
+          color: "transparent",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+    };
+
+    const chart = new google.visualization.AreaChart(
+      document.getElementById("grade-chart")
+    );
+    chart.draw(data, options);
+  }
+
+  function createBellData(data) {
+    jData = jStat(data);
+    mean = jData.mean();
+    stndDev = jData.stdev();
+    xMin = jData.min();
+    xMax = jData.max();
+
+    let chartData = new Array([]);
+    let index = 0;
+    for (var i = xMin; i <= xMax; i += 0.01) {
+      chartData[index] = new Array(4);
+      chartData[index][0] = i;
+      chartData[index][1] = jStat.normal.pdf(i, mean, stndDev);
+      index++;
+    }
+    return chartData;
   }
 
   function createComment(commentText, isCourse) {
