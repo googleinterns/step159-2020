@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -33,7 +34,7 @@ public class PreviousTerms extends HttpServlet {
     response.getWriter().println(prevTermsDataJSON);
   }
 
-  public List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request) {
+  private List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
@@ -99,13 +100,13 @@ public class PreviousTerms extends HttpServlet {
     return result;
   }
 
-  private String makeJSON(Object changeItem) {
+  private String makeJSON(Object changeItem) throws JsonProcessingException {
     try {
       ObjectMapper mapper = new ObjectMapper();
       String jsonString = mapper.writeValueAsString(changeItem);
       return jsonString;
-    } catch (Exception e) {
-      return "Could not convert to JSON";
+    } catch (JsonProcessingException e) {
+      throw e;
     }
   }
 }
