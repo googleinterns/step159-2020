@@ -167,24 +167,26 @@ public class AddSchoolData extends HttpServlet {
   }
 
   private Date findTermDate(String termName) {
-    String[] termList = termName.split(" ", 5);
+    String[] termList = termName.split(" ");
 
+    int month = 0;
     int termYear = Integer.parseInt(termList[1]);
-    Calendar startDay = Calendar.getInstance();
-    startDay.set(Calendar.YEAR, termYear);
-    startDay.set(Calendar.DATE, 01);
-
     if (termList[0].equals("Spring")) {
-      startDay.set(Calendar.MONTH, 2);
+      month = 2;
     } else if (termList[0].equals("Summer")) {
-      startDay.set(Calendar.MONTH, 5);
-    } else if (termList[0].equals("Fall")) {
-      startDay.set(Calendar.MONTH, 8);
+      month = 5;
+    } else if (termList[0].equals("Fall") | termList[0].equals("Autumn")) {
+      month = 8;
+    } else if (termList[0].equals("Winter")) {
+      month = 0;
     } else {
-      startDay.set(Calendar.MONTH, 11);
+      throw new IllegalArgumentException();
     }
 
+    Calendar startDay = Calendar.getInstance();
+    startDay.set(termYear, month, 01);
     Date dateTime = startDay.getTime();
+
     return dateTime;
   }
 }

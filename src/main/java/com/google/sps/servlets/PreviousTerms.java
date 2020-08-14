@@ -37,9 +37,8 @@ public class PreviousTerms extends HttpServlet {
   private List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
-    String termName = request.getParameter("term");
-    String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
+    Integer comparisonCount = Integer.parseInt(request.getParameter("comparison-count"));
 
     Entity foundTerm = findTerm(db, request);
     Date startTime = (Date) foundTerm.getProperty("timeStamp");
@@ -62,7 +61,8 @@ public class PreviousTerms extends HttpServlet {
             .setAncestor(courseKey)
             .addSort("timeStamp", SortDirection.DESCENDING)
             .setFilter(timeFilter);
-    List<Entity> foundTerms = db.prepare(termQuery).asList(FetchOptions.Builder.withLimit(2));
+    List<Entity> foundTerms =
+        db.prepare(termQuery).asList(FetchOptions.Builder.withLimit(comparisonCount));
     return foundTerms;
   }
 
