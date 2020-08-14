@@ -75,13 +75,13 @@ public final class SearchServletTest {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
     addCourseEntity("CS 104", "Smith", "Fall 2019", 1, "stanford", db);
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(1), "Fall 2019", "stanford"));
+    expectedCourses.add(new Course("CS 104", "Smith", Long.valueOf(1), "Fall 2019", "stanford"));
 
     addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford", db);
-    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(2), "Spring 2020", "stanford"));
+    expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020", "stanford"));
 
     addCourseEntity("CS 105", "Smith", "Fall 2019", 3, "stanford", db);
-    expectedCourses.add(new Course("CS 105", "Stanford", Long.valueOf(3), "Fall 2019", "stanford"));
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(3), "Fall 2019", "stanford"));
 
     Collections.sort(expectedCourses);
 
