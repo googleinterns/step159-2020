@@ -63,7 +63,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request, db);
+    addTermRating(request, /* DatastoreService */ db);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
@@ -79,45 +79,41 @@ public class DataServlet extends HttpServlet {
         stringBuilder.append(line);
       }
     } catch (Exception exception) {
-      // If it could not read request.
       throw new IOException("Error reading body of request");
     }
-
-    String schoolName = new String();
-    String courseName = new String();
-    String profName = new String();
-    String termName = new String();
-    Long units = null;
-    String termFeedback = new String();
-    String professorFeedback = new String();
-    Long termRating = null;
-    Long professorRating = null;
-    Long workHours = null;
-    Long difficulty = null;
-    String userId = new String();
-    // try {
-    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-    schoolName = jsonObject.getString("schoolName");
-    courseName = jsonObject.getString("courseName");
-    profName = jsonObject.getString("profName");
-    termName = jsonObject.getString("term");
-    units = (long) jsonObject.getFloat("units");
-    termFeedback = jsonObject.getString("termInput");
-    professorFeedback = jsonObject.getString("profInput");
-    termRating = (long) jsonObject.getFloat("ratingTerm");
-    professorRating = (long) jsonObject.getFloat("ratingProf");
-    workHours = (long) jsonObject.getFloat("hours");
-    difficulty = (long) jsonObject.getFloat("difficulty");
-    userId = jsonObject.getString("ID");
-    // } catch (JSONException exception) {
-    //   // If it could not parse string.
-    //   throw new IOException("Error parsing JSON request string");
-    // }
+    String schoolName;
+    String courseName;
+    String profName;
+    String termName;
+    Long units;
+    String termFeedback;
+    String professorFeedback;
+    Long termRating;
+    Long professorRating;
+    Long workHours;
+    Long difficulty;
+    String userId;
+    try {
+      JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+      schoolName = jsonObject.getString("schoolName");
+      courseName = jsonObject.getString("courseName");
+      profName = jsonObject.getString("profName");
+      termName = jsonObject.getString("term");
+      units = (long) jsonObject.getFloat("units");
+      termFeedback = jsonObject.getString("termInput");
+      professorFeedback = jsonObject.getString("profInput");
+      termRating = (long) jsonObject.getFloat("ratingTerm");
+      professorRating = (long) jsonObject.getFloat("ratingProf");
+      workHours = (long) jsonObject.getFloat("hours");
+      difficulty = (long) jsonObject.getFloat("difficulty");
+      userId = jsonObject.getString("ID");
+    } catch (JSONException exception) {
+      throw new IOException("Error parsing JSON request string");
+    }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Modifying tests right now to reflect changes.
     currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
