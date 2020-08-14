@@ -66,6 +66,7 @@ public class PreviousTerms extends HttpServlet {
     return foundTerms;
   }
 
+  // Guaranted to find a match given that the term page already exists
   private Entity findTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
