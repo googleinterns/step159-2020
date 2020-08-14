@@ -48,8 +48,6 @@ public class AddSchoolData extends HttpServlet {
     String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
 
-    findTermDate(termName);
-
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
     Boolean isNewCourse = isNewCourseDetector(courseName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
