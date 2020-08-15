@@ -150,28 +150,29 @@
   }
 
   async function makeTermRatingChart(termDataObject) {
-    const [prevTerm1, prevTerm2] = await getPrevTermName();
-    const [prevTermData1, prevTermData2] = await Promise.all([
-      getPreviousTermData(prevTerm1),
-      getPreviousTermData(prevTerm2),
-    ]);
-
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
+      list.reduce((prev, curr) => prev + curr) / list.length;
     const currentTermRatingAvg = average(
-      /* adds dummy data */ [4, 8, 17].concat(termDataObject.termScoreList)
+      /* adds dummy data */ [21, 11, 9].concat(
+        termDataObject.termPerceptionList
+      )
     );
-    const prevTermRatingAvg = average(
-      /* adds dummy data */ [12, 5, 3].concat(prevTermData1.termScoreList)
-    );
-    const prevTermRatingAvg2 = average(
-      /* adds dummy data */ [10, 8, 6].concat(prevTermData2.termScoreList)
-    );
+
+    const prevTermData = [];
+    const avgData = [];
+    const prevTermNameList = await getPrevTermName(2);
+
+    for (let term of prevTermNameList) {
+      prevTermData.push(await getPreviousTermData(term));
+    }
+
+    for (let termData of prevTermData) {
+      avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
+    }
 
     const comparisonData = google.visualization.arrayToDataTable([
-      [" ", term, prevTerm1, prevTerm2],
-      [" ", currentTermRatingAvg, prevTermRatingAvg, prevTermRatingAvg2],
+      [" ", term].concat(prevTermNameList),
+      [" ", currentTermRatingAvg].concat(avgData),
     ]);
 
     const options = {
@@ -190,34 +191,29 @@
   }
 
   async function makeTermPerceptionChart(termDataObject) {
-    const [prevTerm1, prevTerm2] = await getPrevTermName();
-
-    const [prevTermData1, prevTermData2] = await Promise.all([
-      getPreviousTermData(prevTerm1),
-      getPreviousTermData(prevTerm2),
-    ]);
-
     const average = (list) =>
       list.reduce((prev, curr) => prev + curr) / list.length;
-
     const currentPerceptionRatingAvg = average(
-      /* adds dummy data */ [17, 8, 5].concat(termDataObject.termPerceptionList)
+      /* adds dummy data */ [21, 11, 9].concat(
+        termDataObject.termPerceptionList
+      )
     );
-    const prevPerceptionRatingAvg = average(
-      /* adds dummy data */ [14, 7, 13].concat(prevTermData1.termPerceptionList)
-    );
-    const prevPerceptionRatingAvg2 = average(
-      /* adds dummy data */ [5, 6, 9].concat(prevTermData2.termPerceptionList)
-    );
+
+    const prevTermData = [];
+    const avgData = [];
+    const prevTermNameList = await getPrevTermName(2);
+
+    for (let term of prevTermNameList) {
+      prevTermData.push(await getPreviousTermData(term));
+    }
+
+    for (let termData of prevTermData) {
+      avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
+    }
 
     const perceptionData = google.visualization.arrayToDataTable([
-      [" ", term, prevTerm1, prevTerm2],
-      [
-        " ",
-        currentPerceptionRatingAvg,
-        prevPerceptionRatingAvg,
-        prevPerceptionRatingAvg2,
-      ],
+      [" ", term].concat(prevTermNameList),
+      [" ", currentPerceptionRatingAvg].concat(avgData),
     ]);
 
     const options = {
@@ -241,8 +237,8 @@
     return response.json();
   }
 
-  async function getPrevTermName() {
-    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`;
+  async function getPrevTermName(comparisonCount) {
+    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&comparison-count=${comparisonCount}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
     const [prevTermName1, prevTermName2] = [

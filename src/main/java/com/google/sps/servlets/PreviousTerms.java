@@ -34,14 +34,13 @@ public class PreviousTerms extends HttpServlet {
     response.getWriter().println(prevTermsDataJSON);
   }
 
-  public List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request) {
+  private List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
-    String termName = request.getParameter("term");
-    String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
+    Integer comparisonCount = Integer.parseInt(request.getParameter("comparison-count"));
 
-    Entity foundTerm = getTerm(db, request);
+    Entity foundTerm = findTerm(db, request);
     Date startTime = (Date) foundTerm.getProperty("timeStamp");
     Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
 
@@ -62,28 +61,19 @@ public class PreviousTerms extends HttpServlet {
             .setAncestor(courseKey)
             .addSort("timeStamp", SortDirection.DESCENDING)
             .setFilter(timeFilter);
-    List<Entity> foundTerms = db.prepare(termQuery).asList(FetchOptions.Builder.withLimit(2));
+    List<Entity> foundTerms =
+        db.prepare(termQuery).asList(FetchOptions.Builder.withLimit(comparisonCount));
     return foundTerms;
   }
 
-  private Entity getTerm(DatastoreService db, HttpServletRequest request) {
+  // Guaranted to find a match given that the term page already exists
+  // TODO: Once we refactor to use keys, have it throw an error if term not found
+  private Entity findTerm(DatastoreService db, HttpServletRequest request) {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     String termName = request.getParameter("term");
-    String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
 
-    Entity foundTerm = findTerm(db, schoolName, courseName, termName, units, profName);
-    return foundTerm;
-  }
-
-  private Entity findTerm(
-      DatastoreService db,
-      String schoolName,
-      String courseName,
-      String termName,
-      Long units,
-      String profName) {
     Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
 
     List<Filter> filters = new ArrayList();
