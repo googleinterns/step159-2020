@@ -176,7 +176,6 @@
     ]);
 
     const options = {
-      colors: ["#9dc8f1", "#f1d19d", "#f1a79d"],
       title: "Average Term Rating Comparison",
       height: 450,
       bars: "horizontal",
@@ -217,7 +216,6 @@
     ]);
 
     const options = {
-      colors: ["#9dc8f1", "#f1d19d", "#f1a79d"],
       title: "Average Term Perception Comparison",
       height: 450,
       bars: "horizontal",
@@ -237,15 +235,11 @@
     return response.json();
   }
 
-  async function getPrevTermName(comparisonCount) {
-    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&comparison-count=${comparisonCount}`;
+  async function getPrevTermName(termLimit) {
+    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&term-limit=${termLimit}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
-    const [prevTermName1, prevTermName2] = [
-      prevTermData[0].properties.term,
-      prevTermData[1].properties.term,
-    ];
-    return [prevTermName1, prevTermName2];
+    return prevTermData.map((data) => data.properties.term);
   }
 
   function makeGradeChart() {

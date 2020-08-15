@@ -38,7 +38,7 @@ public class PreviousTerms extends HttpServlet {
     String schoolName = request.getParameter("school-name");
     String courseName = request.getParameter("course-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
-    Integer comparisonCount = Integer.parseInt(request.getParameter("comparison-count"));
+    Integer comparisonCount = Integer.parseInt(request.getParameter("term-limit"));
 
     Entity foundTerm = findTerm(db, request);
     Date startTime = (Date) foundTerm.getProperty("timeStamp");

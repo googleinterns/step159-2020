@@ -175,7 +175,7 @@ public class AddSchoolData extends HttpServlet {
       month = 2;
     } else if (termList[0].equals("Summer")) {
       month = 5;
-    } else if (termList[0].equals("Fall") | termList[0].equals("Autumn")) {
+    } else if (termList[0].equals("Fall") || termList[0].equals("Autumn")) {
       month = 8;
     } else if (termList[0].equals("Winter")) {
       month = 0;
@@ -184,7 +184,7 @@ public class AddSchoolData extends HttpServlet {
     }
 
     Calendar startDay = Calendar.getInstance();
-    startDay.set(termYear, month, 01);
+    startDay.set(termYear, month, 1);
     Date dateTime = startDay.getTime();
 
     return dateTime;
