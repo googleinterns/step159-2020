@@ -26,6 +26,7 @@
           makeGraphs(data);
           makeTermRatingChart(data);
           makeTermPerceptionChart(data);
+          makeGradeChart(data);
         });
         loadAllComments(data);
       });
@@ -46,23 +47,49 @@
   }
 
   function makeGraphs(termDataObject) {
-    const tempHourList = termDataObject.hoursList;
-    const hourList = [
-      ["hours"],
-      /* dummyHourRating */ [2],
-      /* dummyHourRating */ [8],
-      /* dummyHourRating */ [8],
-      /* dummyHourRating */ [6],
-    ].concat(tempHourList);
-
+    const hourList = dummyHoursData.concat(termDataObject.hoursList);
     const hourData = new google.visualization.arrayToDataTable(hourList);
     const hourOptions = {
+      colors: ["#f1a79d"],
       title: "Hours Spent per Week",
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
       legend: { position: "none" },
-      vAxis: { title: "# Students" },
-      hAxis: { title: "Hours" },
+      hAxis: {
+        title: "Hours",
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
       histogram: {
         hideBucketItems: true,
+      },
+      chartArea: {
+        left: 120,
       },
     };
     const hourChart = new google.visualization.Histogram(
@@ -70,22 +97,50 @@
     );
     hourChart.draw(hourData, hourOptions);
 
-    const tempDiffList = termDataObject.difficultyList;
-    const diffList = [
-      ["difficulty"],
-      /* dummyDifficultyRating */ [1],
-      /* dummyDifficultyRating */ [4],
-      /* dummyDifficultyRating */ [4],
-      /* dummyDifficultyRating */ [7],
-    ].concat(tempDiffList);
+    const diffList = dummyDiffData.concat(termDataObject.difficultyList);
     const diffData = new google.visualization.arrayToDataTable(diffList);
     const diffOptions = {
+      colors: ["#f1d19d"],
       title: "Difficulty of Class",
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
       legend: { position: "none" },
-      vAxis: { title: "# Students" },
-      hAxis: { title: "Difficulty" },
+      hAxis: {
+        title: "Difficulty",
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
       histogram: {
         hideBucketItems: true,
+        bucketSize: 2,
+      },
+      chartArea: {
+        left: 120,
       },
     };
     const diffChart = new google.visualization.Histogram(
@@ -121,6 +176,7 @@
     ]);
 
     const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
       title: "Average Term Rating Comparison",
       height: 450,
       bars: "horizontal",
@@ -161,6 +217,7 @@
     ]);
 
     const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
       title: "Average Term Perception Comparison",
       height: 450,
       bars: "horizontal",
@@ -185,6 +242,98 @@
     const response = await fetch(url);
     const prevTermData = await response.json();
     return prevTermData.map((data) => data.properties.term);
+  }
+
+  function makeGradeChart() {
+    data = new google.visualization.DataTable();
+    data.addColumn("number", "X Value");
+    data.addColumn("number", "Y Value");
+    data.addColumn({ type: "boolean", role: "scope" });
+    data.addColumn({ type: "string", role: "style" });
+    data.addRows(createBellData(dummyGradeData));
+
+    const options = {
+      height: 600,
+      width: $(window).width(),
+      colors: ["#81b8ec"],
+      areaOpacity: 0.75,
+      lineWidth: 3,
+      chartArea: { left: 20 },
+      title: "Term Grade Distribution",
+      legend: { position: "none" },
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
+      hAxis: {
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        title: "Grades",
+        gridlines: {
+          count: 0,
+        },
+        minorGridlines: {
+          count: 0,
+          color: "#FFFFFF	",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+        },
+        minorGridlines: {
+          count: 0,
+          color: "transparent",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+    };
+
+    const chart = new google.visualization.AreaChart(
+      document.getElementById("grade-chart")
+    );
+    chart.draw(data, options);
+  }
+
+  function createBellData(data) {
+    jData = jStat(data);
+    mean = jData.mean();
+    stndDev = jData.stdev();
+    xMin = jData.min();
+    xMax = jData.max();
+
+    let chartData = new Array([]);
+    let index = 0;
+    for (var i = xMin; i <= xMax; i += 0.01) {
+      chartData[index] = new Array(4);
+      chartData[index][0] = i;
+      chartData[index][1] = jStat.normal.pdf(i, mean, stndDev);
+      index++;
+    }
+    return chartData;
   }
 
   function createComment(commentText, isCourse) {

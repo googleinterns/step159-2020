@@ -12,6 +12,7 @@ public class TermDataHolder {
   List<Object> professorScoreList = new ArrayList();
   List<Object> termCommentsList = new ArrayList();
   List<Object> professorCommentsList = new ArrayList();
+  List<Object> gradesList = new ArrayList();
 
   public void setHoursList(List<Object> newHourList) {
     hoursList = newHourList;
