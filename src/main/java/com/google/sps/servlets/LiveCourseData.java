@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/term-live")
+@WebServlet("/term-data")
 public class LiveCourseData extends HttpServlet {
   private DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
