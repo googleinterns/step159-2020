@@ -50,10 +50,7 @@ function createListElement(course) {
   const liElement = document.createElement('li');
   const link = document.createElement('a');
   const url = new URL("/course.html", window.location.origin);
-  url.searchParams.set("course-name", course.name);
-  url.searchParams.set("prof-name", course.professor);
-  url.searchParams.set("num-units", course.units);
-  url.searchParams.set("term", course.term);
+  url.searchParams.set("term0key", course.termKey);
   const school = getUserSchool();
   url.searchParams.set("school-name", school);
   link.setAttribute('href', url);
