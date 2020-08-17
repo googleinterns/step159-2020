@@ -18,6 +18,7 @@ public class Course implements Comparable<Course> {
   String term;
   String school;
   Key termKey;
+  Key courseKey;
 
   public Course(
       String courseName,
@@ -31,7 +32,9 @@ public class Course implements Comparable<Course> {
     units = numUnits;
     term = termName;
     school = schoolName;
-    termKey = findTermKey(db, schoolName, courseName, termName, units, professorName);
+    List<Key> keys = findKeys(db, schoolName, courseName, termName, units, professorName);
+    termKey = keys.get(0);
+    courseKey = keys.get(1);
   }
 
   public String getName() {
@@ -71,7 +74,7 @@ public class Course implements Comparable<Course> {
     return one.compareTo(two);
   }
 
-  private Key findTermKey(
+  private List<Key> findKeys(
       DatastoreService db,
       String schoolName,
       String courseName,
@@ -92,8 +95,8 @@ public class Course implements Comparable<Course> {
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
     Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
-
-    return foundTerm.getKey();
+    List<Key> keys = Arrays.asList(foundTerm.getKey(), courseKey);
+    return keys;
   }
 
   private List<Entity> findQueryMatch(
