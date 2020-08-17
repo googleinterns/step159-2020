@@ -108,7 +108,7 @@ async function verify() {
     const url = new URL("/login", window.location.origin);
     url.searchParams.set("token", token);
     const response = await fetch(url, {method:"POST"});
-    const userInfo = response.json();
+    const userInfo = await response.json();
     return userInfo.id;
 }
 

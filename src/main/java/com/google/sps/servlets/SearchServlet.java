@@ -79,12 +79,12 @@ public class SearchServlet extends HttpServlet {
       String name = request.getParameter("courseName");
       Filter nameFilter;
       if (fuzzy) {
-        String dept = name.split(" ")[0];
+        String department = name.split(" ")[0];
         int courseNum = Integer.parseInt(name.split(" ")[1]); // Get course number
         List<String> courseNums = new ArrayList<>();
-        courseNums.add(dept + " " + String.valueOf(courseNum + 1));
+        courseNums.add(department + " " + String.valueOf(courseNum + 1));
         courseNums.add(name);
-        courseNums.add(dept + " " + String.valueOf(courseNum - 1));
+        courseNums.add(department + " " + String.valueOf(courseNum - 1));
         nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
       } else {
         nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
@@ -113,7 +113,7 @@ public class SearchServlet extends HttpServlet {
       filters.add(termFilter);
     }
 
-    if (!request.getParameter("units").isEmpty() && !(fuzzy)) {
+    if (!request.getParameter("units").isEmpty() && !fuzzy) {
       List<Integer> units = new ArrayList<>();
       List<String> strUnits = Arrays.asList(request.getParameter("units").split(","));
       for (String number : strUnits) {
