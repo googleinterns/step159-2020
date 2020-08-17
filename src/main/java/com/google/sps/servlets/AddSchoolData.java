@@ -11,6 +11,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -140,6 +142,7 @@ public class AddSchoolData extends HttpServlet {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
     newTerm.setProperty("professorKey", professor);
+    newTerm.setProperty("timeStamp", findTermDate(term));
     return newTerm;
   }
 
@@ -161,5 +164,29 @@ public class AddSchoolData extends HttpServlet {
     } catch (DatastoreFailureException | IllegalArgumentException e) {
       throw e;
     }
+  }
+
+  private Date findTermDate(String termName) {
+    String[] termList = termName.split(" ");
+
+    int month = 0;
+    int termYear = Integer.parseInt(termList[1]);
+    if (termList[0].equals("Spring")) {
+      month = 2;
+    } else if (termList[0].equals("Summer")) {
+      month = 5;
+    } else if (termList[0].equals("Fall") || termList[0].equals("Autumn")) {
+      month = 8;
+    } else if (termList[0].equals("Winter")) {
+      month = 0;
+    } else {
+      throw new IllegalArgumentException();
+    }
+
+    Calendar startDay = Calendar.getInstance();
+    startDay.set(termYear, month, 1);
+    Date dateTime = startDay.getTime();
+
+    return dateTime;
   }
 }
