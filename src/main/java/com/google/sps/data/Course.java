@@ -32,7 +32,6 @@ public class Course implements Comparable<Course> {
     term = termName;
     school = schoolName;
     termKey = findTermKey(db, schoolName, courseName, termName, units, professorName);
-    // termKey = null;
   }
 
   public String getName() {
