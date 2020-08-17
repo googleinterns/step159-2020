@@ -18,6 +18,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -56,19 +57,19 @@ public class SearchServlet extends HttpServlet {
 
   /* Create list of courses given request. Public for testing purposes. */
   public JSONObject getMatchingCourses(HttpServletRequest request) {
-
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     MatchResult success = MatchResult.GOOD;
     List<Filter> filters = getFilters(request, /* isFuzzy = */ false);
-    List<Entity> results = getResults(filters);
+    List<Entity> results = getResults(filters, db);
     if (results.isEmpty()) {
       filters = getFilters(request, /* isFuzzy = */ true); // Try fuzzy search.
-      results = getResults(filters);
+      results = getResults(filters, db);
       success = MatchResult.OKAY;
     }
     if (results.isEmpty()) { // Fuzzy search didn't work.
       success = MatchResult.BAD;
     }
-    return getCourses(results, success);
+    return getCourses(results, success, db);
   }
 
   /* Create list of filters given parameters specified in request. */
@@ -129,7 +130,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
-  private List<Entity> getResults(List<Filter> filters) {
+  private List<Entity> getResults(List<Filter> filters, DatastoreService db) {
     Query courseQuery = new Query("Course-Info");
     if (!filters.isEmpty()) {
       if (filters.size() == 1) {
@@ -138,14 +139,12 @@ public class SearchServlet extends HttpServlet {
         courseQuery.setFilter(CompositeFilterOperator.and(filters));
       }
     }
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    List<Entity> results =
-        datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
+    List<Entity> results = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
     return results;
   }
 
   /* Given list of result Entity courses, format into Course objects. */
-  private JSONObject getCourses(List<Entity> results, MatchResult success) {
+  private JSONObject getCourses(List<Entity> results, MatchResult success, DatastoreService db) {
     List<Course> courses = new ArrayList<>();
     for (Entity entity : results) {
       String name = (String) entity.getProperty("name");
@@ -153,7 +152,7 @@ public class SearchServlet extends HttpServlet {
       Long numUnits = (Long) entity.getProperty("units");
       String term = (String) entity.getProperty("term");
       String school = (String) entity.getProperty("school");
-      Course course = new Course(name, professor, numUnits, term, school);
+      Course course = new Course(name, professor, numUnits, term, school, db);
       courses.add(course);
     }
 
@@ -179,16 +178,21 @@ public class SearchServlet extends HttpServlet {
   /* Store course. */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+    addCourse(request, db);
+    response.sendRedirect("/index.html");
+  }
+
+  /* Public for testing. */
+  public static void addCourse(HttpServletRequest request, DatastoreService db) {
+    AddSchoolData addSchool = new AddSchoolData();
+    addSchool.addSchoolData(db, request);
+
     String name = request.getParameter("course-name");
     String prof = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
     String term = request.getParameter("term");
     String school = request.getParameter("school-name");
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-    AddSchoolData addSchool = new AddSchoolData();
-    addSchool.addSchoolData(datastore, request);
 
     Entity newCourse = new Entity("Course-Info");
     newCourse.setProperty("name", name);
@@ -196,8 +200,7 @@ public class SearchServlet extends HttpServlet {
     newCourse.setProperty("units", units);
     newCourse.setProperty("term", term);
     newCourse.setProperty("school", school);
-    datastore.put(newCourse);
-    response.sendRedirect("/index.html");
+    db.put(newCourse);
   }
 
   // TODO: Adapt this to quarter-system schools and potentially include summer quarter.
@@ -219,5 +222,38 @@ public class SearchServlet extends HttpServlet {
     } else { // Season is "Spring"
       return "Fall " + String.valueOf(year);
     }
+  }
+
+  private Key findTermKey(
+      DatastoreService db,
+      String schoolName,
+      String courseName,
+      String termName,
+      Long units,
+      String profName) {
+    Key schoolKey = findQueryMatch(db, "School", "school-name", schoolName).get(0).getKey();
+    List<Filter> filters = new ArrayList();
+    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
+    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
+    filters.add(courseFilter);
+    filters.add(unitFilter);
+
+    Query courseQuery =
+        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
+    Key courseKey =
+        db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
+    Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
+    Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
+    Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
+
+    return foundTerm.getKey();
+  }
+
+  private List<Entity> findQueryMatch(
+      DatastoreService db, String entityType, String entityProperty, String propertyValue) {
+    Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
+    Query q = new Query(entityType).setFilter(filter);
+    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
+    return result;
   }
 }
