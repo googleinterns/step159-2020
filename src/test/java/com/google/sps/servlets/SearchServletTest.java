@@ -61,6 +61,51 @@ public final class SearchServletTest {
 
   @Test
   /* Ensure the whole doGet process works with fuzzy search given all search filters are set. */
+  public void GetCourses_SomeParamsSet_FuzzyMatch() throws IOException {
+
+    request =
+        createRequest(
+            request,
+            /* name */ "CS 105",
+            /* professor */ "Smith",
+            /* term */ "",
+            /* units */ "2",
+            /* school */ "stanford");
+    List<Course> expectedCourses = new ArrayList<>();
+    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+
+    addCourseEntity("CS 104", "Smith", "Fall 2019", 1, "stanford", db);
+    expectedCourses.add(new Course("CS 104", "Smith", Long.valueOf(1), "Fall 2019", "stanford"));
+
+    addCourseEntity("CS 106", "Smith", "Spring 2020", 3, "stanford", db);
+    expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020", "stanford"));
+
+    addCourseEntity("CS 105", "Smith", "Fall 2019", 3, "stanford", db);
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(3), "Fall 2019", "stanford"));
+
+    addCourseEntity("CS 105", "Smith", "Fall 2019", 4, "stanford", db);
+    expectedCourses.add(new Course("CS 105", "Smith", Long.valueOf(4), "Fall 2019", "stanford"));
+
+    addCourseEntity("CS 103", "Smith", "Fall 2019", 3, "stanford", db);
+
+    addCourseEntity("CS 106", "Smith", "Fall 2019", 2, "stanford", db);
+    expectedCourses.add(new Course("CS 106", "Smith", Long.valueOf(2), "Fall 2019", "stanford"));
+
+    Collections.sort(expectedCourses);
+
+    JSONObject expected = new JSONObject();
+    expected.put("courses", new Gson().toJson(expectedCourses));
+    expected.put(
+        "message",
+        "We couldn't find anything exactly matching your query. Here are some similar results!");
+
+    JSONObject json = searchObject.getMatchingCourses(request);
+
+    assertEquals(json, expected);
+  }
+
+  @Test
+  /* Ensure the whole doGet process works with fuzzy search given all search filters are set. */
   public void GetCourses_AllParamsSet_FuzzyMatch() throws IOException {
 
     request =
