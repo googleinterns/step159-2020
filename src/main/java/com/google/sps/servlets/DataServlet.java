@@ -26,6 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.util.PythonInterpreter;
 
 /** An item on a todo list. */
 @WebServlet("/data")
@@ -88,7 +91,7 @@ public class DataServlet extends HttpServlet {
     Long professorRating = null;
     Long workHours = null;
     Long difficulty = null;
-    String userId = newString();
+    String userId = new String();
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
@@ -126,7 +129,19 @@ public class DataServlet extends HttpServlet {
             ? new Entity("Rating", currentTermKey)
             : termRatingQueryList.get(0);
 
+    PythonInterpreter interpreter = new PythonInterpreter();
+    interpreter.exec(
+        "import sys\nsys.path.append('src/main/webapp/perspective.py')\nimport perspective");
+    // execute a function that takes a string and returns a string
+    PyObject commentAnalyzer = interpreter.get("commentAnalyzer");
+    PyObject scoreTermFeedbackPython = commentAnalyzer.__call__(new PyString(termFeedback));
+    PyObject scoreProfFeedbackPython = commentAnalyzer.__call__(new PyString(termFeedback));
+    Long scoreTermFeedback = (Long) scoreTermFeedbackPython.__tojava__(Long.class);
+    Long scoreProfFeedback = (Long) scoreProfFeedbackPython.__tojava__(Long.class);
+
     termRatingEntity.setProperty("comments-term", termFeedback);
+    termRatingEntity.setProperty("perspective-api-score-term", scoreTermFeedback);
+    termRatingEntity.setProperty("perspective-api-score-prof", scoreProfFeedback);
     termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);
