@@ -1,8 +1,8 @@
 * {
-  margin: 0;
-  padding: 0;
   border: 0;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .flex-container {
@@ -66,20 +66,20 @@
 }
 
 .container-chart {
-  width: 85%;
+  margin-right: auto;
+  margin-left: auto;
   padding-right: 75px;
   padding-left: 15px;
   padding-top: 75px;
-  margin-right: auto;
-  margin-left: auto;
+  width: 85%;
 }
 
 .grade-chart {
   height: 600px;
-  width: 85%;
+  margin-right: auto;
+  margin-left: auto;
   padding-right: 75px;
   padding-left: 15px;
   padding-top: 75px;
-  margin-right: auto;
-  margin-left: auto;
+  width: 85%;
 }
