@@ -10,4 +10,5 @@
   "ratingProf" : 3,
   "hours" : 10,
   "difficulty" : 5,
-  "ID" : "9223372036854775807"}
+  "ID" : "9223372036854775807",
+  "translate" : "false"}

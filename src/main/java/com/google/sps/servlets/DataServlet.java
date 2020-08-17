@@ -15,6 +15,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.Translate.TranslateOption;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /** An item on a todo list. */
@@ -38,8 +43,8 @@ public class DataServlet extends HttpServlet {
     this.languageService = LanguageServiceClient.create();
   }
 
-  public DataServlet(LanguageServiceClient languageService) {
-    this.languageService = languageService;
+  public DataServlet(LanguageServiceClient languageServiceClient) {
+    this.languageService = languageServiceClient;
   }
 
   @Override
@@ -94,6 +99,7 @@ public class DataServlet extends HttpServlet {
     Long workHours;
     Long difficulty;
     String userId;
+    Boolean translate;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
@@ -108,8 +114,14 @@ public class DataServlet extends HttpServlet {
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
       userId = jsonObject.getString("ID");
+      translate = Boolean.parseBoolean(jsonObject.getString("translate"));
     } catch (JSONException exception) {
       throw new IOException("Error parsing JSON request string");
+    }
+
+    if (translate) {
+      termFeedback = translateTextToEnglish(termFeedback);
+      professorFeedback = translateTextToEnglish(professorFeedback);
     }
 
     float termScore = getSentimentScore(termFeedback);
@@ -145,7 +157,7 @@ public class DataServlet extends HttpServlet {
   private float getSentimentScore(String feedback) throws IOException {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    Sentiment sentiment = this.languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
     // Won't be closing languageService as we want to use constructor.
     return score;
@@ -187,5 +199,12 @@ public class DataServlet extends HttpServlet {
     // This is initialized when authentication happens, so should not be empty.
     List<Entity> queryList = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
     return queryList;
+  }
+
+  private String translateTextToEnglish(String text) throws IOException {
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+    Translation translation = translate.translate(text, TranslateOption.targetLanguage("en"));
+    String finalText = translation.getTranslatedText();
+    return finalText;
   }
 }
