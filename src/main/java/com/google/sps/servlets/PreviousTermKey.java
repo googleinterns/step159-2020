@@ -22,13 +22,13 @@ public class PreviousTermKey extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Key prevTermKey = getPreviousTerms(db, request);
+    Key prevTermKey = getPreviousTermKey(db, request);
     String prevTermsKeyJSON = makeJSON(prevTermsData);
     response.setContentType("application/json;");
     response.getWriter().println(prevTermsKeyJSON);
   }
 
-  private Key getPreviousTerms(DatastoreService db, HttpServletRequest request) {
+  private Key getPreviousTermKey(DatastoreService db, HttpServletRequest request) {
     Key courseKey = KeyFactory.stringToKey(request.getProperty("course-key"));
     Key termName = request.getProperty("term");
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUALS, termName);
