@@ -176,6 +176,7 @@
     ]);
 
     const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
       title: "Average Term Rating Comparison",
       height: 450,
       bars: "horizontal",
@@ -216,6 +217,7 @@
     ]);
 
     const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
       title: "Average Term Perception Comparison",
       height: 450,
       bars: "horizontal",
