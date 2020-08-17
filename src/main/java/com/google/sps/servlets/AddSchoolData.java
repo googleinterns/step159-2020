@@ -7,10 +7,12 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +51,6 @@ public class AddSchoolData extends HttpServlet {
     Long units = Long.parseLong(request.getParameter("num-units"));
 
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
-    Boolean isNewCourse = isNewCourseDetector(courseName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
 
     Entity school = null;
@@ -63,6 +64,7 @@ public class AddSchoolData extends HttpServlet {
       professor = createProfessor(profName, school.getKey());
       term = createTerm(termName, professor.getKey(), course.getKey());
     } else {
+      Boolean isNewCourse = isNewCourseDetector(schoolName, courseName, units);
       if (isNewCourse) {
         if (isNewProfessor) {
           course = createCourse(courseName, units, existingSchoolKey);
@@ -92,6 +94,21 @@ public class AddSchoolData extends HttpServlet {
     return result;
   }
 
+  private List<Entity> findCourseMatch(String schoolName, String courseName, Long units) {
+    Key schoolKey = findQueryMatch("School", "school-name", schoolName).get(0).getKey();
+
+    List<Filter> filters = new ArrayList();
+    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
+    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
+    filters.add(courseFilter);
+    filters.add(unitFilter);
+
+    Query courseQuery =
+        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
+    List<Entity> result = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
+    return result;
+  }
+
   private Boolean isNewSchoolDetector(String schoolName) {
     List<Entity> querySchool = findQueryMatch("School", "school-name", schoolName);
     if (!querySchool.isEmpty()) {
@@ -101,8 +118,8 @@ public class AddSchoolData extends HttpServlet {
     return true;
   }
 
-  private Boolean isNewCourseDetector(String courseName) {
-    List<Entity> queryCourse = findQueryMatch("Course", "course-name", courseName);
+  private Boolean isNewCourseDetector(String schoolName, String courseName, Long units) {
+    List<Entity> queryCourse = findCourseMatch(schoolName, courseName, units);
     if (!queryCourse.isEmpty()) {
       existingCourseKey = queryCourse.get(0).getKey();
       return false;
