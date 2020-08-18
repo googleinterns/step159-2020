@@ -7,6 +7,8 @@ public class Term {
   int year;
   String school;
   ListIterator termIterator;
+  int numTerms;
+  int currTerm;
   ArrayList<String> termList;
 
   final List<String> QTR_SCHOOLS = Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
@@ -23,10 +25,8 @@ public class Term {
     } else {
       termList = SEMESTER_TERMS;
     }
-    System.out.println(termList);
-    int currIndex = termList.indexOf(season);
-    System.out.println(currIndex);
-    termIterator = termList.listIterator(currIndex);
+    numTerms = termList.size();
+    currTerm = termList.indexOf(season);
   }
 
   public String getSeason() {
@@ -42,24 +42,18 @@ public class Term {
   }
 
   public String getNext() {
-    if (termIterator.hasNext()) {
-      System.out.println(termIterator.next() + " " + String.valueOf(year));
-      return termIterator.next() + " " + String.valueOf(year);
-      // return new Term(termToString, school);
+    if (currTerm + 1 < numTerms) {
+      return termList.get(currTerm + 1) + " " + String.valueOf(year);
     } else {
-      System.out.println(termList.get(0) + " " + String.valueOf(year + 1));
       return termList.get(0) + " " + String.valueOf(year + 1);
-      // return new Term(termToString, school);
     }
   }
 
   public String getPrev() {
-    if (termIterator.hasPrevious()) {
-      return termIterator.previous() + " " + String.valueOf(year);
-      // return new Term(termToString, school);
+    if (currTerm == 0) {
+      return termList.get(numTerms - 1) + " " + String.valueOf(year - 1);
     } else {
-      return termList.get(-1) + " " + String.valueOf(year - 1);
-      // return new Term(termToString, school);
+      return termList.get(currTerm - 1) + " " + String.valueOf(year);
     }
   }
 

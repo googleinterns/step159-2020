@@ -107,12 +107,9 @@ public class SearchServlet extends HttpServlet {
       if (fuzzy) {
         List<String> terms = new ArrayList<>();
         Term termObject = new Term(term, school);
-        terms.add(termObject.getNext());
-        // terms.add(getPrevTerm(term));
-        terms.add(term);
         terms.add(termObject.getPrev());
-        System.out.println("HELLO");
-        System.out.println(terms);
+        terms.add(term);
+        terms.add(termObject.getNext());
         termFilter = new FilterPredicate("term", FilterOperator.IN, terms);
       } else {
         termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
