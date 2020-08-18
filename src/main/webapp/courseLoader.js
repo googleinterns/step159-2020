@@ -241,7 +241,7 @@
   }
 
   async function getPrevTermName(termLimit) {
-    const url = `/prev-terms?course-key=${courseKey}&term-limit=${termLimit}`;
+    const url = `/prev-terms?term-key=${termKey}&course-key=${courseKey}&term-limit=${termLimit}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
     return prevTermData.map((data) => data.properties.term);

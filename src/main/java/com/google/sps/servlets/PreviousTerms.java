@@ -33,7 +33,10 @@ public class PreviousTerms extends HttpServlet {
 
   private List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request) {
     Key courseKey = KeyFactory.stringToKey(request.getProperty("course-key"));
+    Key termKey = KeyFactory.stringToKey(request.getProperty("term-key"));
+    Date startTime = db.get(termKey).getProperty("timeStamp");
     Integer termLimit = Integer.parseInt(request.getProperty("term-limit"));
+
     Filter timeFilter = new FilterPredicate("timeStamp", FilterOperator.LESS_THAN, startTime);
     Query termQuery =
         new Query("Term")

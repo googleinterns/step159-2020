@@ -32,7 +32,6 @@ public class LiveCourseData extends HttpServlet {
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {
     TermDataHolder termDataHolder = new TermDataHolder();
     Key termKey = KeyFactory.stringToKey(request.getProperty("term-key"));
-    Key courseKey = KeyFactory.stringToKey(request.getProperty("course-key"));
 
     termDataHolder.setHoursList(getDataFromTermRating(db, foundTerm, "hours"));
     termDataHolder.setDifficultyList(getDataFromTermRating(db, foundTerm, "difficulty"));
