@@ -5,6 +5,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
@@ -15,10 +16,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.Translate.TranslateOption;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
+import com.google.cloud.translate.v3.LocationName;
+import com.google.cloud.translate.v3.TranslateTextRequest;
+import com.google.cloud.translate.v3.TranslateTextResponse;
+import com.google.cloud.translate.v3.TranslationServiceClient;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -87,11 +88,7 @@ public class DataServlet extends HttpServlet {
     } catch (Exception exception) {
       throw new IOException("Error reading body of request");
     }
-    String schoolName;
-    String courseName;
-    String profName;
-    String termName;
-    Long units;
+    String termKeyString;
     String termFeedback;
     String professorFeedback;
     Long termRating;
@@ -102,11 +99,7 @@ public class DataServlet extends HttpServlet {
     Boolean translate;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      schoolName = jsonObject.getString("schoolName");
-      courseName = jsonObject.getString("courseName");
-      profName = jsonObject.getString("profName");
-      termName = jsonObject.getString("term");
-      units = (long) jsonObject.getFloat("units");
+      termKeyString = jsonObject.getString("term-key");
       termFeedback = jsonObject.getString("termInput");
       professorFeedback = jsonObject.getString("profInput");
       termRating = (long) jsonObject.getFloat("ratingTerm");
@@ -127,9 +120,6 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    currentTermKey =
-        findTerm(datastore, schoolName, courseName, termName, units, profName).getKey();
-
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
         queryEntities(
@@ -139,7 +129,7 @@ public class DataServlet extends HttpServlet {
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
-            ? new Entity("Rating", currentTermKey)
+            ? new Entity("Rating", KeyFactory.stringToKey())
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
@@ -202,9 +192,23 @@ public class DataServlet extends HttpServlet {
   }
 
   private String translateTextToEnglish(String text) throws IOException {
-    Translate translate = TranslateOptions.getDefaultInstance().getService();
-    Translation translation = translate.translate(text, TranslateOption.targetLanguage("en"));
-    String finalText = translation.getTranslatedText();
-    return finalText;
+    String projectId = "nina-laura-dagm-step-2020";
+    try (TranslationServiceClient client = TranslationServiceClient.create()) {
+      LocationName parent = LocationName.of(projectId, "global");
+
+      TranslateTextRequest request =
+          TranslateTextRequest.newBuilder()
+              .setParent(parent.toString())
+              .setMimeType("text/plain")
+              .setTargetLanguageCode("en")
+              .addContents(text)
+              .build();
+
+      TranslateTextResponse response = client.translateText(request);
+      return response.getTranslationsList().get(0).getTranslatedText();
+
+    } catch (IOException exception) {
+      throw new IOException("Could not translate comments");
+    }
   }
 }
