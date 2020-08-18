@@ -29,6 +29,7 @@ public class PreviousTermKey extends HttpServlet {
     response.getWriter().println(prevTermsKeyJSON);
   }
 
+  // finds the entity key of a term based on its name
   private Key getPreviousTermKey(DatastoreService db, HttpServletRequest request) {
     Key courseKey = KeyFactory.stringToKey(request.getParameter("course-key"));
     Key termName = KeyFactory.stringToKey(request.getParameter("term"));
