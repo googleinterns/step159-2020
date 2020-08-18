@@ -159,7 +159,7 @@ public class AddSchoolData extends HttpServlet {
   private Entity createTerm(String term, Long numEnrolled, Key professor, Key parent) {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
-    newTerm.setProperty("num-enrolled", enrolled);
+    newTerm.setProperty("num-enrolled", numEnrolled);
     newTerm.setProperty("professorKey", professor);
     newTerm.setProperty("timeStamp", findTermDate(term));
     return newTerm;

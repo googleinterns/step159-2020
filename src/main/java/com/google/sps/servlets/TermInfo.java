@@ -26,12 +26,12 @@ public class TermInfo extends HttpServlet {
   }
 
   public List<String> getTermInfo(DatastoreService db, HttpServletRequest request) {
-    Key termKey = KeyFactory.stringToKey(request.getProperty("term-key"));
-    Key courseKey = KeyFactory.stringToKey(request.getProperty("course-key"));
+    Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
+    Key courseKey = KeyFactory.stringToKey(request.getParameter("course-key"));
 
-    String term = db.get(termKey).getProperty("term");
-    String enrolled = db.get(termKey).getProperty("num-enrolled");
-    String courseName = db.get(courseKey).getProperty("course-name");
+    String term = (String) db.get(termKey).getProperty("term");
+    String enrolled = (String) db.get(termKey).getProperty("num-enrolled");
+    String courseName = (String) db.get(courseKey).getProperty("course-name");
 
     return Arrays.asList(courseName, term, enrolled);
   }
