@@ -58,18 +58,18 @@ public class SearchServlet extends HttpServlet {
   /* Create list of courses given request. Public for testing purposes. */
   public JSONObject getMatchingCourses(HttpServletRequest request) {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    MatchResult success = MatchResult.GOOD;
+    MatchResult matchResult = MatchResult.GOOD;
     List<Filter> filters = getFilters(request, /* isFuzzy = */ false);
     List<Entity> results = getResults(filters, db);
     if (results.isEmpty()) {
-      filters = getFilters(request, /* isFuzzy = */ true); // Try fuzzy search.
+      filters = getFilters(request, /* isFuzzy = */ true);
       results = getResults(filters, db);
-      success = MatchResult.OKAY;
+      matchResult = MatchResult.OKAY;
     }
     if (results.isEmpty()) { // Fuzzy search didn't work.
-      success = MatchResult.BAD;
+      matchResult = MatchResult.BAD;
     }
-    return getCourses(results, success, db);
+    return getCourses(results, matchResult, db);
   }
 
   /* Create list of filters given parameters specified in request. */
@@ -80,7 +80,7 @@ public class SearchServlet extends HttpServlet {
       Filter nameFilter;
       if (fuzzy) {
         String department = name.split(" ")[0];
-        int courseNum = Integer.parseInt(name.split(" ")[1]); // Get course number
+        int courseNum = Integer.parseInt(name.split(" ")[1]);
         List<String> courseNums = new ArrayList<>();
         courseNums.add(department + " " + String.valueOf(courseNum + 1));
         courseNums.add(name);
@@ -144,7 +144,8 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Given list of result Entity courses, format into Course objects. */
-  private JSONObject getCourses(List<Entity> results, MatchResult success, DatastoreService db) {
+  private JSONObject getCourses(
+      List<Entity> results, MatchResult matchResult, DatastoreService db) {
     List<Course> courses = new ArrayList<>();
     for (Entity entity : results) {
       String name = (String) entity.getProperty("name");
@@ -159,7 +160,7 @@ public class SearchServlet extends HttpServlet {
     Collections.sort(courses);
     JSONObject json = new JSONObject();
 
-    switch (success) {
+    switch (matchResult) {
       case BAD:
         json.put(
             "message",
@@ -180,7 +181,7 @@ public class SearchServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     addCourse(request, db);
-    response.sendRedirect("/index.html");
+    response.setStatus(200);
   }
 
   /* Public for testing. */
@@ -253,7 +254,6 @@ public class SearchServlet extends HttpServlet {
       DatastoreService db, String entityType, String entityProperty, String propertyValue) {
     Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
     Query q = new Query(entityType).setFilter(filter);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    return result;
+    return db.prepare(q).asList(FetchOptions.Builder.withDefaults());
   }
 }

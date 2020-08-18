@@ -289,7 +289,6 @@ public final class SearchServletTest {
       DatastoreService db, String entityType, String entityProperty, String propertyValue) {
     Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
     Query q = new Query(entityType).setFilter(filter);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    return result;
+    return db.prepare(q).asList(FetchOptions.Builder.withDefaults());
   }
 }

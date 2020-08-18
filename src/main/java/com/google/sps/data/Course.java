@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -17,8 +18,8 @@ public class Course implements Comparable<Course> {
   Long units;
   String term;
   String school;
-  Key termKey;
-  Key courseKey;
+  String termKey;
+  String courseKey;
 
   public Course(
       String courseName,
@@ -33,8 +34,8 @@ public class Course implements Comparable<Course> {
     term = termName;
     school = schoolName;
     List<Key> keys = findKeys(db, schoolName, courseName, termName, units, professorName);
-    termKey = keys.get(0);
-    courseKey = keys.get(1);
+    termKey = KeyFactory.keyToString(keys.get(0));
+    courseKey = KeyFactory.keyToString(keys.get(1));
   }
 
   public String getName() {
@@ -57,12 +58,12 @@ public class Course implements Comparable<Course> {
     return school;
   }
 
-  public Key getTermKey() {
+  public String getTermKey() {
     return termKey;
   }
 
-  public void setTermKey(Key key) {
-    termKey = key;
+  public String getCourseKey() {
+    return courseKey;
   }
 
   @Override
@@ -95,15 +96,13 @@ public class Course implements Comparable<Course> {
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
     Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
-    List<Key> keys = Arrays.asList(foundTerm.getKey(), courseKey);
-    return keys;
+    return Arrays.asList(foundTerm.getKey(), courseKey);
   }
 
   private List<Entity> findQueryMatch(
       DatastoreService db, String entityType, String entityProperty, String propertyValue) {
     Filter filter = new FilterPredicate(entityProperty, FilterOperator.EQUAL, propertyValue);
     Query q = new Query(entityType).setFilter(filter);
-    List<Entity> result = db.prepare(q).asList(FetchOptions.Builder.withDefaults());
-    return result;
+    return db.prepare(q).asList(FetchOptions.Builder.withDefaults());
   }
 }
