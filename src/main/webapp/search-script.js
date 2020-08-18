@@ -20,7 +20,7 @@ function collectUnitsFromInput() {
   return addedUnits;
 }
 
-function showCourses() {
+async function showCourses() {
   const courseResults = document.getElementById("search-results");
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
@@ -33,16 +33,14 @@ function showCourses() {
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
-  url.searchParams.set("schoolName", school)
-  fetch(url)
-  .then(response => response.json())
-  .then((searchResults) => {
+  url.searchParams.set("schoolName", school);
+  const response = await fetch(url);
+  const searchResults = await response.json();
     if (searchResults.hasOwnProperty("message")) { // TODO: Make a div for this message so specific styling is easier.
         courseResults.innerHTML += searchResults.message + "<br />";
     }
     const courses = JSON.parse(searchResults.courses);
     courses.forEach(course => courseResults.appendChild(createListElement(course)));
-  });
 }
 
 /* Creates an <li> element containing the course link and name. */
@@ -52,8 +50,6 @@ function createListElement(course) {
   const url = new URL("/course.html", window.location.origin);
   url.searchParams.set("term-key", course.termKey);
   url.searchParams.set("course-key", course.courseKey);
-  const school = getUserSchool();
-  url.searchParams.set("school-name", school);
   link.setAttribute('href', url);
   link.innerText = course.name + " - " + course.professor + " (" + course.term + ")" ;
   liElement.appendChild(link);
@@ -70,7 +66,7 @@ function getUserSchool() {
   return school;
 }
 
-function addCourse() {
+async function addCourse() {
   const courseName = document.getElementById("course-name").value;
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
@@ -82,7 +78,8 @@ function addCourse() {
   url.searchParams.set("num-units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", schoolName);
-  fetch(url, {method:"POST"});
+  const response = await fetch(url, {method:"POST"});
+  return response;
 }
 
 async function onSignIn(googleUser) {
@@ -90,15 +87,19 @@ async function onSignIn(googleUser) {
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
-  const response = await fetch(url, {method:"POST"});
+  const response = await fetch(url, { method: "POST" });
   const id = await response.json();
-    if (id.verified) { // Successful sign-in.
-        document.getElementById("class-info").classList.remove("hidden");
-        document.getElementById("login-box").classList.add("hidden");
-        document.getElementById("school-name").innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;   
-    } else { 
-        document.getElementById("login-box").innerHTML = "Email not verified. Try again.";
-    }
+  if (id.verified) {
+    // Successful sign-in.
+    document.getElementById("class-info").classList.remove("hidden");
+    document.getElementById("login-box").classList.add("hidden");
+    document.getElementById(
+      "school-name"
+    ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
+  } else {
+    document.getElementById("login-box").innerHTML =
+      "Email not verified. Try again.";
+  }
 }
 
 /* Returns a Promise for the backend-generated ID of a user. */
