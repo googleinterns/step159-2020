@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
 import com.google.sps.data.Course;
+import com.google.sps.data.Term;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,6 +76,8 @@ public class SearchServlet extends HttpServlet {
   /* Create list of filters given parameters specified in request. */
   private List<Filter> getFilters(HttpServletRequest request, boolean fuzzy) {
     List<Filter> filters = new ArrayList<>();
+    String school = request.getParameter("school-name");
+    Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
       Filter nameFilter;
@@ -103,9 +106,13 @@ public class SearchServlet extends HttpServlet {
       Filter termFilter;
       if (fuzzy) {
         List<String> terms = new ArrayList<>();
-        terms.add(getPrevTerm(term));
+        Term termObject = new Term(term, school);
+        terms.add(termObject.getNext());
+        // terms.add(getPrevTerm(term));
         terms.add(term);
-        terms.add(getNextTerm(term));
+        terms.add(termObject.getPrev());
+        System.out.println("HELLO");
+        System.out.println(terms);
         termFilter = new FilterPredicate("term", FilterOperator.IN, terms);
       } else {
         termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
@@ -124,8 +131,7 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
-    String school = request.getParameter("school-name");
-    Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
+
     return filters;
   }
 
