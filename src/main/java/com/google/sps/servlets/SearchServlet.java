@@ -207,27 +207,6 @@ public class SearchServlet extends HttpServlet {
     db.put(newCourse);
   }
 
-  // TODO: Adapt this to quarter-system schools and potentially include summer quarter.
-  private String getPrevTerm(String term) {
-    String season = term.split(" ")[0];
-    int year = Integer.parseInt(term.split(" ")[1]);
-    if (season.equals("Fall")) {
-      return "Spring " + String.valueOf(year);
-    } else { // Season is "Spring".
-      return "Fall " + String.valueOf(year - 1);
-    }
-  }
-
-  private String getNextTerm(String term) {
-    String season = term.split(" ")[0];
-    int year = Integer.parseInt(term.split(" ")[1]);
-    if (season.equals("Fall")) {
-      return "Spring " + String.valueOf(year + 1);
-    } else { // Season is "Spring"
-      return "Fall " + String.valueOf(year);
-    }
-  }
-
   private Key findTermKey(
       DatastoreService db,
       String schoolName,
