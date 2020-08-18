@@ -6,6 +6,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.sps.data.TermDataHolder;
 import java.io.IOException;
@@ -31,18 +32,18 @@ public class LiveCourseData extends HttpServlet {
 
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {
     TermDataHolder termDataHolder = new TermDataHolder();
-    Key termKey = KeyFactory.stringToKey(request.getProperty("term-key"));
+    Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
 
-    termDataHolder.setHoursList(getDataFromTermRating(db, foundTerm, "hours"));
-    termDataHolder.setDifficultyList(getDataFromTermRating(db, foundTerm, "difficulty"));
-    termDataHolder.setTermScoreList(getDataFromTermRating(db, foundTerm, "score-term"));
-    termDataHolder.setTermPerceptionList(getDataFromTermRating(db, foundTerm, "perception-term"));
+    termDataHolder.setHoursList(getDataFromTermRating(db, termKey, "hours"));
+    termDataHolder.setDifficultyList(getDataFromTermRating(db, termKey, "difficulty"));
+    termDataHolder.setTermScoreList(getDataFromTermRating(db, termKey, "score-term"));
+    termDataHolder.setTermPerceptionList(getDataFromTermRating(db, termKey, "perception-term"));
     termDataHolder.setProfessorPerceptionList(
-        getDataFromTermRating(db, foundTerm, "perception-professor"));
-    termDataHolder.setProfessorScoreList(getDataFromTermRating(db, foundTerm, "score-professor"));
-    termDataHolder.setTermCommentsList(getDataFromTermRating(db, foundTerm, "comments-term"));
+        getDataFromTermRating(db, termKey, "perception-professor"));
+    termDataHolder.setProfessorScoreList(getDataFromTermRating(db, termKey, "score-professor"));
+    termDataHolder.setTermCommentsList(getDataFromTermRating(db, termKey, "comments-term"));
     termDataHolder.setProfessorCommentsList(
-        getDataFromTermRating(db, foundTerm, "comments-professor"));
+        getDataFromTermRating(db, termKey, "comments-professor"));
     return termDataHolder;
   }
 
