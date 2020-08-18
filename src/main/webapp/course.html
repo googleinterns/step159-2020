@@ -73,7 +73,7 @@
     <div class="container-fluid bg-light p-5">
       <div class="container-xl my-4">
         <h1 class="p-4 text-center">Add Your Review</h1>
-        <form id="term-form">
+        <form id="term-form" novalidate>
           <div class="row">
             <div class="col">
               <p class="lead">Review your term</p>
@@ -82,10 +82,15 @@
                 name="term-input"
                 maxlength="1500"
                 type="text"
-                class="form-control mb-5"
+                class="form-control mb-5 required"
                 rows="5"
                 placeholder="Write Opinion Here"
+                required
               ></textarea>
+              <div class="valid-tooltip">Looks good!</div>
+              <div class="invalid-tooltip">
+                Please input a valid term comment.
+              </div>
             </div>
             <div class="col">
               <p class="lead">Review your professor</p>
@@ -94,10 +99,15 @@
                 name="prof-input"
                 maxlength="1500"
                 type="text"
-                class="form-control mb-5"
+                class="form-control mb-5 required"
                 rows="5"
                 placeholder="Write Opinion Here"
+                required
               ></textarea>
+              <div class="valid-tooltip">Looks good!</div>
+              <div class="invalid-tooltip">
+                Please input a valid professor comment.
+              </div>
             </div>
           </div>
 
@@ -117,9 +127,12 @@
                 min="0"
                 max="5"
                 type="number"
-                class="form-control mb-5"
+                class="form-control mb-5 required"
                 placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
+                required
               />
+              <div class="valid-tooltip">Looks good!</div>
+              <div class="invalid-tooltip">Please input a term rating.</div>
             </div>
             <div class="col">
               <p
@@ -136,9 +149,14 @@
                 min="0"
                 max="5"
                 type="number"
-                class="form-control mb-5"
+                class="form-control mb-5 required"
                 placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
+                required
               />
+              <div class="valid-tooltip">Looks good!</div>
+              <div class="invalid-tooltip">
+                Please input a professor rating.
+              </div>
             </div>
           </div>
 
@@ -150,9 +168,14 @@
                 name="hours"
                 min="0"
                 type="number"
-                class="form-control mb-5"
-                placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
+                class="form-control mb-5 required"
+                placeholder="Hours per week spent on course"
+                required
               />
+              <div class="valid-tooltip">Looks good!</div>
+              <div class="invalid-tooltip">
+                Please input a valid amount of hours.
+              </div>
             </div>
             <div class="col">
               <p class="lead">How Difficulty was this Course?</p>
@@ -162,19 +185,35 @@
                 min="0"
                 max="5"
                 type="number"
-                class="form-control mb-5"
-                placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
+                class="form-control mb-5 required"
+                placeholder="Difficulty (From 0 = Very Easy to 5 = Very Difficult)"
+                required
               />
             </div>
+            <div class="valid-tooltip">Looks good!</div>
+            <div class="invalid-tooltip">
+              Please input a valid difficulty score.
+            </div>
+            <div class="col">
+              <p class="lead">What was your grade in the class?</p>
+              <select id="grade" name="grade" class="form-control mb-5">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+              </select>
+            </div>
           </div>
+          <button
+            onclick="passRatingProperties()"
+            type="button"
+            class="btn btn-lg btn-outline-success"
+          >
+            Submit
+          </button>
         </form>
-        <button
-          onclick="passRatingProperties()"
-          type="button"
-          class="btn btn-lg btn-outline-success"
-        >
-          Submit
-        </button>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>
@@ -198,6 +237,5 @@
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script src="dummyData.js"></script>
-    <script src="courseLoader.js"></script>
   </body>
 </html>

@@ -401,26 +401,21 @@
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const ratingProperties = {
-      courseName: urlParams.get("course-name"),
-      term: urlParams.get("term"),
-      profName: urlParams.get("prof-name"),
-      units: urlParams.get("num-units"),
-      schoolName: urlParams.get("school-name"),
+      courseKey: urlParams.get("course-key"),
+      termKey: urlParams.get("term-key"),
       termInput: document.getElementById("term-input").value,
       profInput: document.getElementById("prof-input").value,
       ratingTerm: document.getElementById("rating-term").value,
       ratingProf: document.getElementById("rating-prof").value,
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
+      grade: document.getElementById("grade").value,
     };
     document.getElementById("term-form").reset();
 
     const url = newURL(
-      ratingProperties.schoolName,
-      ratingProperties.courseName,
-      ratingProperties.profName,
-      ratingProperties.units,
-      ratingProperties.term,
+      ratingProperties.courseKey,
+      ratingProperties.termKey,
       ratingProperties.termInput,
       ratingProperties.profInput,
       ratingProperties.ratingTerm,
@@ -433,11 +428,8 @@
   }
 
   function newURL(
-    schoolName,
-    courseName,
-    profName,
-    units,
-    term,
+    courseKey,
+    termKey,
     termInput,
     profInput,
     ratingTerm,
@@ -446,11 +438,8 @@
     difficulty
   ) {
     const url = new URL("/data", window.location.origin);
-    url.searchParams.set("course-name", courseName);
-    url.searchParams.set("prof-name", profName);
-    url.searchParams.set("num-units", units);
-    url.searchParams.set("term", term);
-    url.searchParams.set("school-name", schoolName);
+    url.searchParams.set("course-key", courseKey);
+    url.searchParams.set("term-key", termKey);
 
     url.searchParams.set("hour", hours);
     url.searchParams.set("difficulty", difficulty);

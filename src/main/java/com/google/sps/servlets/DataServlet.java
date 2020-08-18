@@ -4,10 +4,8 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -26,15 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.util.PythonInterpreter;
 
 /** An item on a todo list. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
-  private Key currentTermKey;
   private LanguageServiceClient languageService;
   private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
@@ -80,25 +74,20 @@ public class DataServlet extends HttpServlet {
       throw new IOException("Error reading body of request");
     }
 
-    String schoolName = new String();
-    String courseName = new String();
-    String profName = new String();
-    String termName = new String();
-    Long units = null;
-    String termFeedback = new String();
-    String professorFeedback = new String();
-    Long termRating = null;
-    Long professorRating = null;
-    Long workHours = null;
-    Long difficulty = null;
-    String userId = new String();
+    String courseKeyString;
+    String termKeyString;
+    String termFeedback;
+    String professorFeedback;
+    Long termRating;
+    Long professorRating;
+    Long workHours;
+    Long difficulty;
+    String userId;
+    String grade;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      schoolName = jsonObject.getString("schoolName");
-      courseName = jsonObject.getString("courseName");
-      profName = jsonObject.getString("profName");
-      termName = jsonObject.getString("term");
-      units = (long) jsonObject.getFloat("units");
+      courseKeyString = jsonObject.getString("courseKey");
+      termKeyString = jsonObject.getString("termKey");
       termFeedback = jsonObject.getString("termInput");
       professorFeedback = jsonObject.getString("profInput");
       termRating = (long) jsonObject.getFloat("ratingTerm");
@@ -106,6 +95,7 @@ public class DataServlet extends HttpServlet {
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
       userId = jsonObject.getString("ID");
+      grade = jsonObject.getString("grade");
     } catch (JSONException exception) {
       // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
@@ -114,8 +104,8 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Modifying tests right now to reflect changes.
-    currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
+    termKey = KeyFactory.stringToKey(termKeyString);
+    Entity termEntity = datastore.get(termKey);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -125,23 +115,10 @@ public class DataServlet extends HttpServlet {
             /* propertyValue */ userId);
 
     Entity termRatingEntity =
-        termRatingQueryList.isEmpty()
-            ? new Entity("Rating", currentTermKey)
-            : termRatingQueryList.get(0);
-
-    PythonInterpreter interpreter = new PythonInterpreter();
-    interpreter.exec(
-        "import sys\nsys.path.append('src/main/webapp/perspective.py')\nimport perspective");
-    // execute a function that takes a string and returns a string
-    PyObject commentAnalyzer = interpreter.get("commentAnalyzer");
-    PyObject scoreTermFeedbackPython = commentAnalyzer.__call__(new PyString(termFeedback));
-    PyObject scoreProfFeedbackPython = commentAnalyzer.__call__(new PyString(termFeedback));
-    Long scoreTermFeedback = (Long) scoreTermFeedbackPython.__tojava__(Long.class);
-    Long scoreProfFeedback = (Long) scoreProfFeedbackPython.__tojava__(Long.class);
+        termRatingQueryList.isEmpty() ? new Entity("Rating", termKey) : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
-    termRatingEntity.setProperty("perspective-api-score-term", scoreTermFeedback);
-    termRatingEntity.setProperty("perspective-api-score-prof", scoreProfFeedback);
+    termRatingEntity.setProperty("grade", grade);
     termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);
@@ -161,34 +138,6 @@ public class DataServlet extends HttpServlet {
     float score = sentiment.getScore();
     languageService.close();
     return score;
-  }
-
-  private Entity findTerm(
-      DatastoreService db,
-      String schoolName,
-      String courseName,
-      String termName,
-      Long units,
-      String profName)
-      throws IOException {
-    Key schoolKey = queryEntities("School", "school-name", schoolName).get(0).getKey();
-
-    List<Filter> filters = new ArrayList();
-    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
-    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
-    filters.add(courseFilter);
-    filters.add(unitFilter);
-
-    Query courseQuery =
-        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
-    Key courseKey =
-        db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
-
-    Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
-    Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
-    Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
-
-    return foundTerm;
   }
 
   public List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
