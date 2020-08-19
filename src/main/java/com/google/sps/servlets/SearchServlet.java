@@ -168,11 +168,18 @@ public class SearchServlet extends HttpServlet {
         json.put(
             "message",
             "We couldn't find anything relating to this query. Change your search parameters and try again.");
+        break;
       case OKAY:
         json.put(
             "message",
             "We couldn't find anything exactly matching your query. Here are some similar results!");
         break;
+      case GOOD:
+        if (courses.size() == 1) {
+          json.put("message", "We found an exact match for your query!");
+        } else {
+          json.put("message", "We found exact matches for your query!");
+        }
     }
     String strCourses = new Gson().toJson(courses);
     json.put("courses", strCourses);
