@@ -3,6 +3,7 @@ package com.google.sps.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
@@ -19,13 +20,18 @@ public class TermInfo extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<String> termInfo = getTermInfo(db, request);
-    String termInfoJSON = makeJSON(termInfo);
-    response.setContentType("application/json;");
-    response.getWriter().println(termInfoJSON);
+    try {
+      List<String> termInfo = getTermInfo(db, request);
+      String termInfoJSON = makeJSON(termInfo);
+      response.setContentType("application/json;");
+      response.getWriter().println(termInfoJSON);
+    } catch (EntityNotFoundException e) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
   }
 
-  public List<String> getTermInfo(DatastoreService db, HttpServletRequest request) {
+  public List<String> getTermInfo(DatastoreService db, HttpServletRequest request)
+      throws EntityNotFoundException {
     Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
     Key courseKey = KeyFactory.stringToKey(request.getParameter("course-key"));
 

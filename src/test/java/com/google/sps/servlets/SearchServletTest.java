@@ -268,6 +268,7 @@ public final class SearchServletTest {
     when(req.getParameter("term")).thenReturn(term);
     when(req.getParameter("num-units")).thenReturn(units);
     when(req.getParameter("school-name")).thenReturn(school);
+    when(req.getParameter("num-enrolled")).thenReturn("300");
     SearchServlet.addCourse(req, db);
   }
 

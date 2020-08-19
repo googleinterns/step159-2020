@@ -22,6 +22,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -96,6 +97,7 @@ public final class LiveCourseDataTest {
         /* profName */ "Jason Ku");
     schoolData.addSchoolData(db, request);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
+    String parentStr = KeyFactory.keyToString(parent);
     addRatingEntity(
         /* database */ db,
         /* hours */ 12,
@@ -107,6 +109,8 @@ public final class LiveCourseDataTest {
         /* termComment */ "Great",
         /* professorComment */ "Terrible",
         /* parentEntity */ parent);
+
+    createRequest(/* requestServelt */ requestB, /* term-key */ parentStr);
 
     List<Object> expectedHoursList = new ArrayList(Arrays.asList(Arrays.asList((long) 12)));
     List<Object> expectedDifficultyList = new ArrayList(Arrays.asList(Arrays.asList((long) 7)));
@@ -120,7 +124,7 @@ public final class LiveCourseDataTest {
     List<Object> expectedProfessorCommentsList =
         new ArrayList(Arrays.asList(Arrays.asList("Great")));
 
-    TermDataHolder answer = liveCourseData.getAllDataFromTerm(db, request);
+    TermDataHolder answer = liveCourseData.getAllDataFromTerm(db, requestB);
 
     assertEquals(expectedHoursList, answer.getHoursList());
     assertEquals(expectedDifficultyList, answer.getDifficultyList());
@@ -134,7 +138,7 @@ public final class LiveCourseDataTest {
 
   private void createRequest(
       HttpServletRequest request,
-      String schoolName,
+      Key schoolName,
       String courseName,
       String termName,
       String units,
@@ -144,6 +148,11 @@ public final class LiveCourseDataTest {
     when(request.getParameter("term")).thenReturn(termName);
     when(request.getParameter("num-units")).thenReturn(units);
     when(request.getParameter("prof-name")).thenReturn(profName);
+    when(request.getParameter("num-enrolled")).thenReturn("300");
+  }
+
+  private void createRequest(HttpServletRequest request, String termKeyStr) {
+    when(request.getParameter("term-key")).thenReturn(termKeyStr);
   }
 
   private List<Entity> findQueryMatch(
