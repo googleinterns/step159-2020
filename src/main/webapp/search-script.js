@@ -121,5 +121,3 @@ function signOut() {
     .getElementById("login-box")
     .classList.remove("hidden");
 }
-
-//ignore this: needed so git will add the file to my pr

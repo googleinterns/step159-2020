@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ignore this: needed so git will add the file to my pr
-
 package com.google.sps.servlets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
