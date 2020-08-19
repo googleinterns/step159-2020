@@ -49,7 +49,6 @@ public class AddSchoolData extends HttpServlet {
     String termName = request.getParameter("term");
     String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
-    Long numEnrolled = Long.parseLong(request.getParameter("num-enrolled"));
 
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
@@ -63,24 +62,24 @@ public class AddSchoolData extends HttpServlet {
       school = createSchool(schoolName);
       course = createCourse(courseName, units, school.getKey());
       professor = createProfessor(profName, school.getKey());
-      term = createTerm(termName, numEnrolled, professor.getKey(), course.getKey());
+      term = createTerm(termName, professor.getKey(), course.getKey());
     } else {
       Boolean isNewCourse = isNewCourseDetector(schoolName, courseName, units);
       if (isNewCourse) {
         if (isNewProfessor) {
           course = createCourse(courseName, units, existingSchoolKey);
           professor = createProfessor(profName, existingSchoolKey);
-          term = createTerm(termName, numEnrolled, professor.getKey(), course.getKey());
+          term = createTerm(termName, professor.getKey(), course.getKey());
         } else {
           course = createCourse(courseName, units, existingSchoolKey);
-          term = createTerm(termName, numEnrolled, existingProfessorKey, course.getKey());
+          term = createTerm(termName, existingProfessorKey, course.getKey());
         }
       } else {
         if (isNewProfessor) {
           professor = createProfessor(profName, existingSchoolKey);
-          term = createTerm(termName, numEnrolled, professor.getKey(), existingCourseKey);
+          term = createTerm(termName, professor.getKey(), existingCourseKey);
         } else {
-          term = createTerm(termName, numEnrolled, existingProfessorKey, existingCourseKey);
+          term = createTerm(termName, existingProfessorKey, existingCourseKey);
         }
       }
     }
@@ -156,10 +155,9 @@ public class AddSchoolData extends HttpServlet {
     return newProfessor;
   }
 
-  private Entity createTerm(String term, Long numEnrolled, Key professor, Key parent) {
+  private Entity createTerm(String term, Key professor, Key parent) {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
-    newTerm.setProperty("num-enrolled", numEnrolled);
     newTerm.setProperty("professorKey", professor);
     newTerm.setProperty("timeStamp", findTermDate(term));
     return newTerm;

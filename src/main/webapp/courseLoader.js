@@ -5,17 +5,15 @@
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const termKey = urlParams.get("term-key");
-  const courseKey = urlParams.get("term-key");
+  const courseName = urlParams.get("course-name");
+  const profName = urlParams.get("prof-name");
+  const term = urlParams.get("term");
+  const units = urlParams.get("num-units");
+  const schoolName = urlParams.get("school-name");
 
   function fillTitles() {
-    fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
-      .then((response) => response.json())
-      .then((termInfo) => {
-        document.getElementById("course-name").innerHTML = termInfo[0];
-        document.getElementById("term-name").innerHTML = termInfo[1];
-        document.getElementById("num-enrolled").innerHTML = termInfo[2];
-      });
+    document.getElementById("course-name").innerHTML = courseName;
+    document.getElementById("term-name").innerHTML = term;
   }
 
   function populateData() {
