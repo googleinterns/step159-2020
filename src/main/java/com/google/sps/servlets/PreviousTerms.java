@@ -28,32 +28,32 @@ public class PreviousTerms extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<Entity> prevTermsData = getPreviousTerms(db, request);
-    String prevTermsDataJSON = makeJSON(prevTermsData);
-    response.setContentType("application/json;");
-    response.getWriter().println(prevTermsDataJSON);
+    try {
+      List<Entity> prevTermsData = getPreviousTerms(db, request);
+      String prevTermsDataJSON = makeJSON(prevTermsData);
+      response.setContentType("application/json;");
+      response.getWriter().println(prevTermsDataJSON);
+    } catch (EntityNotFoundException e) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
   }
 
   private List<Entity> getPreviousTerms(DatastoreService db, HttpServletRequest request)
       throws EntityNotFoundException {
-    try {
-      Key courseKey = KeyFactory.stringToKey(request.getParameter("course-key"));
-      Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
-      Integer termLimit = Integer.parseInt(request.getParameter("term-limit"));
-      Date startTime = (Date) db.get(termKey).getProperty("timeStamp");
+    Key courseKey = KeyFactory.stringToKey(request.getParameter("course-key"));
+    Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
+    Integer termLimit = Integer.parseInt(request.getParameter("term-limit"));
+    Date startTime = (Date) db.get(termKey).getProperty("timeStamp");
 
-      Filter timeFilter = new FilterPredicate("timeStamp", FilterOperator.LESS_THAN, startTime);
-      Query termQuery =
-          new Query("Term")
-              .setAncestor(courseKey)
-              .addSort("timeStamp", SortDirection.DESCENDING)
-              .setFilter(timeFilter);
-      List<Entity> foundTerms =
-          db.prepare(termQuery).asList(FetchOptions.Builder.withLimit(termLimit));
-      return foundTerms;
-    } catch (EntityNotFoundException e) {
-      throw e;
-    }
+    Filter timeFilter = new FilterPredicate("timeStamp", FilterOperator.LESS_THAN, startTime);
+    Query termQuery =
+        new Query("Term")
+            .setAncestor(courseKey)
+            .addSort("timeStamp", SortDirection.DESCENDING)
+            .setFilter(timeFilter);
+    List<Entity> foundTerms =
+        db.prepare(termQuery).asList(FetchOptions.Builder.withLimit(termLimit));
+    return foundTerms;
   }
 
   private String makeJSON(Object changeItem) throws JsonProcessingException {

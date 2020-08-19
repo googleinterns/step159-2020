@@ -12,6 +12,8 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.util.*;
 
+// ignore this: needed so git will add the file to my pr
+
 public class Course implements Comparable<Course> {
   String name;
   String professor;

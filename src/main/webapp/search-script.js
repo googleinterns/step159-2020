@@ -83,8 +83,12 @@ async function onSignIn(googleUser) {
   const id = await response.json();
   if (id.verified) {
     // Successful sign-in.
-    document.getElementById("class-info").classList.remove("hidden");
-    document.getElementById("login-box").classList.add("hidden");
+    document
+      .getElementById("class-info")
+      .classList.remove("hidden");
+    document
+      .getElementById("login-box")
+      .classList.add("hidden");
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -110,6 +114,12 @@ function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   const profile = auth2.currentUser.get().getBasicProfile();
   auth2.signOut();
-  document.getElementById("class-info").classList.add("hidden");
-  document.getElementById("login-box").classList.remove("hidden");
+  document
+    .getElementById("class-info")
+    .classList.add("hidden");
+  document
+    .getElementById("login-box")
+    .classList.remove("hidden");
 }
+
+//ignore this: needed so git will add the file to my pr
