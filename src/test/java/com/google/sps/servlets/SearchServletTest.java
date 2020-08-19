@@ -185,6 +185,7 @@ public final class SearchServletTest {
 
     JSONObject expected = new JSONObject();
     expected.put("courses", new Gson().toJson(expectedCourses));
+    expected.put("message", "We found exact matches for your query!");
     JSONObject json = searchObject.getMatchingCourses(request);
 
     assertEquals(json, expected);
@@ -222,6 +223,7 @@ public final class SearchServletTest {
 
     JSONObject expected = new JSONObject();
     expected.put("courses", new Gson().toJson(expectedCourses));
+    expected.put("message", "We found exact matches for your query!");
     JSONObject json = searchObject.getMatchingCourses(request);
     assertEquals(json, expected);
   }
