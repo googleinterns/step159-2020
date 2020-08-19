@@ -1,26 +1,30 @@
-
-* { 
-    margin: 0; 
-    padding: 0; 
-    border: 0; 
-    box-sizing: border-box;
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .flex-container {
-    display: flex;
-    height: 600px;
+  display: flex;
+  height: 600px;
+}
+
+.flex-child-p {
+  flex: 1;
+  padding: 75px;
 }
 
 .flex-child {
-    flex: 1;
-}  
+  flex: 1;
+}
 
 .form-container {
-    padding-top: 100px;
+  padding-top: 100px;
 }
 
 .my-3 {
-    margin: 20px 125px;
+  margin: 20px 125px;
 }
 
 .plr-20 {
@@ -38,7 +42,7 @@
   align-items: center;
   background-color: #f2f2f2;
   border-radius: 5px;
-  display:flex;
+  display: flex;
   flex-flow: column wrap;
   justify-content: center;
   padding: 100px 0;
@@ -59,4 +63,23 @@
   color: #000;
   font-family: monospace;
   font-size: 16px;
-} 
+}
+
+.container-chart {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  width: 85%;
+}
+
+.grade-chart {
+  height: 600px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  width: 85%;
+}
