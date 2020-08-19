@@ -19,9 +19,7 @@
   }
 
   function populateData() {
-    fetch(
-      `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`
-    )
+    fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
         google.charts.setOnLoadCallback(() => {
@@ -234,13 +232,16 @@
   }
 
   async function getPreviousTermData(prevTerm) {
-    const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${prevTerm}&prof-name=${profName}&num-units=${units}`;
-    const response = await fetch(url);
-    return response.json();
+    const keyUrl = `/term-key?course-key=${courseKey}&term=${prevTerm}`;
+    const response = await fetch(keyUrl);
+    const prevTermKey = response.json();
+    const prevTermDataUrl = `/term-data?term-key=${prevTermKey}`;
+    const dataResponse = await fetch(prevTermDataUrl);
+    return dataResponse.json();
   }
 
   async function getPrevTermName(termLimit) {
-    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&term-limit=${termLimit}`;
+    const url = `/prev-terms?term-key=${termKey}&course-key=${courseKey}&term-limit=${termLimit}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
     return prevTermData.map((data) => data.properties.term);
