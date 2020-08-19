@@ -128,17 +128,17 @@ public final class SearchServletTest {
     List<Course> expectedCourses = new ArrayList<>();
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-    addCourse("CS 104", "Smith", "Fall 2019", "1", "stanford", db);
+    addCourse("CS 104", "Smith", "Winter 2020", "1", "stanford", db);
     expectedCourses.add(
-        new Course("CS 104", "Smith", Long.valueOf(1), "Fall 2019", "stanford", db));
+        new Course("CS 104", "Smith", Long.valueOf(1), "Winter 2020", "stanford", db));
 
     addCourse("CS 106", "Smith", "Spring 2020", "3", "stanford", db);
     expectedCourses.add(
         new Course("CS 106", "Smith", Long.valueOf(3), "Spring 2020", "stanford", db));
 
-    addCourse("CS 105", "Smith", "Fall 2019", "3", "stanford", db);
+    addCourse("CS 105", "Smith", "Winter 2020", "3", "stanford", db);
     expectedCourses.add(
-        new Course("CS 105", "Smith", Long.valueOf(3), "Fall 2019", "stanford", db));
+        new Course("CS 105", "Smith", Long.valueOf(3), "Winter 2020", "stanford", db));
 
     Collections.sort(expectedCourses);
 
@@ -184,6 +184,7 @@ public final class SearchServletTest {
 
     JSONObject expected = new JSONObject();
     expected.put("courses", new Gson().toJson(expectedCourses));
+    expected.put("message", "We found exact matches for your query!");
     JSONObject json = searchObject.getMatchingCourses(request);
 
     assertEquals(json, expected);
@@ -221,6 +222,7 @@ public final class SearchServletTest {
 
     JSONObject expected = new JSONObject();
     expected.put("courses", new Gson().toJson(expectedCourses));
+    expected.put("message", "We found exact matches for your query!");
     JSONObject json = searchObject.getMatchingCourses(request);
     assertEquals(json, expected);
   }

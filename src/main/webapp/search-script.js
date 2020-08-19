@@ -14,6 +14,7 @@ async function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
+  const searchMessage = document.getElementById("search-message").value;
   const units = countUnits("search-units");
   const school = getUserSchool();
   courseResults.innerHTML = "";
@@ -25,10 +26,7 @@ async function showCourses() {
   url.searchParams.set("schoolName", school);
   const response = await fetch(url);
   const searchResults = await response.json();
-  if (searchResults.hasOwnProperty("message")) {
-    // TODO: Make a div for this message so specific styling is easier.
-    courseResults.innerHTML += searchResults.message + "<br />";
-  }
+  searchMessage.innerHTML += searchResults.message + "<br />";
   const courses = JSON.parse(searchResults.courses);
   courses.forEach((course) =>
     courseResults.appendChild(createListElement(course))
