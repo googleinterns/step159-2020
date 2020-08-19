@@ -82,10 +82,8 @@ public class SearchServlet extends HttpServlet {
       String name = request.getParameter("courseName");
       String[] splitName = name.split(" ");
       Filter nameFilter;
-      if (fuzzy
-          && splitName.length
-              > 1) { // TODO: Add better fix, this is placeholder to prevent test errors with MIT
-        // courses.
+      // TODO: Add better fix, this is placeholder to prevent test errors with MIT courses.
+      if (fuzzy && splitName.length > 1) {
         String department = splitName[0];
         int courseNum = Integer.parseInt(splitName[1]);
         List<String> courseNums = new ArrayList<>();
