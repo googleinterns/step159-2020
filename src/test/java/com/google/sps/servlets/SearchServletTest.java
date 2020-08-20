@@ -1,5 +1,4 @@
 // // Copyright 2019 Google LLC
-// //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -271,6 +270,7 @@ public final class SearchServletTest {
     when(req.getParameter("term")).thenReturn(term);
     when(req.getParameter("num-units")).thenReturn(units);
     when(req.getParameter("school-name")).thenReturn(school);
+    when(req.getParameter("num-enrolled")).thenReturn("300");
     SearchServlet.addCourse(req, db);
   }
 

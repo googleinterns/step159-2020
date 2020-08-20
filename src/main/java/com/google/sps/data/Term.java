@@ -13,8 +13,9 @@ public class Term {
 
   final List<String> QTR_SCHOOLS = Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
   final ArrayList<String> QTR_TERMS =
-      new ArrayList<String>(Arrays.asList("Winter", "Spring", "Fall"));
-  final ArrayList<String> SEMESTER_TERMS = new ArrayList<String>(Arrays.asList("Spring", "Fall"));
+      new ArrayList<String>(Arrays.asList("Winter", "Spring", "Summer", "Fall"));
+  final ArrayList<String> SEMESTER_TERMS =
+      new ArrayList<String>(Arrays.asList("Spring", "Summer", "Fall"));
   // TODO: Potentially add in a summer term.
 
   public Term(String termString, String termSchool) {

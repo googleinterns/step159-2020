@@ -37,6 +37,7 @@
       <div class="container">
         <h1 class="display-4 text-center" id="course-name">Course Name</h1>
         <p class="lead text-center" id="term-name">Term Name</p>
+        <p class="text-muted text-center" id="num-enrolled">Num Enrolled</p>
       </div>
     </div>
 
@@ -155,7 +156,7 @@
               />
             </div>
             <div class="col">
-              <p class="lead">How Difficulty was this Course?</p>
+              <p class="lead">How Difficult was this Course?</p>
               <input
                 id="difficulty"
                 name="difficulty"
@@ -167,14 +168,14 @@
               />
             </div>
           </div>
+          <button
+            onclick="passRatingProperties()"
+            type="button"
+            class="btn btn-lg btn-outline-success"
+          >
+            Submit
+          </button>
         </form>
-        <button
-          onclick="passRatingProperties()"
-          type="button"
-          class="btn btn-lg btn-outline-success"
-        >
-          Submit
-        </button>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>
