@@ -237,13 +237,6 @@
   async function getRatingPropertiesToStore() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    let translate;
-
-    if (document.getElementById("true").checked) {
-      translate = document.getElementById("true").value;
-    } else if (document.getElementById("false".checked)) {
-      translate = document.getElementById("false").value;
-    }
 
     const ratingProperties = {
       courseKey: urlParams.get("course-key"),
@@ -255,7 +248,7 @@
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
       ID: await verify(),
-      translate: translate,
+      translate: document.getElementById("translate").value
     };
     document.getElementById("term-form").reset();
 
