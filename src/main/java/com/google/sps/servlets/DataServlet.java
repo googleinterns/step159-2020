@@ -88,7 +88,7 @@ public class DataServlet extends HttpServlet {
     Long professorRating = null;
     Long workHours = null;
     Long difficulty = null;
-    String userId = newString();
+    String userId = new String();
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
