@@ -32,10 +32,16 @@ import org.json.JSONObject;
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private Key currentTermKey;
+  private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
-  private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-  // Will re-add constructor later for testing.
+  public DataServlet() throws IOException {
+    this.languageService = LanguageServiceClient.create();
+  }
+
+  public DataServlet(LanguageServiceClient languageService) {
+    this.languageService = languageService;
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -58,37 +64,37 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request);
+    addTermRating(request, /* DatastoreService */ datastore);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
 
-  public void addTermRating(HttpServletRequest request) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  public void addTermRating(HttpServletRequest request, DatastoreService datastore)
+      throws IOException {
     StringBuilder stringBuilder = new StringBuilder();
     String line = null;
+    // Talked with Luke and as we won't do validation testing, I will not
+    // test either of the try-catch loops.
     try {
       BufferedReader reader = request.getReader();
       while ((line = reader.readLine()) != null) {
         stringBuilder.append(line);
       }
     } catch (Exception exception) {
-      /*report an error*/
       throw new IOException("Error reading body of request");
     }
-
-    String schoolName = new String();
-    String courseName = new String();
-    String profName = new String();
-    String termName = new String();
-    Long units = null;
-    String termFeedback = new String();
-    String professorFeedback = new String();
-    Long termRating = null;
-    Long professorRating = null;
-    Long workHours = null;
-    Long difficulty = null;
-    String userId = new String();
+    String schoolName;
+    String courseName;
+    String profName;
+    String termName;
+    Long units;
+    String termFeedback;
+    String professorFeedback;
+    Long termRating;
+    Long professorRating;
+    Long workHours;
+    Long difficulty;
+    String userId;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       schoolName = jsonObject.getString("schoolName");
@@ -104,15 +110,14 @@ public class DataServlet extends HttpServlet {
       difficulty = (long) jsonObject.getFloat("difficulty");
       userId = jsonObject.getString("ID");
     } catch (JSONException exception) {
-      // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
     }
 
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    // Modifying tests right now to reflect changes.
-    currentTermKey = findTerm(db, schoolName, courseName, termName, units, profName).getKey();
+    currentTermKey =
+        findTerm(datastore, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -139,17 +144,16 @@ public class DataServlet extends HttpServlet {
   }
 
   private float getSentimentScore(String feedback) throws IOException {
-    LanguageServiceClient languageService = LanguageServiceClient.create();
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
     Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
-    languageService.close();
+    // Won't be closing languageService as we want to use constructor.
     return score;
   }
 
   private Entity findTerm(
-      DatastoreService db,
+      DatastoreService datastore,
       String schoolName,
       String courseName,
       String termName,
@@ -157,7 +161,6 @@ public class DataServlet extends HttpServlet {
       String profName)
       throws IOException {
     Key schoolKey = queryEntities("School", "school-name", schoolName).get(0).getKey();
-
     List<Filter> filters = new ArrayList();
     Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
     Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
@@ -167,11 +170,12 @@ public class DataServlet extends HttpServlet {
     Query courseQuery =
         new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
     Key courseKey =
-        db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
+        datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
 
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
-    Entity foundTerm = db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
+    Entity foundTerm =
+        datastore.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
 
     return foundTerm;
   }
