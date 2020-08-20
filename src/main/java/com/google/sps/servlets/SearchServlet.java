@@ -1,5 +1,4 @@
 // Copyright 2019 Google LLC
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -191,11 +190,18 @@ public class SearchServlet extends HttpServlet {
         json.put(
             "message",
             "We couldn't find anything relating to this query. Change your search parameters and try again.");
+        break;
       case OKAY:
         json.put(
             "message",
             "We couldn't find anything exactly matching your query. Here are some similar results!");
         break;
+      case GOOD:
+        if (courses.size() == 1) {
+          json.put("message", "We found an exact match for your query!");
+        } else {
+          json.put("message", "We found exact matches for your query!");
+        }
     }
     String strCourses = new Gson().toJson(courses);
     json.put("courses", strCourses);

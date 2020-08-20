@@ -14,6 +14,7 @@ async function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
+  const searchMessage = document.getElementById("search-message").value;
   const units = countUnits("search-units");
   const school = getUserSchool();
   courseResults.innerHTML = "";
@@ -25,10 +26,7 @@ async function showCourses() {
   url.searchParams.set("school-name", school);
   const response = await fetch(url);
   const searchResults = await response.json();
-  if (searchResults.hasOwnProperty("message")) {
-    // TODO: Make a div for this message so specific styling is easier.
-    courseResults.innerHTML += searchResults.message + "<br />";
-  }
+  searchMessage.innerHTML += searchResults.message + "<br />";
   const courses = JSON.parse(searchResults.courses);
   courses.forEach((course) =>
     courseResults.appendChild(createListElement(course))
@@ -83,8 +81,12 @@ async function onSignIn(googleUser) {
   const id = await response.json();
   if (id.verified) {
     // Successful sign-in.
-    document.getElementById("class-info").classList.remove("hidden");
-    document.getElementById("login-box").classList.add("hidden");
+    document
+      .getElementById("class-info")
+      .classList.remove("hidden");
+    document
+      .getElementById("login-box")
+      .classList.add("hidden");
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -110,6 +112,10 @@ function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   const profile = auth2.currentUser.get().getBasicProfile();
   auth2.signOut();
-  document.getElementById("class-info").classList.add("hidden");
-  document.getElementById("login-box").classList.remove("hidden");
+  document
+    .getElementById("class-info")
+    .classList.add("hidden");
+  document
+    .getElementById("login-box")
+    .classList.remove("hidden");
 }
