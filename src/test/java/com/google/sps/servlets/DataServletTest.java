@@ -33,14 +33,14 @@ public final class DataServletTest {
   private static final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
-  private DataServlet newTermRating;
+  private DataServlet dataServletInstance;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
     languageService = Mockito.mock(LanguageServiceClient.class);
-    newTermRating = new DataServlet(languageService);
+    dataServletInstance = new DataServlet(languageService);
   }
 
   @AfterEach
@@ -53,15 +53,16 @@ public final class DataServletTest {
 
   @Test
   public void addTermRating_newRating() throws IOException {
-
+    // SETUP.
     // File with body request in webapp folder.
     Reader reader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
-
+    
+    Float sentimentScore = (float) -0.8999999761581421;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
-            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.8999999761581421))
+            .setDocumentSentiment(Sentiment.newBuilder().setScore(sentimentScore))
             .build();
 
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
@@ -73,15 +74,18 @@ public final class DataServletTest {
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "3");
-    newTermRating.addTermRating(request, datastore);
-
+    
+    // ACT.
+    dataServletInstance.addTermRating(request, datastore);
     Entity termRatingEntity =
-        newTermRating
+        dataServletInstance
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
                 /* propertyValue */ "9223372036854775807")
             .get(0);
+    
+    // ASSERT.
     assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
     assertEquals("9223372036854775807", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
@@ -89,21 +93,22 @@ public final class DataServletTest {
     assertEquals(Long.valueOf(4), termRatingEntity.getProperty("difficulty"));
     assertEquals("The professor was amazing.", termRatingEntity.getProperty("comments-professor"));
     assertEquals(Long.valueOf(3), termRatingEntity.getProperty("perception-professor"));
-    assertEquals(-0.8999999761581421, termRatingEntity.getProperty("score-term"));
-    assertEquals(-0.8999999761581421, termRatingEntity.getProperty("score-professor"));
+    assertEquals(sentimentScore, termRatingEntity.getProperty("score-term"));
+    assertEquals(sentimentScore, termRatingEntity.getProperty("score-professor"));
   }
 
   @Test
   public void addTermRating_overwritingExistingTermRating() throws IOException {
-
+    // SETUP.
     // File with body request in webapp folder.
     Reader originalRatingReader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader originalRatingBufferedReader = new BufferedReader(originalRatingReader);
     when(request.getReader()).thenReturn(originalRatingBufferedReader);
-
+    
+    Float sentimentScore = (float) -0.699999988079071;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
-            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.699999988079071))
+            .setDocumentSentiment(Sentiment.newBuilder().setScore(sentimentScore))
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -114,21 +119,26 @@ public final class DataServletTest {
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "3");
-    newTermRating.addTermRating(request, datastore);
-
+    
+    // ACT.
+    dataServletInstance.addTermRating(request, datastore);
+    
+    // SETUP.
     Reader newRatingReader = new FileReader("src/main/webapp/WEB-INF/testOverwriteRating.txt");
     BufferedReader NewRatingBufferedReader = new BufferedReader(newRatingReader);
     when(request.getReader()).thenReturn(NewRatingBufferedReader);
 
-    newTermRating.addTermRating(request, datastore);
+    // ACT.
+    dataServletInstance.addTermRating(request, datastore);
 
     Entity termRatingEntity =
-        newTermRating
+        dataServletInstance
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
                 /* propertyValue */ "9223372036854775807")
             .get(0);
+    // ASSERT.
     assertEquals("I don't like this class.", termRatingEntity.getProperty("comments-term"));
     assertEquals("9223372036854775807", termRatingEntity.getProperty("reviewer-id"));
     assertEquals(Long.valueOf(1), termRatingEntity.getProperty("perception-term"));
@@ -136,8 +146,8 @@ public final class DataServletTest {
     assertEquals(Long.valueOf(5), termRatingEntity.getProperty("difficulty"));
     assertEquals("This teacher was wonderful.", termRatingEntity.getProperty("comments-professor"));
     assertEquals(Long.valueOf(3), termRatingEntity.getProperty("perception-professor"));
-    assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-term"));
-    assertEquals(-0.699999988079071, termRatingEntity.getProperty("score-professor"));
+    assertEquals(sentimentScore, termRatingEntity.getProperty("score-term"));
+    assertEquals(sentimentScore, termRatingEntity.getProperty("score-professor"));
   }
 
   public void createSchoolCourseAndTermEntities(
