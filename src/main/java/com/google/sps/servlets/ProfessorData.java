@@ -72,17 +72,6 @@ public class ProfessorData extends HttpServlet {
     return profData;
   }
 
-  //   private List<Object> getDataFromTermRating(DatastoreService db, Key termKey, String property)
-  // {
-  //     List<Object> dataList = new ArrayList();
-  //     List<Entity> termRatings = findChildren(db, "Rating", termKey);
-
-  //     for (Entity rating : termRatings) {
-  //       dataList.add(Arrays.asList(rating.getProperty(property)));
-  //     }
-  //     return dataList;
-  //   }
-
   private List<Entity> findChildren(DatastoreService db, String type, Key parent) {
     Query children = new Query(type).setAncestor(parent);
     List<Entity> result = db.prepare(children).asList(FetchOptions.Builder.withDefaults());
