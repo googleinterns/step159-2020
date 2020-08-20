@@ -73,7 +73,7 @@
     <div class="container-fluid bg-light p-5">
       <div class="container-xl my-4">
         <h1 class="p-4 text-center">Add Your Review</h1>
-        <form id="term-form" novalidate>
+        <form id="term-form" class="needs-validation" novalidate>
           <div class="row">
             <div class="col">
               <p class="lead">Review your term</p>
@@ -82,7 +82,7 @@
                 name="term-input"
                 maxlength="1500"
                 type="text"
-                class="form-control mb-5 required"
+                class="form-control mb-5"
                 rows="5"
                 placeholder="Write Opinion Here"
                 required
@@ -99,7 +99,7 @@
                 name="prof-input"
                 maxlength="1500"
                 type="text"
-                class="form-control mb-5 required"
+                class="form-control mb-5"
                 rows="5"
                 placeholder="Write Opinion Here"
                 required
@@ -127,7 +127,7 @@
                 min="0"
                 max="5"
                 type="number"
-                class="form-control mb-5 required"
+                class="form-control mb-5"
                 placeholder="Term Rating (From 0 = Terrible to 5 = Excellent)"
                 required
               />
@@ -149,7 +149,7 @@
                 min="0"
                 max="5"
                 type="number"
-                class="form-control mb-5 required"
+                class="form-control mb-5"
                 placeholder="Professor Rating (From 0 = Terrible to 5 = Excellent)"
                 required
               />
@@ -168,7 +168,7 @@
                 name="hours"
                 min="0"
                 type="number"
-                class="form-control mb-5 required"
+                class="form-control mb-5"
                 placeholder="Hours per week spent on course"
                 required
               />
@@ -185,7 +185,7 @@
                 min="0"
                 max="5"
                 type="number"
-                class="form-control mb-5 required"
+                class="form-control mb-5"
                 placeholder="Difficulty (From 0 = Very Easy to 5 = Very Difficult)"
                 required
               />
@@ -237,5 +237,6 @@
       src="https://www.gstatic.com/charts/loader.js"
     ></script>
     <script src="dummyData.js"></script>
+    <script src="courseLoader.js"></script>
   </body>
 </html>

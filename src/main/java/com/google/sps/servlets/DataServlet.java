@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -104,9 +105,6 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    termKey = KeyFactory.stringToKey(termKeyString);
-    Entity termEntity = datastore.get(termKey);
-
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
         queryEntities(
@@ -115,7 +113,9 @@ public class DataServlet extends HttpServlet {
             /* propertyValue */ userId);
 
     Entity termRatingEntity =
-        termRatingQueryList.isEmpty() ? new Entity("Rating", termKey) : termRatingQueryList.get(0);
+        termRatingQueryList.isEmpty()
+            ? new Entity("Rating", KeyFactory.stringToKey(termKeyString))
+            : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
     termRatingEntity.setProperty("grade", grade);
