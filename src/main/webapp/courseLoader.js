@@ -415,6 +415,7 @@
       ratingProf: document.getElementById("rating-prof").value,
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
+      ID: await verify(),
     };
     document.getElementById("term-form").reset();
 
