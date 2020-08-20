@@ -25,6 +25,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
 import com.google.sps.data.Course;
+import com.google.sps.data.Term;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,8 @@ public class SearchServlet extends HttpServlet {
   /* Create list of filters given parameters specified in request. */
   private List<Filter> getFilters(HttpServletRequest request, boolean fuzzy) {
     List<Filter> filters = new ArrayList<>();
+    String school = request.getParameter("school-name");
+    Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
       Filter nameFilter;
@@ -102,9 +105,10 @@ public class SearchServlet extends HttpServlet {
       Filter termFilter;
       if (fuzzy) {
         List<String> terms = new ArrayList<>();
-        terms.add(getPrevTerm(term));
+        Term termObject = new Term(term, school);
+        terms.add(termObject.getPrev());
         terms.add(term);
-        terms.add(getNextTerm(term));
+        terms.add(termObject.getNext());
         termFilter = new FilterPredicate("term", FilterOperator.IN, terms);
       } else {
         termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
@@ -123,8 +127,7 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
-    String school = request.getParameter("school-name");
-    Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
+
     return filters;
   }
 
@@ -164,11 +167,18 @@ public class SearchServlet extends HttpServlet {
         json.put(
             "message",
             "We couldn't find anything relating to this query. Change your search parameters and try again.");
+        break;
       case OKAY:
         json.put(
             "message",
             "We couldn't find anything exactly matching your query. Here are some similar results!");
         break;
+      case GOOD:
+        if (courses.size() == 1) {
+          json.put("message", "We found an exact match for your query!");
+        } else {
+          json.put("message", "We found exact matches for your query!");
+        }
     }
     String strCourses = new Gson().toJson(courses);
     json.put("courses", strCourses);
@@ -201,27 +211,6 @@ public class SearchServlet extends HttpServlet {
     newCourse.setProperty("term", term);
     newCourse.setProperty("school", school);
     db.put(newCourse);
-  }
-
-  // TODO: Adapt this to quarter-system schools and potentially include summer quarter.
-  private String getPrevTerm(String term) {
-    String season = term.split(" ")[0];
-    int year = Integer.parseInt(term.split(" ")[1]);
-    if (season.equals("Fall")) {
-      return "Spring " + String.valueOf(year);
-    } else { // Season is "Spring".
-      return "Fall " + String.valueOf(year - 1);
-    }
-  }
-
-  private String getNextTerm(String term) {
-    String season = term.split(" ")[0];
-    int year = Integer.parseInt(term.split(" ")[1]);
-    if (season.equals("Fall")) {
-      return "Spring " + String.valueOf(year + 1);
-    } else { // Season is "Spring"
-      return "Fall " + String.valueOf(year);
-    }
   }
 
   private Key findTermKey(
