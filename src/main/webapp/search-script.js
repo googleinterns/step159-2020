@@ -22,7 +22,7 @@ async function showCourses() {
   url.searchParams.set("profName", profName);
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
-  url.searchParams.set("schoolName", school);
+  url.searchParams.set("school-name", school);
   const response = await fetch(url);
   const searchResults = await response.json();
   if (searchResults.hasOwnProperty("message")) {

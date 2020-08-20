@@ -80,17 +80,38 @@ public class SearchServlet extends HttpServlet {
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
-      String[] splitName = name.split(" ");
+      String[] splitName;
+      if (school.equals("mit")) {
+        splitName = name.split("\\.");
+      } else {
+        splitName = name.split(" ");
+      }
       Filter nameFilter;
-      // TODO: Add better fix, this is placeholder to prevent test errors with MIT courses.
       if (fuzzy && splitName.length > 1) {
-        String department = splitName[0];
-        int courseNum = Integer.parseInt(splitName[1]);
         List<String> courseNums = new ArrayList<>();
-        courseNums.add(department + " " + String.valueOf(courseNum + 1));
         courseNums.add(name);
-        courseNums.add(department + " " + String.valueOf(courseNum - 1));
-        nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
+        try {
+          String department = splitName[0];
+          int courseNum = Integer.parseInt(splitName[1]);
+          if (school.equals("mit")) {
+            courseNums.add(
+                department
+                    + "."
+                    + String.format(
+                        "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
+            courseNums.add(
+                department
+                    + "."
+                    + String.format(
+                        "%0" + String.valueOf(splitName[1].length()) + "d", courseNum + 1));
+          } else {
+            courseNums.add(department + " " + String.valueOf(courseNum + 1));
+            courseNums.add(department + " " + String.valueOf(courseNum - 1));
+          }
+          nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
+        } catch (NumberFormatException e) {
+          nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
+        }
       } else {
         nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
       }
