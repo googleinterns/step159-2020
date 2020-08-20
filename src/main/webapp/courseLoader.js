@@ -237,12 +237,12 @@
   async function getRatingPropertiesToStore() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    let wantsToTranslate;
+    let translate;
 
     if (document.getElementById("true").checked) {
-      wantsToTranslate = document.getElementById("true").value;
+      translate = document.getElementById("true").value;
     } else if (document.getElementById("false".checked)) {
-      wantsToTranslate = document.getElementById("false").value;
+      translate = document.getElementById("false").value;
     }
 
     const ratingProperties = {
@@ -255,44 +255,30 @@
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
       ID: await verify(),
-      translate: wantsToTranslate,
+      translate: translate,
     };
     document.getElementById("term-form").reset();
 
     const url = newURL(
-      ratingProperties.courseKey,
-      ratingProperties.termKey,
-      ratingProperties.termInput,
-      ratingProperties.profInput,
-      ratingProperties.ratingTerm,
-      ratingProperties.ratingProf,
-      ratingProperties.hours,
-      ratingProperties.difficulty
+      ratingProperties
     );
 
     return [url, ratingProperties];
   }
 
   function newURL(
-    courseKey,
-    termKey,
-    termInput,
-    profInput,
-    ratingTerm,
-    ratingProf,
-    hours,
-    difficulty
+    ratingProperties
   ) {
     const url = new URL("/data", window.location.origin);
-    url.searchParams.set("course-key", courseKey);
-    url.searchParams.set("term-key", termKey);
+    url.searchParams.set("course-key", ratingProperties.courseKey);
+    url.searchParams.set("term-key", ratingProperties.termKey);
 
-    url.searchParams.set("hour", hours);
-    url.searchParams.set("difficulty", difficulty);
-    url.searchParams.set("term-input", termInput);
-    url.searchParams.set("prof-input", profInput);
-    url.searchParams.set("rating-term", ratingTerm);
-    url.searchParams.set("rating-prof", ratingProf);
+    url.searchParams.set("hour", ratingProperties.hours);
+    url.searchParams.set("difficulty", ratingProperties.difficulty);
+    url.searchParams.set("term-input", ratingProperties.termInput);
+    url.searchParams.set("prof-input", ratingProperties.profInput);
+    url.searchParams.set("rating-term", ratingProperties.ratingTerm);
+    url.searchParams.set("rating-prof", ratingProperties.ratingProf);
 
     return url;
   }
