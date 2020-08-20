@@ -9,7 +9,6 @@
   const courseKey = urlParams.get("course-key");
 
   function fillTitles() {
-    console.log(termKey, "fillTitles");
     fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
       .then((response) => response.json())
       .then((termInfo) => {
@@ -20,7 +19,6 @@
   }
 
   function populateData() {
-    console.log(termKey, "PopulateData");
     fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
