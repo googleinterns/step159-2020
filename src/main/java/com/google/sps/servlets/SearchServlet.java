@@ -44,7 +44,6 @@ public class SearchServlet extends HttpServlet {
   /* Show courses. */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     JSONObject courseResults = getMatchingCourses(request);
-    System.out.println(courseResults);
     response.setContentType("application/json;");
     response.getWriter().println(courseResults);
   }
