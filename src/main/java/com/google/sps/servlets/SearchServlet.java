@@ -80,10 +80,12 @@ public class SearchServlet extends HttpServlet {
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
+      String[] splitName = name.split(" ");
       Filter nameFilter;
-      if (fuzzy) {
-        String department = name.split(" ")[0];
-        int courseNum = Integer.parseInt(name.split(" ")[1]);
+      // TODO: Add better fix, this is placeholder to prevent test errors with MIT courses.
+      if (fuzzy && splitName.length > 1) {
+        String department = splitName[0];
+        int courseNum = Integer.parseInt(splitName[1]);
         List<String> courseNums = new ArrayList<>();
         courseNums.add(department + " " + String.valueOf(courseNum + 1));
         courseNums.add(name);
