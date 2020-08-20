@@ -70,6 +70,7 @@ async function addCourse() {
   url.searchParams.set("num-units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", schoolName);
+  url.searchParams.set("num-enrolled", "300");
   const response = await fetch(url, { method: "POST" });
   return response;
 }
