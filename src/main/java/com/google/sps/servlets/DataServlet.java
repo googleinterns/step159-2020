@@ -69,7 +69,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request, /* DatastoreService */ datastore);
+    addTermRating(request, datastore);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
@@ -99,7 +99,7 @@ public class DataServlet extends HttpServlet {
     Boolean translate;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      termKeyString = jsonObject.getString("term-key");
+      termKeyString = jsonObject.getString("termKey");
       termFeedback = jsonObject.getString("termInput");
       professorFeedback = jsonObject.getString("profInput");
       termRating = (long) jsonObject.getFloat("ratingTerm");
@@ -129,7 +129,7 @@ public class DataServlet extends HttpServlet {
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
-            ? new Entity("Rating", KeyFactory.stringToKey())
+            ? new Entity("Rating", KeyFactory.stringToKey(termKeyString))
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
@@ -151,34 +151,6 @@ public class DataServlet extends HttpServlet {
     float score = sentiment.getScore();
     // Won't be closing languageService as we want to use constructor.
     return score;
-  }
-
-  private Entity findTerm(
-      DatastoreService datastore,
-      String schoolName,
-      String courseName,
-      String termName,
-      Long units,
-      String profName)
-      throws IOException {
-    Key schoolKey = queryEntities("School", "school-name", schoolName).get(0).getKey();
-    List<Filter> filters = new ArrayList();
-    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
-    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
-    filters.add(courseFilter);
-    filters.add(unitFilter);
-
-    Query courseQuery =
-        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
-    Key courseKey =
-        datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
-
-    Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
-    Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
-    Entity foundTerm =
-        datastore.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
-
-    return foundTerm;
   }
 
   public List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
