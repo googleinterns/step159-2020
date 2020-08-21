@@ -1,4 +1,4 @@
-async function onSignIn(googleUser) {
+async function signIn(googleUser) {
   const profile = googleUser.getBasicProfile();
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
