@@ -216,12 +216,6 @@ const dummyComments = [
   "outclimbed",
   "outdared",
   "pistoleers",
-  "redbugs",
-  "snake-line",
-  "subrules",
-  "subtrends",
-  "torenia",
-  "unhides",
 ];
 
 const dummyGradeData = [

@@ -13,7 +13,10 @@
       .then((response) => response.json())
       .then((profInfo) => {
         document.getElementById("prof-name").innerHTML = profName;
-        makeDiffComparisonChart(profInfo);
+        google.charts.setOnLoadCallback(() => {
+          makeDiffComparisonChart(profInfo);
+          makePerceptionComparisonChart(profInfo);
+        });
       });
   }
 
@@ -31,7 +34,7 @@
     for (let dataHolder of profData) {
       courseList.push(dataHolder.term);
       difficultyAvgList.push(
-        average(dummyDiffData.concat(dataHolder.difficultyList))
+        average(dummyGradeData.concat(dataHolder.difficultyList)) + 3
       );
     }
 
@@ -61,21 +64,26 @@
 
     const courseList = [];
     const perceptionAvgList = [];
+    const commentList = [];
 
     for (let dataHolder of profData) {
       courseList.push(dataHolder.term);
       perceptionAvgList.push(
-        average(dummyGradeData.concat(dataHolder.perceptionList))
+        average(dummyGradeData.concat(dataHolder.perceptionList)) + 7
       );
+
+      for (let comment of dummyComments.concat(dataHolder.commentsList)) {
+        commentList.push(comment);
+      }
     }
 
     const perceptionData = google.visualization.arrayToDataTable([
       [" "].concat(courseList),
-      [" "].concat(difficultyAvgList),
+      [" "].concat(perceptionAvgList),
     ]);
 
     const options = {
-      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
+      colors: ["#f1a79d", "#81b8ec", "#f1d19d"],
       title: "Average Course Perception Comparison",
       height: 450,
       bars: "horizontal",
@@ -87,9 +95,34 @@
       document.getElementById("perception-comp")
     );
     chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
+    loadComments(commentList);
+  }
+
+  function createComment(commentText) {
+    const commentContainer = document.getElementById("prof-comments");
+
+    const commentWrapper = document.createElement("div");
+    commentWrapper.setAttribute("class", "media text-muted pt-3");
+
+    const commentUser = document.createElement("strong");
+    commentUser.setAttribute("class", "d-block text-gray-dark");
+    commentUser.innerHTML = "@username";
+
+    const commentBody = document.createElement("p");
+    commentBody.setAttribute(
+      "class",
+      "media-body pb-3 mb-0 small lh-125 border-bottom border-gray"
+    );
+    commentBody.innerHTML = commentText;
+
+    commentBody.insertAdjacentElement("afterbegin", commentUser);
+    commentWrapper.appendChild(commentBody);
+    commentContainer.appendChild(commentWrapper);
+  }
+
+  function loadComments(commentList) {
+    for (let comment of commentList) {
+      createComment(comment);
+    }
   }
 })();
-
-// for(let comment of dummyComments.concat(dataHolder.commentsList)){
-//     commentsList.push(comment);
-// }
