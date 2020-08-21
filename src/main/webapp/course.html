@@ -28,7 +28,7 @@
     />
     <link rel="stylesheet" href="course-style.css" />
   </head>
-  <body onload="fillTitles()">
+  <body>
     <nav class="navbar navbar-dark bg-dark">
       <span class="navbar-brand mb-0 h1">App Name</span>
     </nav>
@@ -37,7 +37,12 @@
       <div class="container">
         <h1 class="display-4 text-center" id="course-name">Course Name</h1>
         <p class="lead text-center" id="term-name">Term Name</p>
+        <p class="text-muted text-center" id="num-enrolled">Num Enrolled</p>
       </div>
+    </div>
+
+    <div class="container-chart">
+      <div id="grade-chart"></div>
     </div>
 
     <div class="flex-container">
@@ -47,7 +52,7 @@
 
     <div class="flex-container">
       <div class="flex-child-p" id="term-rating-comp"></div>
-      <div class="flex-child" id="term-chart"></div>
+      <div class="flex-child-p" id="term-perception-comp"></div>
     </div>
 
     <div class="plr-20 container-fluid">
@@ -200,6 +205,7 @@
         </form>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -215,5 +221,11 @@
       integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
       crossorigin="anonymous"
     ></script>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script src="dummyData.js"></script>
+    <script src="courseLoader.js"></script>
   </body>
 </html>

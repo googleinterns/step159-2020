@@ -1,8 +1,8 @@
 * {
-  margin: 0;
-  padding: 0;
   border: 0;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .flex-container {
@@ -12,7 +12,7 @@
 
 .flex-child-p {
   flex: 1;
-  padding: 50px;
+  padding: 75px;
 }
 
 .flex-child {
@@ -63,4 +63,23 @@
   color: #000;
   font-family: monospace;
   font-size: 16px;
+}
+
+.container-chart {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  width: 85%;
+}
+
+.grade-chart {
+  height: 600px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  width: 85%;
 }

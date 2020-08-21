@@ -5,24 +5,30 @@
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const profName = urlParams.get("prof-name");
-  const term = urlParams.get("term");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
+  const termKey = urlParams.get("term-key");
+  const courseKey = urlParams.get("course-key");
 
   function fillTitles() {
-    document.getElementById("course-name").innerHTML = courseName;
-    document.getElementById("term-name").innerHTML = term;
+    fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
+      .then((response) => response.json())
+      .then((termInfo) => {
+        document.getElementById("course-name").innerHTML = termInfo[0];
+        document.getElementById("term-name").innerHTML = termInfo[1];
+        document.getElementById("num-enrolled").innerHTML = termInfo[2];
+      });
   }
 
   function populateData() {
-    fetch(
-      `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`
-    )
+    fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
-        makeGraphs(data);
+        google.charts.setOnLoadCallback(() => {
+          makeGraphs(data);
+          makeTermRatingChart(data);
+          makeTermPerceptionChart(data);
+          makeGradeChart(data);
+        });
+        loadAllComments(data);
       });
   }
 
@@ -31,29 +37,59 @@
     populateData();
   });
 
-  function makeGraphs(termDataObject) {
+  function loadAllComments(termDataObject) {
     const termCommentsList = termDataObject.termCommentsList;
     const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
       termCommentsList
     );
     loadComments(dummyComments, /* isCourse */ true);
     loadComments(dummyComments, /* isCourse */ false);
+  }
 
-    const tempHoursList = termDataObject.hoursList;
-    const hoursList = [
-      ["hours"],
-      /* dummyHourRating */ [3],
-      /* dummyHourRating */ [8],
-    ].concat(tempHoursList);
-
-    const hourData = new google.visualization.arrayToDataTable(hoursList);
+  function makeGraphs(termDataObject) {
+    const hourList = dummyHoursData.concat(termDataObject.hoursList);
+    const hourData = new google.visualization.arrayToDataTable(hourList);
     const hourOptions = {
+      colors: ["#f1a79d"],
       title: "Hours Spent per Week",
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
       legend: { position: "none" },
-      vAxis: { title: "# Students" },
-      hAxis: { title: "Hours" },
+      hAxis: {
+        title: "Hours",
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
       histogram: {
         hideBucketItems: true,
+      },
+      chartArea: {
+        left: 120,
       },
     };
     const hourChart = new google.visualization.Histogram(
@@ -61,99 +97,88 @@
     );
     hourChart.draw(hourData, hourOptions);
 
-    const tempDiffList = termDataObject.difficultyList;
-    const diffList = [
-      ["difficulty"],
-      /* dummyDifficultyRating */ [1],
-      /* dummyDifficultyRating */ [4],
-    ].concat(tempDiffList);
+    const diffList = dummyDiffData.concat(termDataObject.difficultyList);
     const diffData = new google.visualization.arrayToDataTable(diffList);
     const diffOptions = {
+      colors: ["#f1d19d"],
       title: "Difficulty of Class",
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
       legend: { position: "none" },
-      vAxis: { title: "# Students" },
-      hAxis: { title: "Difficulty" },
+      hAxis: {
+        title: "Difficulty",
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
       histogram: {
         hideBucketItems: true,
+        bucketSize: 2,
+      },
+      chartArea: {
+        left: 120,
       },
     };
     const diffChart = new google.visualization.Histogram(
       document.getElementById("diff-chart")
     );
     diffChart.draw(diffData, diffOptions);
-
-    const tempTermPerceptionList = termDataObject.termPerceptionList;
-    const termPerceptionList = [
-      ["Term Perception"],
-      /* dummyPerceptionRating */ [11],
-      /* dummyPerceptionRating */ [5],
-    ].concat(tempTermPerceptionList);
-    const termPerceptionData = new google.visualization.arrayToDataTable(
-      termPerceptionList
-    );
-    const termPerceptionOptions = {
-      title: "Perception of Term Reviews",
-      legend: { position: "none" },
-      vAxis: { title: "Perception" },
-      hAxis: { title: "Comment Quantity" },
-      histogram: {
-        hideBucketItems: true,
-      },
-    };
-    const termPerceptionChart = new google.visualization.Histogram(
-      document.getElementById("term-chart")
-    );
-    termPerceptionChart.draw(termPerceptionData, termPerceptionOptions);
-
-    return makeTermRatingChart(termDataObject);
   }
 
   async function makeTermRatingChart(termDataObject) {
-    //splits term name into [season,year]
-    const currentTerm = term
-      .split(/(\s+)/)
-      .filter((entry) => entry.trim() != "");
-    let prevTerm1;
-    let prevTerm2;
+    const average = (list) =>
+      list.reduce((prev, curr) => prev + curr) / list.length;
+    const currentTermRatingAvg = average(
+      /* adds dummy data */ [21, 11, 9].concat(
+        termDataObject.termPerceptionList
+      )
+    );
 
-    //TODO: Make this work for all term types
-    if (currentTerm[0] == "Spring") {
-      prevTerm1 = `Fall ${currentTerm[1]}`;
-      prevTerm2 = `Spring ${String(parseInt(currentTerm[1] - 1))}`;
-    } else {
-      prevTerm1 = `Spring ${currentTerm[1]}`;
-      prevTerm2 = `Fall ${String(parseInt(currentTerm[1] - 1))}`;
+    const prevTermData = [];
+    const avgData = [];
+    const prevTermNameList = await getPrevTermName(2);
+
+    for (let term of prevTermNameList) {
+      prevTermData.push(await getPreviousTermData(term));
     }
 
-    const [prevTermData1, prevTermData2] = await Promise.all([
-      getPreviousTermData(prevTerm1),
-      getPreviousTermData(prevTerm2),
-    ]);
-
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
-    const currentTermRatingAvg = average(
-      /* adds dummy data */ [4, 8, 17].concat(termDataObject.termScoreList)
-    );
-    const prevTermRatingAvg = average(
-      /* adds dummy data */ [12, 5, 3].concat(prevTermData1.termScoreList)
-    );
-    const prevTermRatingAvg2 = average(
-      /* adds dummy data */ [10, 8, 6].concat(prevTermData2.termScoreList)
-    );
+    for (let termData of prevTermData) {
+      avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
+    }
 
     const comparisonData = google.visualization.arrayToDataTable([
-      ["year", `${currentTerm[0]}  ${currentTerm[1]}`, prevTerm1, prevTerm2],
-      [
-        currentTerm[1],
-        currentTermRatingAvg,
-        prevTermRatingAvg,
-        prevTermRatingAvg2,
-      ],
+      [" ", document.getElementById("term-name").innerHTML].concat(
+        prevTermNameList
+      ),
+      [" ", currentTermRatingAvg].concat(avgData),
     ]);
 
     const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
       title: "Average Term Rating Comparison",
       height: 450,
       bars: "horizontal",
@@ -167,11 +192,155 @@
     chart.draw(comparisonData, google.charts.Bar.convertOptions(options));
   }
 
+  async function makeTermPerceptionChart(termDataObject) {
+    const average = (list) =>
+      list.reduce((prev, curr) => prev + curr) / list.length;
+    const currentPerceptionRatingAvg = average(
+      /* adds dummy data */ [21, 11, 9].concat(
+        termDataObject.termPerceptionList
+      )
+    );
+
+    const prevTermData = [];
+    const avgData = [];
+    const prevTermNameList = await getPrevTermName(2);
+
+    for (let term of prevTermNameList) {
+      prevTermData.push(await getPreviousTermData(term));
+    }
+
+    for (let termData of prevTermData) {
+      avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
+    }
+
+    const perceptionData = google.visualization.arrayToDataTable([
+      [" ", document.getElementById("term-name").innerHTML].concat(
+        prevTermNameList
+      ),
+      [" ", currentPerceptionRatingAvg].concat(avgData),
+    ]);
+
+    const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
+      title: "Average Term Perception Comparison",
+      height: 450,
+      bars: "horizontal",
+      bar: { groupWidth: "30%" },
+      hAxis: { title: "Avg Term Perception" },
+    };
+
+    const chart = new google.charts.Bar(
+      document.getElementById("term-perception-comp")
+    );
+    chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
+  }
+
   async function getPreviousTermData(prevTerm) {
-    const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${prevTerm}&prof-name=${profName}&num-units=${units}`;
+    const keyUrl = `/prev-key?course-key=${courseKey}&term=${prevTerm}`;
+    const response = await fetch(keyUrl);
+    const prevTermKey = await response.json();
+    const prevTermDataUrl = `/term-data?term-key=${prevTermKey}`;
+    const dataResponse = await fetch(prevTermDataUrl);
+    return dataResponse.json();
+  }
+
+  async function getPrevTermName(termLimit) {
+    const url = `/prev-terms?term-key=${termKey}&course-key=${courseKey}&term-limit=${termLimit}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
-    return prevTermData;
+    return prevTermData.map((data) => data.properties.term);
+  }
+
+  function makeGradeChart() {
+    data = new google.visualization.DataTable();
+    data.addColumn("number", "X Value");
+    data.addColumn("number", "Y Value");
+    data.addColumn({ type: "boolean", role: "scope" });
+    data.addColumn({ type: "string", role: "style" });
+    data.addRows(createBellData(dummyGradeData));
+
+    const options = {
+      height: 600,
+      width: $(window).width(),
+      colors: ["#81b8ec"],
+      areaOpacity: 0.75,
+      lineWidth: 3,
+      chartArea: { left: 20 },
+      title: "Term Grade Distribution",
+      legend: { position: "none" },
+      titleTextStyle: {
+        color: "#808080",
+        fontSize: 16,
+        bold: false,
+        italic: false,
+      },
+      hAxis: {
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+          fontName: "Roboto",
+        },
+        title: "Grades",
+        gridlines: {
+          count: 0,
+        },
+        minorGridlines: {
+          count: 0,
+          color: "#FFFFFF	",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+      vAxis: {
+        titleTextStyle: {
+          color: "#808080",
+          fontSize: 12,
+          bold: false,
+          italic: false,
+        },
+        minorGridlines: {
+          count: 0,
+          color: "transparent",
+        },
+        textStyle: {
+          color: "#808080",
+          fontName: "Roboto",
+          fontSize: 11,
+          bold: false,
+          italic: false,
+        },
+      },
+    };
+
+    const chart = new google.visualization.AreaChart(
+      document.getElementById("grade-chart")
+    );
+    chart.draw(data, options);
+  }
+
+  function createBellData(data) {
+    jData = jStat(data);
+    mean = jData.mean();
+    stndDev = jData.stdev();
+    xMin = jData.min();
+    xMax = jData.max();
+
+    let chartData = new Array([]);
+    let index = 0;
+    for (var i = xMin; i <= xMax; i += 0.01) {
+      chartData[index] = new Array(4);
+      chartData[index][0] = i;
+      chartData[index][1] = jStat.normal.pdf(i, mean, stndDev);
+      index++;
+    }
+    return chartData;
   }
 
   function createComment(commentText, isCourse) {

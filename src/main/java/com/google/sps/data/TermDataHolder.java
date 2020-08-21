@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TermDataHolder {
-  List<Object> hourList = new ArrayList();
+  List<Object> hoursList = new ArrayList();
   List<Object> difficultyList = new ArrayList();
   List<Object> termPerceptionList = new ArrayList();
   List<Object> termScoreList = new ArrayList();
@@ -12,9 +12,10 @@ public class TermDataHolder {
   List<Object> professorScoreList = new ArrayList();
   List<Object> termCommentsList = new ArrayList();
   List<Object> professorCommentsList = new ArrayList();
+  List<Object> gradesList = new ArrayList();
 
   public void setHoursList(List<Object> newHourList) {
-    hourList = newHourList;
+    hoursList = newHourList;
   }
 
   public void setDifficultyList(List<Object> newDifficultyList) {
@@ -46,7 +47,7 @@ public class TermDataHolder {
   }
 
   public List<Object> getHoursList() {
-    return hourList;
+    return hoursList;
   }
 
   public List<Object> getDifficultyList() {
