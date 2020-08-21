@@ -23,7 +23,7 @@ public class PreviousTermKey extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Key prevTermKey = getPreviousTermKey(db, request);
+    String prevTermKey = KeyFactory.keyToString(getPreviousTermKey(db, request));
     String prevTermsKeyJSON = makeJSON(prevTermKey);
     response.setContentType("application/json;");
     response.getWriter().println(prevTermsKeyJSON);
@@ -32,7 +32,7 @@ public class PreviousTermKey extends HttpServlet {
   // finds the entity key of a term based on its name
   private Key getPreviousTermKey(DatastoreService db, HttpServletRequest request) {
     Key courseKey = KeyFactory.stringToKey(request.getParameter("course-key"));
-    Key termName = KeyFactory.stringToKey(request.getParameter("term"));
+    String termName = request.getParameter("term");
     Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
     Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
     return db.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();

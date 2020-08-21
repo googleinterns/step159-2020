@@ -6,7 +6,7 @@
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const termKey = urlParams.get("term-key");
-  const courseKey = urlParams.get("term-key");
+  const courseKey = urlParams.get("course-key");
 
   function fillTitles() {
     fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
@@ -171,7 +171,9 @@
     }
 
     const comparisonData = google.visualization.arrayToDataTable([
-      [" ", term].concat(prevTermNameList),
+      [" ", document.getElementById("term-name").innerHTML].concat(
+        prevTermNameList
+      ),
       [" ", currentTermRatingAvg].concat(avgData),
     ]);
 
@@ -212,7 +214,9 @@
     }
 
     const perceptionData = google.visualization.arrayToDataTable([
-      [" ", term].concat(prevTermNameList),
+      [" ", document.getElementById("term-name").innerHTML].concat(
+        prevTermNameList
+      ),
       [" ", currentPerceptionRatingAvg].concat(avgData),
     ]);
 
@@ -232,9 +236,9 @@
   }
 
   async function getPreviousTermData(prevTerm) {
-    const keyUrl = `/term-key?course-key=${courseKey}&term=${prevTerm}`;
+    const keyUrl = `/prev-key?course-key=${courseKey}&term=${prevTerm}`;
     const response = await fetch(keyUrl);
-    const prevTermKey = response.json();
+    const prevTermKey = await response.json();
     const prevTermDataUrl = `/term-data?term-key=${prevTermKey}`;
     const dataResponse = await fetch(prevTermDataUrl);
     return dataResponse.json();
