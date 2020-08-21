@@ -8,6 +8,14 @@
   const termKey = urlParams.get("term-key");
   const courseKey = urlParams.get("course-key");
 
+  function setProfessorUrl(profName, profKey) {
+    const profLink = document.getElementById("prof-link");
+    const url = new URL("/professor.html", window.location.origin);
+    url.searchParams.set("prof-key", profKey);
+    url.searchParams.set("prof-name", profName);
+    profLink.setAttribute("href", url);
+  }
+
   function fillTitles() {
     fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
       .then((response) => response.json())
@@ -15,6 +23,8 @@
         document.getElementById("course-name").innerHTML = termInfo[0];
         document.getElementById("term-name").innerHTML = termInfo[1];
         document.getElementById("num-enrolled").innerHTML = termInfo[2];
+        document.getElementById("prof-name").innerHTML = termInfo[3];
+        setProfessorUrl(termInfo[3], termInfo[4]);
       });
   }
 
@@ -43,7 +53,6 @@
       termCommentsList
     );
     loadComments(dummyComments, /* isCourse */ true);
-    loadComments(dummyComments, /* isCourse */ false);
   }
 
   function makeGraphs(termDataObject) {
@@ -151,7 +160,7 @@
 
   async function makeTermRatingChart(termDataObject) {
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr) / list.length;
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
     const currentTermRatingAvg = average(
       /* adds dummy data */ [21, 11, 9].concat(
         termDataObject.termPerceptionList
@@ -194,7 +203,7 @@
 
   async function makeTermPerceptionChart(termDataObject) {
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr) / list.length;
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
     const currentPerceptionRatingAvg = average(
       /* adds dummy data */ [21, 11, 9].concat(
         termDataObject.termPerceptionList
@@ -474,6 +483,10 @@
     const urlAndData = await getRatingPropertiesToStore();
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
+
+  document
+    .getElementById("myBtn")
+    .addEventListener("click", passRatingProperties);
 
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
