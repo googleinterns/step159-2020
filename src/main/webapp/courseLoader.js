@@ -160,7 +160,7 @@
 
   async function makeTermRatingChart(termDataObject) {
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr) / list.length;
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
     const currentTermRatingAvg = average(
       /* adds dummy data */ [21, 11, 9].concat(
         termDataObject.termPerceptionList
@@ -203,7 +203,7 @@
 
   async function makeTermPerceptionChart(termDataObject) {
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr) / list.length;
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
     const currentPerceptionRatingAvg = average(
       /* adds dummy data */ [21, 11, 9].concat(
         termDataObject.termPerceptionList

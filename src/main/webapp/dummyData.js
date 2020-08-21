@@ -206,6 +206,24 @@ const dummyHoursData = [
   [6],
 ];
 
+const dummyComments = [
+  "ambivert",
+  "calcspar",
+  "deaness",
+  "entrete",
+  "gades",
+  "monkeydom",
+  "outclimbed",
+  "outdared",
+  "pistoleers",
+  "redbugs",
+  "snake-line",
+  "subrules",
+  "subtrends",
+  "torenia",
+  "unhides",
+];
+
 const dummyGradeData = [
   3.5,
   3,

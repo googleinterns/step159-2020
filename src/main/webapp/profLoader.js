@@ -21,58 +21,75 @@
     populateData();
   });
 
-  async function makeDiffComparisonChart(profData) {
+  function makeDiffComparisonChart(profData) {
     const average = (list) =>
-      list.reduce((prev, curr) => prev + curr) / list.length;
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
 
     const courseList = [];
-    const diffAvgList = [];
+    const difficultyAvgList = [];
 
-    for (let termHolder of profData) {
-      courseList.push(termHolder.properties.term);
-      diffAvgList.push(average(termHolder.properties.difficultyList));
+    for (let dataHolder of profData) {
+      courseList.push(dataHolder.term);
+      difficultyAvgList.push(
+        average(dummyDiffData.concat(dataHolder.difficultyList))
+      );
     }
 
-    console.log(courseList);
-    console.log(diffAvgList);
+    const difficultyData = google.visualization.arrayToDataTable([
+      [" "].concat(courseList),
+      [" "].concat(difficultyAvgList),
+    ]);
 
-    // const currentPerceptionRatingAvg = average(
-    //   /* adds dummy data */ [21, 11, 9].concat(
-    //     termDataObject.termPerceptionList
-    //   )
-    // );
+    const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
+      title: "Average Course Difficulty Comparison",
+      height: 450,
+      bars: "horizontal",
+      bar: { groupWidth: "30%" },
+      hAxis: { title: "Avg Term Perception" },
+    };
 
-    // const prevTermData = [];
-    // const avgData = [];
-    // const prevTermNameList = await getPrevTermName(2);
+    const chart = new google.charts.Bar(
+      document.getElementById("difficulty-comp")
+    );
+    chart.draw(difficultyData, google.charts.Bar.convertOptions(options));
+  }
 
-    // for (let term of prevTermNameList) {
-    //   prevTermData.push(await getPreviousTermData(term));
-    // }
+  function makePerceptionComparisonChart(profData) {
+    const average = (list) =>
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
 
-    // for (let termData of prevTermData) {
-    //   avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
-    // }
+    const courseList = [];
+    const perceptionAvgList = [];
 
-    // const perceptionData = google.visualization.arrayToDataTable([
-    //   [" ", document.getElementById("term-name").innerHTML].concat(
-    //     prevTermNameList
-    //   ),
-    //   [" ", currentPerceptionRatingAvg].concat(avgData),
-    // ]);
+    for (let dataHolder of profData) {
+      courseList.push(dataHolder.term);
+      perceptionAvgList.push(
+        average(dummyGradeData.concat(dataHolder.perceptionList))
+      );
+    }
 
-    // const options = {
-    //   colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
-    //   title: "Average Term Perception Comparison",
-    //   height: 450,
-    //   bars: "horizontal",
-    //   bar: { groupWidth: "30%" },
-    //   hAxis: { title: "Avg Term Perception" },
-    // };
+    const perceptionData = google.visualization.arrayToDataTable([
+      [" "].concat(courseList),
+      [" "].concat(difficultyAvgList),
+    ]);
 
-    // const chart = new google.charts.Bar(
-    //   document.getElementById("term-perception-comp")
-    // );
-    // chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
+    const options = {
+      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
+      title: "Average Course Perception Comparison",
+      height: 450,
+      bars: "horizontal",
+      bar: { groupWidth: "30%" },
+      hAxis: { title: "Avg Term Perception" },
+    };
+
+    const chart = new google.charts.Bar(
+      document.getElementById("perception-comp")
+    );
+    chart.draw(perceptionData, google.charts.Bar.convertOptions(options));
   }
 })();
+
+// for(let comment of dummyComments.concat(dataHolder.commentsList)){
+//     commentsList.push(comment);
+// }
