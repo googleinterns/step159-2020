@@ -5,9 +5,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -15,6 +15,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
+import com.google.cloud.translate.v3.LocationName;
+import com.google.cloud.translate.v3.TranslateTextRequest;
+import com.google.cloud.translate.v3.TranslateTextResponse;
+import com.google.cloud.translate.v3.TranslationServiceClient;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,8 +43,8 @@ public class DataServlet extends HttpServlet {
     this.languageService = LanguageServiceClient.create();
   }
 
-  public DataServlet(LanguageServiceClient languageService) {
-    this.languageService = languageService;
+  public DataServlet(LanguageServiceClient languageServiceClient) {
+    this.languageService = languageServiceClient;
   }
 
   @Override
@@ -64,7 +68,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request, /* DatastoreService */ datastore);
+    addTermRating(request, datastore);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
@@ -83,11 +87,7 @@ public class DataServlet extends HttpServlet {
     } catch (Exception exception) {
       throw new IOException("Error reading body of request");
     }
-    String schoolName;
-    String courseName;
-    String profName;
-    String termName;
-    Long units;
+    String termKeyString;
     String termFeedback;
     String professorFeedback;
     Long termRating;
@@ -95,29 +95,29 @@ public class DataServlet extends HttpServlet {
     Long workHours;
     Long difficulty;
     String userId;
+    Boolean translate;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      schoolName = jsonObject.getString("schoolName");
-      courseName = jsonObject.getString("courseName");
-      profName = jsonObject.getString("profName");
-      termName = jsonObject.getString("term");
-      units = (long) jsonObject.getFloat("units");
+      termKeyString = jsonObject.getString("termKey");
       termFeedback = jsonObject.getString("termInput");
       professorFeedback = jsonObject.getString("profInput");
       termRating = (long) jsonObject.getFloat("ratingTerm");
       professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
-      userId = jsonObject.getString("ID");
+      userId = jsonObject.getString("id");
+      translate = Boolean.parseBoolean(jsonObject.getString("translate"));
     } catch (JSONException exception) {
       throw new IOException("Error parsing JSON request string");
     }
 
+    if (translate) {
+      termFeedback = translateTextToEnglish(termFeedback);
+      professorFeedback = translateTextToEnglish(professorFeedback);
+    }
+
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
-
-    currentTermKey =
-        findTerm(datastore, schoolName, courseName, termName, units, profName).getKey();
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -128,7 +128,7 @@ public class DataServlet extends HttpServlet {
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
-            ? new Entity("Rating", currentTermKey)
+            ? new Entity("Rating", KeyFactory.stringToKey(termKeyString))
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
@@ -146,38 +146,10 @@ public class DataServlet extends HttpServlet {
   private float getSentimentScore(String feedback) throws IOException {
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    Sentiment sentiment = this.languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
     // Won't be closing languageService as we want to use constructor.
     return score;
-  }
-
-  private Entity findTerm(
-      DatastoreService datastore,
-      String schoolName,
-      String courseName,
-      String termName,
-      Long units,
-      String profName)
-      throws IOException {
-    Key schoolKey = queryEntities("School", "school-name", schoolName).get(0).getKey();
-    List<Filter> filters = new ArrayList();
-    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
-    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
-    filters.add(courseFilter);
-    filters.add(unitFilter);
-
-    Query courseQuery =
-        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
-    Key courseKey =
-        datastore.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults()).get(0).getKey();
-
-    Filter termFilter = new FilterPredicate("term", FilterOperator.EQUAL, termName);
-    Query termQuery = new Query("Term").setAncestor(courseKey).setFilter(termFilter);
-    Entity foundTerm =
-        datastore.prepare(termQuery).asList(FetchOptions.Builder.withDefaults()).get(0);
-
-    return foundTerm;
   }
 
   public List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
@@ -188,5 +160,26 @@ public class DataServlet extends HttpServlet {
     // This is initialized when authentication happens, so should not be empty.
     List<Entity> queryList = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
     return queryList;
+  }
+
+  private String translateTextToEnglish(String text) throws IOException {
+    String projectId = "nina-laura-dagm-step-2020";
+    try (TranslationServiceClient client = TranslationServiceClient.create()) {
+      LocationName parent = LocationName.of(projectId, "global");
+
+      TranslateTextRequest request =
+          TranslateTextRequest.newBuilder()
+              .setParent(parent.toString())
+              .setMimeType("text/plain")
+              .setTargetLanguageCode("en")
+              .addContents(text)
+              .build();
+
+      TranslateTextResponse response = client.translateText(request);
+      return response.getTranslationsList().get(0).getTranslatedText();
+
+    } catch (IOException exception) {
+      throw new IOException("Could not translate comments");
+    }
   }
 }

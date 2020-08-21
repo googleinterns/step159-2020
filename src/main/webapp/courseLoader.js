@@ -374,7 +374,6 @@
   }
 
   async function postRatingProperties(url, data = {}) {
-    // Default options are marked with *.
     const response = await fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       cache: "no-cache",
@@ -407,65 +406,37 @@
   async function getRatingPropertiesToStore() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
+
     const ratingProperties = {
-      courseName: urlParams.get("course-name"),
-      term: urlParams.get("term"),
-      profName: urlParams.get("prof-name"),
-      units: urlParams.get("num-units"),
-      schoolName: urlParams.get("school-name"),
+      courseKey: urlParams.get("course-key"),
+      termKey: urlParams.get("term-key"),
       termInput: document.getElementById("term-input").value,
       profInput: document.getElementById("prof-input").value,
       ratingTerm: document.getElementById("rating-term").value,
       ratingProf: document.getElementById("rating-prof").value,
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
-      ID: await verify(),
+      id: await verify(),
+      translate: document.getElementById("translate").value,
     };
     document.getElementById("term-form").reset();
 
-    const url = newURL(
-      ratingProperties.schoolName,
-      ratingProperties.courseName,
-      ratingProperties.profName,
-      ratingProperties.units,
-      ratingProperties.term,
-      ratingProperties.termInput,
-      ratingProperties.profInput,
-      ratingProperties.ratingTerm,
-      ratingProperties.ratingProf,
-      ratingProperties.hours,
-      ratingProperties.difficulty
-    );
+    const url = newURL(ratingProperties);
 
     return [url, ratingProperties];
   }
 
-  function newURL(
-    schoolName,
-    courseName,
-    profName,
-    units,
-    term,
-    termInput,
-    profInput,
-    ratingTerm,
-    ratingProf,
-    hours,
-    difficulty
-  ) {
+  function newURL(ratingProperties) {
     const url = new URL("/data", window.location.origin);
-    url.searchParams.set("course-name", courseName);
-    url.searchParams.set("prof-name", profName);
-    url.searchParams.set("num-units", units);
-    url.searchParams.set("term", term);
-    url.searchParams.set("school-name", schoolName);
+    url.searchParams.set("course-key", ratingProperties.courseKey);
+    url.searchParams.set("term-key", ratingProperties.termKey);
 
-    url.searchParams.set("hour", hours);
-    url.searchParams.set("difficulty", difficulty);
-    url.searchParams.set("term-input", termInput);
-    url.searchParams.set("prof-input", profInput);
-    url.searchParams.set("rating-term", ratingTerm);
-    url.searchParams.set("rating-prof", ratingProf);
+    url.searchParams.set("hour", ratingProperties.hours);
+    url.searchParams.set("difficulty", ratingProperties.difficulty);
+    url.searchParams.set("term-input", ratingProperties.termInput);
+    url.searchParams.set("prof-input", ratingProperties.profInput);
+    url.searchParams.set("rating-term", ratingProperties.ratingTerm);
+    url.searchParams.set("rating-prof", ratingProperties.ratingProf);
 
     return url;
   }
