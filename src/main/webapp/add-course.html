@@ -10,11 +10,12 @@
         <script src="login-script.js"></script>
     </head>
     <body>
-        <div id="login-box">
+        <div id="private-login-box">
             <div class="g-signin2" id="login-button" data-onsuccess="signInPrivate"></div>
+            <div id="private-login-message"></div>
         </div>
-        <div class="hidden" id="class-info">
-            <div id="school-name"></div>
+        <div class="hidden" id="private-class-info">
+            <div id="private-school-name"></div>
             <form id="course-form" onsubmit="addCourse()">
                 <p>Enter course info:</p>
                 <div id="class-textarea">
@@ -38,6 +39,7 @@
                 </div>
                 <input type="submit"/>
             </form>
+            <button id="logout-button" onclick="signOutPrivate()">Sign out</button>
         </div>
     </body>
 </html>
