@@ -14,7 +14,7 @@ async function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
-  const searchMessage = document.getElementById("search-message").value;
+  const searchMessage = document.getElementById("search-message");
   const units = countUnits("search-units");
   const school = getUserSchool();
   courseResults.innerHTML = "";
