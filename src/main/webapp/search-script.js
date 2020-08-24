@@ -60,8 +60,8 @@ async function addCourse() {
   const courseName = document.getElementById("course-name").value;
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
+  const schoolName = document.getElementById("schoool-name").value;
   const units = countUnits("num-units");
-  const schoolName = getUserSchool();
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
   url.searchParams.set("prof-name", profName);
