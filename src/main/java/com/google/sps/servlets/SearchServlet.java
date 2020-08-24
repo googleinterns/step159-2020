@@ -77,8 +77,8 @@ public class SearchServlet extends HttpServlet {
     List<Filter> filters = new ArrayList<>();
     String school = request.getParameter("school-name").toLowerCase();
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
-    if (!request.getParameter("courseName").isEmpty()) {
-      String name = request.getParameter("courseName").toLowerCase();
+    if (!request.getParameter("course-name").isEmpty()) {
+      String name = request.getParameter("course-name").toLowerCase();
       String[] splitName;
       if (school.equals("mit")) { // Courses are formatted "department.courseNum"
         splitName = name.split("\\.");
@@ -122,8 +122,8 @@ public class SearchServlet extends HttpServlet {
       filters.add(nameFilter);
     }
 
-    if (!request.getParameter("profName").isEmpty()) {
-      String profName = request.getParameter("profName").toLowerCase();
+    if (!request.getParameter("prof-name").isEmpty()) {
+      String profName = request.getParameter("prof-name").toLowerCase();
       Filter profFilter = new FilterPredicate("search-professor", FilterOperator.EQUAL, profName);
       filters.add(profFilter);
     }

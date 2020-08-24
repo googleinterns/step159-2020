@@ -19,8 +19,8 @@ async function showCourses() {
   const school = getUserSchool();
   courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
-  url.searchParams.set("courseName", courseName);
-  url.searchParams.set("profName", profName);
+  url.searchParams.set("course-name", courseName);
+  url.searchParams.set("prof-name", profName);
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", school);
