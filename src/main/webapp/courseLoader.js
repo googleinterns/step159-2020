@@ -205,6 +205,7 @@
   }
 
   async function postRatingProperties(url, data = {}) {
+    console.log("working");
     // Default options are marked with *.
     const response = await fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -247,6 +248,7 @@
       ratingProf: document.getElementById("rating-prof").value,
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
+      id: await verify(),
     };
     document.getElementById("term-form").reset();
 
@@ -290,10 +292,15 @@
 
   async function passRatingProperties() {
     const urlAndData = await getRatingPropertiesToStore();
+    console.log(urlAndData[1]);
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
 
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-  });
+  //   $(function () {
+  //     $('[data-toggle="tooltip"]').tooltip();
+  //   });
+
+  document
+    .getElementById("button")
+    .addEventListener("click", passRatingProperties);
 })();

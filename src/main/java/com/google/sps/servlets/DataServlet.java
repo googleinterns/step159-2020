@@ -17,14 +17,10 @@ import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -100,7 +96,7 @@ public class DataServlet extends HttpServlet {
       professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
-      userId = jsonObject.getString("ID");
+      userId = jsonObject.getString("id");
     } catch (JSONException exception) {
       // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
@@ -109,14 +105,8 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    String urlParameters =
-        "ID="
-            + URLEncoder.encode(userId, "UTF-8")
-            + "&term-key="
-            + URLEncoder.encode(termKeyString, "UTF-8");
-    JSONObject toxicityScores = executePost("/perspective", urlParameters);
-    Long toxicityTermComment = (long) toxicityScores.getFloat("toxicity_term_comment");
-    Long toxicityProfComment = (long) toxicityScores.getFloat("toxicity_professor_comment");
+    Long toxicityTermComment = (long) getToxicityScore(termFeedback);
+    Long toxicityProfComment = (long) getToxicityScore(professorFeedback);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -164,44 +154,19 @@ public class DataServlet extends HttpServlet {
     return queryList;
   }
 
-  public static JSONObject executePost(String targetURL, String urlParameters) throws IOException {
-    HttpURLConnection connection = null;
-    try {
-      // Creates a connection.
-      URL url = new URL(targetURL);
-      connection = (HttpURLConnection) url.openConnection();
-      connection.setRequestMethod("POST");
-      connection.setRequestProperty("Content-Type", "application/json");
-      connection.setRequestProperty(
-          "Content-Length", Integer.toString(urlParameters.getBytes().length));
-      connection.setRequestProperty("Content-Language", "en-US");
-      connection.setUseCaches(false);
-      connection.setDoOutput(true);
+  public Long getToxicityScore(String text) throws IOException {
 
-      // Sends request to Python Servlet.
-      DataOutputStream dataStream = new DataOutputStream(connection.getOutputStream());
-      dataStream.writeBytes(urlParameters);
-      dataStream.close();
+    ProcessBuilder processBuilder =
+        new ProcessBuilder(Arrays.asList("python", "src/main/webapp/perspective.py"));
+    Process process = processBuilder.start();
 
-      // Gets Response.
-      InputStream inputStream = connection.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-      StringBuilder stringBuilder = new StringBuilder(); // or StringBuffer if Java version 5+
-      String line;
-      while ((line = reader.readLine()) != null) {
-        stringBuilder.append(line);
-        stringBuilder.append('\r');
-      }
-      reader.close();
-      // Creates json object with info.
-      JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      return jsonObject;
-    } catch (Exception e) {
-      throw new IOException("Could not read response from Python Servlet.");
-    } finally {
-      if (connection != null) {
-        connection.disconnect();
-      }
+    BufferedReader bufferedReader =
+        new BufferedReader(new InputStreamReader(process.getInputStream()));
+    Long toReturn = null;
+    String line;
+    if ((line = bufferedReader.readLine()) != null) {
+      toReturn = Long.parseLong(line);
     }
+    return toReturn;
   }
 }

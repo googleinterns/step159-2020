@@ -6,29 +6,13 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
-      integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
-      crossorigin="anonymous"
-    />
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <script type="text/javascript" src="courseLoader.js"></script>
-    <script
-      src="https://apis.google.com/js/platform.js?onload=onLoad"
-      async
-      defer
-    ></script>
     <meta
       name="google-signin-client_id"
       content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
     />
     <link rel="stylesheet" href="course-style.css" />
   </head>
-  <body onload="fillTitles()">
+  <body>
     <nav class="navbar navbar-dark bg-dark">
       <span class="navbar-brand mb-0 h1">App Name</span>
     </nav>
@@ -165,7 +149,7 @@
           </div>
         </form>
         <button
-          onclick="passRatingProperties()"
+          id="button"
           type="button"
           class="btn btn-lg btn-outline-success"
         >
@@ -187,6 +171,29 @@
       src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"
       integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
       crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
+      integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
+      crossorigin="anonymous"
+    />
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript" src="courseLoader.js"></script>
+    <script>
+      function onLoad() {
+        gapi.load("auth2", function () {
+          gapi.auth2.init();
+        });
+      }
+    </script>
+    <script
+      src="https://apis.google.com/js/platform.js?onload=onLoad"
+      async
+      defer
     ></script>
   </body>
 </html>
