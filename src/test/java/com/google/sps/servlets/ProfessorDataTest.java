@@ -69,15 +69,15 @@ public final class ProfessorDataTest {
   public void GettingRatingData_AllProperties() throws EntityNotFoundException {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-    List<Object> expectedHoursListA = new ArrayList(Arrays.asList((long) 12));
-    List<Object> expectedDifficultyListA = new ArrayList(Arrays.asList((long) 7));
-    List<Object> expectedPerceptionListA = new ArrayList(Arrays.asList((double) 0.8));
-    List<Object> expectedCommentsListA = new ArrayList(Arrays.asList("Great"));
+    List<Long> expectedHoursListA = new ArrayList(Arrays.asList((long) 12));
+    List<Long> expectedDifficultyListA = new ArrayList(Arrays.asList((long) 7));
+    List<Long> expectedPerceptionListA = new ArrayList(Arrays.asList((double) 0.8));
+    List<Long> expectedCommentsListA = new ArrayList(Arrays.asList("Great"));
 
-    List<Object> expectedHoursListB = new ArrayList(Arrays.asList((long) 11));
-    List<Object> expectedDifficultyListB = new ArrayList(Arrays.asList((long) 6));
-    List<Object> expectedPerceptionListB = new ArrayList(Arrays.asList((double) 0.79));
-    List<Object> expectedCommentsListB = new ArrayList(Arrays.asList("Good"));
+    List<Long> expectedHoursListB = new ArrayList(Arrays.asList((long) 11));
+    List<Long> expectedDifficultyListB = new ArrayList(Arrays.asList((long) 6));
+    List<Long> expectedPerceptionListB = new ArrayList(Arrays.asList((double) 0.79));
+    List<Long> expectedCommentsListB = new ArrayList(Arrays.asList("Good"));
 
     createRequest(
         /* requestServelt */ request,
