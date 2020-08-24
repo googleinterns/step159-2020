@@ -85,7 +85,7 @@ public class DataServlet extends HttpServlet {
     } catch (Exception exception) {
       throw new IOException("Error reading body of request");
     }
-    
+
     String termKeyString;
     String termFeedback;
     String professorFeedback;
