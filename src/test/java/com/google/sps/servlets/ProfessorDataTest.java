@@ -81,14 +81,14 @@ public final class ProfessorDataTest {
 
     createRequest(
         /* requestServelt */ request,
-        /* schoolName */ "MIT",
+        /* schoolName */ "mit",
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "12",
         /* profName */ "Jason Ku");
     createRequest(
         /* requestServelt */ requestB,
-        /* schoolName */ "MIT",
+        /* schoolName */ "mit",
         /* courseName */ "6.006",
         /* termName */ "Fall 2020",
         /* units */ "12",
