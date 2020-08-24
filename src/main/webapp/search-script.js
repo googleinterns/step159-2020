@@ -60,7 +60,7 @@ async function addCourse() {
   const courseName = document.getElementById("course-name").value;
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
-  const schoolName = document.getElementById("schoool-name").value;
+  const schoolName = document.getElementById("school-name").value;
   const units = countUnits("num-units");
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
@@ -71,4 +71,8 @@ async function addCourse() {
   url.searchParams.set("num-enrolled", "300");
   const response = await fetch(url, { method: "POST" });
   return response;
+}
+
+function redirect(newSite) {
+  location.href = new URL("/" + newSite, window.location.origin);
 }
