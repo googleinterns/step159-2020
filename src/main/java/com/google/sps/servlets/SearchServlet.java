@@ -95,11 +95,13 @@ public class SearchServlet extends HttpServlet {
           // Account for the fact that some course numbers have leading zeroes (e.g 6.006)
           if (school.equals("mit")) {
             // When raising and lowering course number, make sure total length is same as original
-            courseNums.add(
-                department
-                    + "."
-                    + String.format(
-                        "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
+            if (courseNum != 0) {
+              courseNums.add(
+                  department
+                      + "."
+                      + String.format(
+                          "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
+            }
             courseNums.add(
                 department
                     + "."
