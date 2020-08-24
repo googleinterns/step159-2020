@@ -26,7 +26,7 @@ async function showCourses() {
   url.searchParams.set("school-name", school);
   const response = await fetch(url);
   const searchResults = await response.json();
-  searchMessage.innerHTML += searchResults.message + "<br />";
+  searchMessage.innerHTML = searchResults.message + "<br />";
   const courses = JSON.parse(searchResults.courses);
   courses.forEach((course) =>
     courseResults.appendChild(createListElement(course))
