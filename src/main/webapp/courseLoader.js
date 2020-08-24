@@ -5,21 +5,21 @@
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const courseName = urlParams.get("course-name");
-  const profName = urlParams.get("prof-name");
-  const term = urlParams.get("term");
-  const units = urlParams.get("num-units");
-  const schoolName = urlParams.get("school-name");
+  const termKey = urlParams.get("term-key");
+  const courseKey = urlParams.get("course-key");
 
   function fillTitles() {
-    document.getElementById("course-name").innerHTML = courseName;
-    document.getElementById("term-name").innerHTML = term;
+    fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
+      .then((response) => response.json())
+      .then((termInfo) => {
+        document.getElementById("course-name").innerHTML = termInfo[0];
+        document.getElementById("term-name").innerHTML = termInfo[1];
+        document.getElementById("num-enrolled").innerHTML = termInfo[2];
+      });
   }
 
   function populateData() {
-    fetch(
-      `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}`
-    )
+    fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
         google.charts.setOnLoadCallback(() => {
@@ -171,7 +171,9 @@
     }
 
     const comparisonData = google.visualization.arrayToDataTable([
-      [" ", term].concat(prevTermNameList),
+      [" ", document.getElementById("term-name").innerHTML].concat(
+        prevTermNameList
+      ),
       [" ", currentTermRatingAvg].concat(avgData),
     ]);
 
@@ -212,7 +214,9 @@
     }
 
     const perceptionData = google.visualization.arrayToDataTable([
-      [" ", term].concat(prevTermNameList),
+      [" ", document.getElementById("term-name").innerHTML].concat(
+        prevTermNameList
+      ),
       [" ", currentPerceptionRatingAvg].concat(avgData),
     ]);
 
@@ -232,13 +236,16 @@
   }
 
   async function getPreviousTermData(prevTerm) {
-    const url = `/term-live?school-name=${schoolName}&course-name=${courseName}&term=${prevTerm}&prof-name=${profName}&num-units=${units}`;
-    const response = await fetch(url);
-    return response.json();
+    const keyUrl = `/prev-key?course-key=${courseKey}&term=${prevTerm}`;
+    const response = await fetch(keyUrl);
+    const prevTermKey = await response.json();
+    const prevTermDataUrl = `/term-data?term-key=${prevTermKey}`;
+    const dataResponse = await fetch(prevTermDataUrl);
+    return dataResponse.json();
   }
 
   async function getPrevTermName(termLimit) {
-    const url = `/prev-terms?school-name=${schoolName}&course-name=${courseName}&term=${term}&prof-name=${profName}&num-units=${units}&term-limit=${termLimit}`;
+    const url = `/prev-terms?term-key=${termKey}&course-key=${courseKey}&term-limit=${termLimit}`;
     const response = await fetch(url);
     const prevTermData = await response.json();
     return prevTermData.map((data) => data.properties.term);
@@ -367,7 +374,6 @@
   }
 
   async function postRatingProperties(url, data = {}) {
-    // Default options are marked with *.
     const response = await fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       cache: "no-cache",
@@ -400,6 +406,7 @@
   async function getRatingPropertiesToStore() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
+
     const ratingProperties = {
       courseKey: urlParams.get("course-key"),
       termKey: urlParams.get("term-key"),
@@ -410,43 +417,25 @@
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
       grade: document.getElementById("grade").value,
+      id: await verify(),
+      translate: document.getElementById("translate").value,
     };
     document.getElementById("term-form").reset();
-
-    const url = newURL(
-      ratingProperties.courseKey,
-      ratingProperties.termKey,
-      ratingProperties.termInput,
-      ratingProperties.profInput,
-      ratingProperties.ratingTerm,
-      ratingProperties.ratingProf,
-      ratingProperties.hours,
-      ratingProperties.difficulty
-    );
-
+    const url = newURL(ratingProperties);
     return [url, ratingProperties];
   }
 
-  function newURL(
-    courseKey,
-    termKey,
-    termInput,
-    profInput,
-    ratingTerm,
-    ratingProf,
-    hours,
-    difficulty
-  ) {
+  function newURL(ratingProperties) {
     const url = new URL("/data", window.location.origin);
-    url.searchParams.set("course-key", courseKey);
-    url.searchParams.set("term-key", termKey);
+    url.searchParams.set("course-key", ratingProperties.courseKey);
+    url.searchParams.set("term-key", ratingProperties.termKey);
 
-    url.searchParams.set("hour", hours);
-    url.searchParams.set("difficulty", difficulty);
-    url.searchParams.set("term-input", termInput);
-    url.searchParams.set("prof-input", profInput);
-    url.searchParams.set("rating-term", ratingTerm);
-    url.searchParams.set("rating-prof", ratingProf);
+    url.searchParams.set("hour", ratingProperties.hours);
+    url.searchParams.set("difficulty", ratingProperties.difficulty);
+    url.searchParams.set("term-input", ratingProperties.termInput);
+    url.searchParams.set("prof-input", ratingProperties.profInput);
+    url.searchParams.set("rating-term", ratingProperties.ratingTerm);
+    url.searchParams.set("rating-prof", ratingProperties.ratingProf);
 
     return url;
   }

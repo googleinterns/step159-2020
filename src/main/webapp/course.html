@@ -37,6 +37,7 @@
       <div class="container">
         <h1 class="display-4 text-center" id="course-name">Course Name</h1>
         <p class="lead text-center" id="term-name">Term Name</p>
+        <p class="text-muted text-center" id="num-enrolled">Num Enrolled</p>
       </div>
     </div>
 
@@ -178,7 +179,7 @@
               </div>
             </div>
             <div class="col">
-              <p class="lead">How Difficulty was this Course?</p>
+              <p class="lead">How Difficult was this Course?</p>
               <input
                 id="difficulty"
                 name="difficulty"
@@ -214,6 +215,18 @@
               </select>
             </div>
           </div>
+
+          <div class="row">
+            <div class="col">
+              <p class="lead">Want to Translate to English?</p>
+              <select class="custom-select mb-5" id="translate">
+                <option selected>Open select menu</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+
           <button
             onclick="passRatingProperties()"
             type="button"
