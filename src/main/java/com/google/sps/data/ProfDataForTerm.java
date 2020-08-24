@@ -3,7 +3,7 @@ package com.google.sps.data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfDataHolder {
+public class ProfDataForTerm {
   String term;
   List<Object> hoursList = new ArrayList();
   List<Object> difficultyList = new ArrayList();
