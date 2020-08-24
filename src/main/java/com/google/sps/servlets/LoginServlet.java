@@ -8,6 +8,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.sps.data.LoginObject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.*;
 import java.util.Collections;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,9 +20,17 @@ import org.json.simple.JSONObject;
 public class LoginServlet extends HttpServlet {
   private String clientId =
       "12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"; // Client ID.
+  private List<String> whitelist =
+      Arrays.asList(
+          "ninaprabhu@google.com",
+          "lqueipom@google.com",
+          "dagmawi@google.com",
+          "crumley@google.com",
+          "lgmt@google.com");
 
   public LoginObject verifyToken(HttpServletRequest request) throws IOException {
     String idTokenString = request.getParameter("token");
+    Boolean checkWhitelist = Boolean.parseBoolean(request.getParameter("private"));
     UrlFetchTransport transport = UrlFetchTransport.getDefaultInstance();
     GsonFactory json = GsonFactory.getDefaultInstance();
     GoogleIdTokenVerifier verifier =
@@ -33,6 +42,9 @@ public class LoginServlet extends HttpServlet {
       if (idToken != null) {
         Payload payload = idToken.getPayload();
         String userId = payload.getSubject();
+        if (checkWhitelist && !(whitelist.contains(payload.getEmail()))) {
+          return new LoginObject("", false, "NOT AUTHORIZED");
+        }
         return new LoginObject(userId, true, "");
       }
       return new LoginObject("", false, "NULL TOKEN");
