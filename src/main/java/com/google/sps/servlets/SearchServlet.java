@@ -75,29 +75,33 @@ public class SearchServlet extends HttpServlet {
   /* Create list of filters given parameters specified in request. */
   private List<Filter> getFilters(HttpServletRequest request, boolean fuzzy) {
     List<Filter> filters = new ArrayList<>();
-    String school = request.getParameter("school-name");
+    String school = request.getParameter("school-name").toLowerCase();
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("courseName").isEmpty()) {
       String name = request.getParameter("courseName");
       String[] splitName;
-      if (school.equals("mit")) {
+      if (school.equals("mit")) { // Courses are formatted "department.courseNum"
         splitName = name.split("\\.");
       } else {
-        splitName = name.split(" ");
+        splitName = name.split(" "); // Courses are formatted "department courseNum"
       }
       Filter nameFilter;
-      if (fuzzy && splitName.length > 1) {
+      if (fuzzy && splitName.length > 1) { // Check if course name is properly split
         List<String> courseNums = new ArrayList<>();
         courseNums.add(name);
         try {
           String department = splitName[0];
           int courseNum = Integer.parseInt(splitName[1]);
-          if (school.equals("mit")) {
-            courseNums.add(
-                department
-                    + "."
-                    + String.format(
-                        "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
+          if (school.equals(
+              "mit")) { // Account for the fact that some course numbers have leading zeroes (e.g.
+            // 6.006)
+            courseNums
+                .add( // When raising and lowering course number, make sure total length is same as
+                    // original
+                    department
+                        + "."
+                        + String.format(
+                            "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
             courseNums.add(
                 department
                     + "."
@@ -108,7 +112,8 @@ public class SearchServlet extends HttpServlet {
             courseNums.add(department + " " + String.valueOf(courseNum - 1));
           }
           nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
-        } catch (NumberFormatException e) {
+        } catch (
+            NumberFormatException e) { // If there is any error with fuzzy search, do normal search.
           nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
         }
       } else {
