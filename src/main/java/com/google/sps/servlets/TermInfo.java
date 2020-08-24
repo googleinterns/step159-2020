@@ -7,8 +7,7 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ public class TermInfo extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     try {
-      List<String> termInfo = getTermInfo(db, request);
+      HashMap<String, String> termInfo = getTermInfo(db, request);
       String termInfoJSON = makeJSON(termInfo);
       response.setContentType("application/json;");
       response.getWriter().println(termInfoJSON);
@@ -30,7 +29,7 @@ public class TermInfo extends HttpServlet {
     }
   }
 
-  public List<String> getTermInfo(DatastoreService db, HttpServletRequest request)
+  public HashMap<String, String> getTermInfo(DatastoreService db, HttpServletRequest request)
       throws EntityNotFoundException {
 
     Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
@@ -45,7 +44,14 @@ public class TermInfo extends HttpServlet {
             .getProperty("professor-name")
             .toString();
 
-    return Arrays.asList(courseName, term, enrolled, profName, profKey);
+    HashMap<String, String> termData = new HashMap<String, String>();
+    termData.put("course-name", courseName);
+    termData.put("term-name", term);
+    termData.put("num-enrolled", enrolled);
+    termData.put("prof-name", profName);
+    termData.put("prof-key", profKey);
+
+    return termData;
   }
 
   private String makeJSON(Object changeItem) {

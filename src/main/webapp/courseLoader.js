@@ -3,6 +3,9 @@
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
+  const average = (list) =>
+    list.reduce((prev, curr) => prev + curr, 0) / list.length;
+
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const termKey = urlParams.get("term-key");
@@ -20,11 +23,12 @@
     fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
       .then((response) => response.json())
       .then((termInfo) => {
-        document.getElementById("course-name").innerHTML = termInfo[0];
-        document.getElementById("term-name").innerHTML = termInfo[1];
-        document.getElementById("num-enrolled").innerHTML = termInfo[2];
-        document.getElementById("prof-name").innerHTML = termInfo[3];
-        setProfessorUrl(termInfo[3], termInfo[4]);
+        console.log(termInfo);
+        // document.getElementById("course-name").innerHTML = termInfo[0];
+        // document.getElementById("term-name").innerHTML = termInfo[1];
+        // document.getElementById("num-enrolled").innerHTML = termInfo[2];
+        // document.getElementById("prof-name").innerHTML = termInfo[3];
+        // setProfessorUrl(termInfo[3], termInfo[4]);
       });
   }
 
@@ -159,8 +163,6 @@
   }
 
   async function makeTermRatingChart(termDataObject) {
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
     const currentTermRatingAvg = average(
       /* adds dummy data */ [21, 11, 9].concat(
         termDataObject.termPerceptionList
@@ -202,8 +204,6 @@
   }
 
   async function makeTermPerceptionChart(termDataObject) {
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
     const currentPerceptionRatingAvg = average(
       /* adds dummy data */ [21, 11, 9].concat(
         termDataObject.termPerceptionList
@@ -485,7 +485,7 @@
   }
 
   document
-    .getElementById("myBtn")
+    .getElementById("form-submit")
     .addEventListener("click", passRatingProperties);
 
   $(function () {

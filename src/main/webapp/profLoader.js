@@ -3,6 +3,9 @@
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
+  const average = (list) =>
+    list.reduce((prev, curr) => prev + curr, 0) / list.length;
+
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const profKey = urlParams.get("prof-key");
@@ -25,16 +28,13 @@
   });
 
   function makeDiffComparisonChart(profData) {
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
     const courseList = [];
     const difficultyAvgList = [];
 
     for (let dataHolder of profData) {
       courseList.push(dataHolder.term);
       difficultyAvgList.push(
-        average(dummyGradeData.concat(dataHolder.difficultyList)) + 3
+        average(dummyGradeData.concat(dataHolder.difficultyList))
       );
     }
 
@@ -59,9 +59,6 @@
   }
 
   function makePerceptionComparisonChart(profData) {
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
     const courseList = [];
     const perceptionAvgList = [];
     const commentList = [];
@@ -69,7 +66,7 @@
     for (let dataHolder of profData) {
       courseList.push(dataHolder.term);
       perceptionAvgList.push(
-        average(dummyGradeData.concat(dataHolder.perceptionList)) + 7
+        average(dummyGradeData.concat(dataHolder.perceptionList))
       );
 
       for (let comment of dummyComments.concat(dataHolder.commentsList)) {

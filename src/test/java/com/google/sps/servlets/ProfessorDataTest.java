@@ -30,7 +30,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.sps.data.ProfDataHolder;
+import com.google.sps.data.ProfDataForTerm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +61,7 @@ public final class ProfessorDataTest {
     helper.tearDown();
   }
 
-  @Mock HttpServletRequest request;
+  @Mock HttpServletRequest requestA;
   @Mock HttpServletRequest requestB;
   @Mock HttpServletRequest requestC;
 
@@ -69,35 +69,35 @@ public final class ProfessorDataTest {
   public void GettingRatingData_AllProperties() throws EntityNotFoundException {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-    List<Object> expectedHoursListA = new ArrayList(Arrays.asList((long) 12));
-    List<Object> expectedDifficultyListA = new ArrayList(Arrays.asList((long) 7));
-    List<Object> expectedPerceptionListA = new ArrayList(Arrays.asList((double) 0.8));
-    List<Object> expectedCommentsListA = new ArrayList(Arrays.asList("Great"));
+    List<Long> expectedHoursListA = new ArrayList(Arrays.asList((long) 12));
+    List<Long> expectedDifficultyListA = new ArrayList(Arrays.asList((long) 7));
+    List<Long> expectedPerceptionListA = new ArrayList(Arrays.asList((double) 0.8));
+    List<Long> expectedCommentsListA = new ArrayList(Arrays.asList("Great"));
 
-    List<Object> expectedHoursListB = new ArrayList(Arrays.asList((long) 11));
-    List<Object> expectedDifficultyListB = new ArrayList(Arrays.asList((long) 6));
-    List<Object> expectedPerceptionListB = new ArrayList(Arrays.asList((double) 0.79));
-    List<Object> expectedCommentsListB = new ArrayList(Arrays.asList("Good"));
+    List<Long> expectedHoursListB = new ArrayList(Arrays.asList((long) 11));
+    List<Long> expectedDifficultyListB = new ArrayList(Arrays.asList((long) 6));
+    List<Long> expectedPerceptionListB = new ArrayList(Arrays.asList((double) 0.79));
+    List<Long> expectedCommentsListB = new ArrayList(Arrays.asList("Good"));
 
     createRequest(
-        /* requestServelt */ request,
-        /* schoolName */ "MIT",
+        /* requestServelt */ requestA,
+        /* schoolName */ "mit",
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "12",
         /* profName */ "Jason Ku");
     createRequest(
         /* requestServelt */ requestB,
-        /* schoolName */ "MIT",
+        /* schoolName */ "mit",
         /* courseName */ "6.006",
         /* termName */ "Fall 2020",
         /* units */ "12",
         /* profName */ "Jason Ku");
 
-    schoolData.addSchoolData(db, request);
+    schoolData.addSchoolData(db, requestA);
     schoolData.addSchoolData(db, requestB);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
-    Key parent2 = findQueryMatch(db, "Term", "term", "Fall 2020").get(0).getKey();
+    Key parent1 = findQueryMatch(db, "Term", "term", "Fall 2020").get(0).getKey();
     String profKeyStr = KeyFactory.keyToString((Key) db.get(parent).getProperty("professorKey"));
 
     addRatingEntity(
@@ -121,11 +121,11 @@ public final class ProfessorDataTest {
         /* professorPerception */ 0.79,
         /* termComment */ "Good",
         /* professorComment */ "Bad",
-        /* parentEntity */ parent2);
+        /* parentEntity */ parent1);
 
     createRequest(/* requestServelt */ requestC, /* prof-key */ profKeyStr);
 
-    List<ProfDataHolder> answer = professorData.getAllDataFromProf(db, requestC);
+    List<ProfDataForTerm> answer = professorData.getAllDataFromProf(db, requestC);
 
     assertEquals(expectedHoursListA, answer.get(0).getHoursList());
     assertEquals(expectedDifficultyListA, answer.get(0).getDifficultyList());
