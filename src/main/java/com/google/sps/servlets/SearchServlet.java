@@ -78,7 +78,7 @@ public class SearchServlet extends HttpServlet {
     String school = request.getParameter("school-name").toLowerCase();
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("courseName").isEmpty()) {
-      String name = request.getParameter("courseName");
+      String name = request.getParameter("courseName").toLowerCase();
       String[] splitName;
       if (school.equals("mit")) { // Courses are formatted "department.courseNum"
         splitName = name.split("\\.");
@@ -92,16 +92,14 @@ public class SearchServlet extends HttpServlet {
         try {
           String department = splitName[0];
           int courseNum = Integer.parseInt(splitName[1]);
-          if (school.equals(
-              "mit")) { // Account for the fact that some course numbers have leading zeroes (e.g.
-            // 6.006)
-            courseNums
-                .add( // When raising and lowering course number, make sure total length is same as
-                    // original
-                    department
-                        + "."
-                        + String.format(
-                            "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
+          // Account for the fact that some course numbers have leading zeroes (e.g 6.006)
+          if (school.equals("mit")) {
+            // When raising and lowering course number, make sure total length is same as original
+            courseNums.add(
+                department
+                    + "."
+                    + String.format(
+                        "%0" + String.valueOf(splitName[1].length()) + "d", courseNum - 1));
             courseNums.add(
                 department
                     + "."
@@ -111,20 +109,20 @@ public class SearchServlet extends HttpServlet {
             courseNums.add(department + " " + String.valueOf(courseNum + 1));
             courseNums.add(department + " " + String.valueOf(courseNum - 1));
           }
-          nameFilter = new FilterPredicate("name", FilterOperator.IN, courseNums);
+          nameFilter = new FilterPredicate("search-name", FilterOperator.IN, courseNums);
         } catch (
             NumberFormatException e) { // If there is any error with fuzzy search, do normal search.
-          nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
+          nameFilter = new FilterPredicate("search-name", FilterOperator.EQUAL, name);
         }
       } else {
-        nameFilter = new FilterPredicate("name", FilterOperator.EQUAL, name);
+        nameFilter = new FilterPredicate("search-name", FilterOperator.EQUAL, name);
       }
       filters.add(nameFilter);
     }
 
     if (!request.getParameter("profName").isEmpty()) {
-      String profName = request.getParameter("profName");
-      Filter profFilter = new FilterPredicate("professor", FilterOperator.EQUAL, profName);
+      String profName = request.getParameter("profName").toLowerCase();
+      Filter profFilter = new FilterPredicate("search-professor", FilterOperator.EQUAL, profName);
       filters.add(profFilter);
     }
 
@@ -234,10 +232,12 @@ public class SearchServlet extends HttpServlet {
 
     Entity newCourse = new Entity("Course-Info");
     newCourse.setProperty("name", name);
+    newCourse.setProperty("search-name", name.toLowerCase());
     newCourse.setProperty("professor", prof);
+    newCourse.setProperty("search-professor", prof.toLowerCase());
     newCourse.setProperty("units", units);
     newCourse.setProperty("term", term);
-    newCourse.setProperty("school", school);
+    newCourse.setProperty("school", school); // Already lowercase.
     db.put(newCourse);
   }
 
