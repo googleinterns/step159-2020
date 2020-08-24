@@ -23,12 +23,11 @@
     fetch(`/term-info?term-key=${termKey}&course-key=${courseKey}`)
       .then((response) => response.json())
       .then((termInfo) => {
-        console.log(termInfo);
-        // document.getElementById("course-name").innerHTML = termInfo[0];
-        // document.getElementById("term-name").innerHTML = termInfo[1];
-        // document.getElementById("num-enrolled").innerHTML = termInfo[2];
-        // document.getElementById("prof-name").innerHTML = termInfo[3];
-        // setProfessorUrl(termInfo[3], termInfo[4]);
+        document.getElementById("course-name").innerHTML = termInfo[0];
+        document.getElementById("term-name").innerHTML = termInfo[1];
+        document.getElementById("num-enrolled").innerHTML = termInfo[2];
+        document.getElementById("prof-name").innerHTML = termInfo[3];
+        setProfessorUrl(termInfo[3], termInfo[4]);
       });
   }
 
@@ -485,7 +484,7 @@
   }
 
   document
-    .getElementById("form-submit")
+    .getElementById("myBtn")
     .addEventListener("click", passRatingProperties);
 
   $(function () {
