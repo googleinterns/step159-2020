@@ -64,28 +64,6 @@ public final class LiveCourseDataTest {
   @Mock HttpServletRequest requestB;
 
   @Test
-  public void FindingExisitngTermEntity() {
-    DatastoreService db = DatastoreServiceFactory.getDatastoreService();
-    createRequest(
-        /* requestServelt */ request,
-        /* schoolName */ "MIT",
-        /* courseName */ "6.006",
-        /* termName */ "Spring 2020",
-        /* units */ "12",
-        /* profName */ "Jason Ku");
-    createRequest(requestB, "MIT", "6.008", "Spring 2018", "6", "Srini");
-    String expectedTermName = "Spring 2020";
-
-    schoolData.addSchoolData(db, request);
-    schoolData.addSchoolData(db, requestB);
-    Key expectedParent = findQueryMatch(db, "Course", "course-name", "6.006").get(0).getKey();
-    Entity found = liveCourseData.getTerm(db, request);
-
-    assertEquals(expectedParent, found.getParent());
-    assertEquals(expectedTermName, found.getProperty("term"));
-  }
-
-  @Test
   public void GettingRatingData_AllProperties() {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     createRequest(
@@ -138,7 +116,7 @@ public final class LiveCourseDataTest {
 
   private void createRequest(
       HttpServletRequest request,
-      Key schoolName,
+      String schoolName,
       String courseName,
       String termName,
       String units,
