@@ -4,7 +4,6 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -35,7 +34,6 @@ import org.json.JSONObject;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
-  private Key currentTermKey;
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
 
@@ -87,6 +85,7 @@ public class DataServlet extends HttpServlet {
     } catch (Exception exception) {
       throw new IOException("Error reading body of request");
     }
+    
     String termKeyString;
     String termFeedback;
     String professorFeedback;
@@ -95,6 +94,7 @@ public class DataServlet extends HttpServlet {
     Long workHours;
     Long difficulty;
     String userId;
+    String grade;
     Boolean translate;
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
@@ -105,6 +105,7 @@ public class DataServlet extends HttpServlet {
       professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
+      grade = jsonObject.getString("grade");
       userId = jsonObject.getString("id");
       translate = Boolean.parseBoolean(jsonObject.getString("translate"));
     } catch (JSONException exception) {
@@ -132,6 +133,7 @@ public class DataServlet extends HttpServlet {
             : termRatingQueryList.get(0);
 
     termRatingEntity.setProperty("comments-term", termFeedback);
+    termRatingEntity.setProperty("grade", grade);
     termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);

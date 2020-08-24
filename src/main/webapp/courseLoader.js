@@ -416,13 +416,12 @@
       ratingProf: document.getElementById("rating-prof").value,
       hours: document.getElementById("hours").value,
       difficulty: document.getElementById("difficulty").value,
+      grade: document.getElementById("grade").value,
       id: await verify(),
       translate: document.getElementById("translate").value,
     };
     document.getElementById("term-form").reset();
-
     const url = newURL(ratingProperties);
-
     return [url, ratingProperties];
   }
 

@@ -24,7 +24,6 @@ async function showCourses() {
   url.searchParams.set("units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("schoolName", school);
-
   const response = await fetch(url);
   const searchResults = await response.json();
   searchMessage.innerHTML += searchResults.message + "<br />";
