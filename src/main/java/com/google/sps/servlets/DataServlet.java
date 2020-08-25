@@ -19,6 +19,9 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,8 +108,8 @@ public class DataServlet extends HttpServlet {
     float termScore = getSentimentScore(termFeedback);
     float professorScore = getSentimentScore(professorFeedback);
 
-    Long toxicityTermComment = (long) getToxicityScore(termFeedback);
-    Long toxicityProfComment = (long) getToxicityScore(professorFeedback);
+    double toxicityTermComment = getToxicityScore(termFeedback);
+    double toxicityProfComment = getToxicityScore(professorFeedback);
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -154,19 +157,65 @@ public class DataServlet extends HttpServlet {
     return queryList;
   }
 
-  public Long getToxicityScore(String text) throws IOException {
+  private double getToxicityScore(String comment) throws IOException {
+    HttpURLConnection commentAnalyzerConnection = creatingPostRequestCommentAnalyzer();
+    // Create JSON request.
+    JSONObject jsonObjectCommentAnalyzer = jsonObjectCommentAnalyzerRequest(comment);
 
-    ProcessBuilder processBuilder =
-        new ProcessBuilder(Arrays.asList("python", "src/main/webapp/perspective.py"));
-    Process process = processBuilder.start();
+    OutputStreamWriter writer = new OutputStreamWriter(commentAnalyzerConnection.getOutputStream());
+    writer.write(jsonObjectCommentAnalyzer.toString());
+    writer.close();
 
-    BufferedReader bufferedReader =
-        new BufferedReader(new InputStreamReader(process.getInputStream()));
-    Long toReturn = null;
-    String line;
-    if ((line = bufferedReader.readLine()) != null) {
-      toReturn = Long.parseLong(line);
+    int responseCode =
+        commentAnalyzerConnection.getResponseCode(); // New items get NOT_FOUND on POST.
+    if (responseCode == HttpURLConnection.HTTP_OK
+        || responseCode == HttpURLConnection.HTTP_NOT_FOUND) {
+      StringBuilder response = new StringBuilder();
+      String line;
+
+      // Read input data stream.
+      BufferedReader reader =
+          new BufferedReader(new InputStreamReader(commentAnalyzerConnection.getInputStream()));
+      while ((line = reader.readLine()) != null) {
+        response.append(line);
+      }
+      reader.close();
+      JSONObject responseJsonObject = new JSONObject(response.toString());
+      double toxicityValue =
+          responseJsonObject
+              .getJSONObject("attributeScores")
+              .getJSONObject("TOXICITY")
+              .getJSONObject("summaryScore")
+              .getFloat("value");
+      return toxicityValue;
+    } else {
+      throw new RuntimeException("Cannot get toxicity score.");
     }
-    return toReturn;
+  }
+
+  private HttpURLConnection creatingPostRequestCommentAnalyzer() {
+    String apiKey = "AIzaSyBnjF0OVUD3BGiuYFMSVe1_g134AKz3xQY";
+    URL urlCommentAnalyzer =
+        new URL("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey);
+    HttpURLConnection connection = (HttpURLConnection) urlCommentAnalyzer.openConnection();
+    // Enable output for the connection.
+    connection.setDoOutput(true);
+    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+    connection.setRequestProperty("Accept", "application/json");
+    // Set HTTP request method.
+    connection.setRequestMethod("POST");
+    return connection;
+  }
+
+  private JSONObject jsonObjectCommentAnalyzerRequest(String text) {
+    JSONObject jsonObject = new JSONObject();
+    JSONObject textJsonObject = new JSONObject();
+    JSONObject toxicityJsonObject = new JSONObject();
+    JSONObject toxicityScoreJsonObject = new JSONObject();
+    jsonObject.put("comment", textJsonObject.put("text", text));
+    jsonObject.put("languages", Arrays.asList("en"));
+    jsonObject.put(
+        "requestedAttributes", toxicityJsonObject.put("TOXICITY", toxicityScoreJsonObject));
+    return jsonObject;
   }
 }
