@@ -121,8 +121,8 @@ public class DataServlet extends HttpServlet {
       professorFeedback = translateTextToEnglish(professorFeedback);
     }
 
-    Float termScore = getSentimentScore(termFeedback);
-    Float professorScore = getSentimentScore(professorFeedback);
+    float termScore = getSentimentScore(termFeedback);
+    float professorScore = getSentimentScore(professorFeedback);
 
     double toxicityTermComment = getToxicityScore(termFeedback);
     double toxicityProfComment = getToxicityScore(professorFeedback);
