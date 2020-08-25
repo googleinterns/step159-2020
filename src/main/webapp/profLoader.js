@@ -13,7 +13,7 @@
 
   function fillTitle(profData) {
     document.getElementById("prof-name").innerHTML = profName;
-    linkContainer = document.getElementById("link-container");
+    const linkContainer = document.getElementById("link-container");
 
     for (let dataHolder of profData) {
       const newLink = document.createElement("a");
