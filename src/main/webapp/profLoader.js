@@ -3,22 +3,35 @@
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
-  const average = (list) =>
-    list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const profKey = urlParams.get("prof-key");
   const profName = urlParams.get("prof-name");
 
+  function fillTitle(profData) {
+    document.getElementById("prof-name").innerHTML = profName;
+    linkContainer = document.getElementById("link-container");
+
+    for (let dataHolder of profData) {
+      const newLink = document.createElement("a");
+      newLink.innerHTML = `${dataHolder.course} - ${dataHolder.term}`;
+
+      const url = new URL("/course.html", window.location.origin);
+      url.searchParams.set("term-key", dataHolder.termKey);
+      url.searchParams.set("course-key", dataHolder.courseKey);
+      newLink.setAttribute("href", url);
+      linkContainer.appendChild(newLink);
+    }
+  }
+
   function populateData() {
     fetch(`/prof-data?prof-key=${profKey}`)
       .then((response) => response.json())
-      .then((profInfo) => {
-        document.getElementById("prof-name").innerHTML = profName;
+      .then((profData) => {
+        fillTitle(profData);
         google.charts.setOnLoadCallback(() => {
-          makeDiffComparisonChart(profInfo);
-          makePerceptionComparisonChart(profInfo);
+          makeDiffComparisonChart(profData);
+          makePerceptionComparisonChart(profData);
         });
       });
   }
@@ -28,13 +41,16 @@
   });
 
   function makeDiffComparisonChart(profData) {
+    const average = (list) =>
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
+
     const courseList = [];
     const difficultyAvgList = [];
 
     for (let dataHolder of profData) {
-      courseList.push(dataHolder.term);
+      courseList.push(`${dataHolder.course} - ${dataHolder.term}`);
       difficultyAvgList.push(
-        average(dummyGradeData.concat(dataHolder.difficultyList))
+        average(dummyGradeData.concat(dataHolder.difficultyList)) + 3
       );
     }
 
@@ -59,14 +75,17 @@
   }
 
   function makePerceptionComparisonChart(profData) {
+    const average = (list) =>
+      list.reduce((prev, curr) => prev + curr, 0) / list.length;
+
     const courseList = [];
     const perceptionAvgList = [];
     const commentList = [];
 
     for (let dataHolder of profData) {
-      courseList.push(dataHolder.term);
+      courseList.push(`${dataHolder.course} - ${dataHolder.term}`);
       perceptionAvgList.push(
-        average(dummyGradeData.concat(dataHolder.perceptionList))
+        average(dummyGradeData.concat(dataHolder.perceptionList)) + 7
       );
 
       for (let comment of dummyComments.concat(dataHolder.commentsList)) {
