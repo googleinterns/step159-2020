@@ -32,7 +32,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /** An item on a todo list. */
@@ -101,30 +100,29 @@ public class DataServlet extends HttpServlet {
     String userId;
     String grade;
     Boolean translate;
-
-    try {
-      JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-      termKeyString = jsonObject.getString("termKey");
-      termFeedback = jsonObject.getString("termInput");
-      professorFeedback = jsonObject.getString("profInput");
-      termRating = (long) jsonObject.getFloat("ratingTerm");
-      professorRating = (long) jsonObject.getFloat("ratingProf");
-      workHours = (long) jsonObject.getFloat("hours");
-      difficulty = (long) jsonObject.getFloat("difficulty");
-      grade = jsonObject.getString("grade");
-      userId = jsonObject.getString("id");
-      translate = Boolean.parseBoolean(jsonObject.getString("translate"));
-    } catch (JSONException exception) {
-      throw new IOException("Error parsing JSON request string");
-    }
+    // try {
+    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+    termKeyString = jsonObject.getString("termKey");
+    termFeedback = jsonObject.getString("termInput");
+    professorFeedback = jsonObject.getString("profInput");
+    termRating = (long) jsonObject.getFloat("ratingTerm");
+    professorRating = (long) jsonObject.getFloat("ratingProf");
+    workHours = (long) jsonObject.getFloat("hours");
+    difficulty = (long) jsonObject.getFloat("difficulty");
+    grade = jsonObject.getString("grade");
+    userId = jsonObject.getString("id");
+    translate = Boolean.parseBoolean(jsonObject.getString("translate"));
+    // } catch (JSONException exception) {
+    //   throw new IOException("Error parsing JSON request string");
+    // }
 
     if (translate) {
       termFeedback = translateTextToEnglish(termFeedback);
       professorFeedback = translateTextToEnglish(professorFeedback);
     }
 
-    float termScore = getSentimentScore(termFeedback);
-    float professorScore = getSentimentScore(professorFeedback);
+    Float termScore = getSentimentScore(termFeedback);
+    Float professorScore = getSentimentScore(professorFeedback);
 
     double toxicityTermComment = getToxicityScore(termFeedback);
     double toxicityProfComment = getToxicityScore(professorFeedback);
