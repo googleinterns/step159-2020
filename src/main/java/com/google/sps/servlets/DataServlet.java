@@ -100,21 +100,21 @@ public class DataServlet extends HttpServlet {
     String userId;
     String grade;
     Boolean translate;
-    // try {
-    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-    termKeyString = jsonObject.getString("termKey");
-    termFeedback = jsonObject.getString("termInput");
-    professorFeedback = jsonObject.getString("profInput");
-    termRating = (long) jsonObject.getFloat("ratingTerm");
-    professorRating = (long) jsonObject.getFloat("ratingProf");
-    workHours = (long) jsonObject.getFloat("hours");
-    difficulty = (long) jsonObject.getFloat("difficulty");
-    grade = jsonObject.getString("grade");
-    userId = jsonObject.getString("id");
-    translate = Boolean.parseBoolean(jsonObject.getString("translate"));
-    // } catch (JSONException exception) {
-    //   throw new IOException("Error parsing JSON request string");
-    // }
+    try {
+      JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+      termKeyString = jsonObject.getString("termKey");
+      termFeedback = jsonObject.getString("termInput");
+      professorFeedback = jsonObject.getString("profInput");
+      termRating = (long) jsonObject.getFloat("ratingTerm");
+      professorRating = (long) jsonObject.getFloat("ratingProf");
+      workHours = (long) jsonObject.getFloat("hours");
+      difficulty = (long) jsonObject.getFloat("difficulty");
+      grade = jsonObject.getString("grade");
+      userId = jsonObject.getString("id");
+      translate = Boolean.parseBoolean(jsonObject.getString("translate"));
+    } catch (JSONException exception) {
+      throw new IOException("Error parsing JSON request string");
+    }
 
     if (translate) {
       termFeedback = translateTextToEnglish(termFeedback);
