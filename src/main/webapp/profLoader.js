@@ -50,7 +50,7 @@
     for (let dataHolder of profData) {
       courseList.push(`${dataHolder.course} - ${dataHolder.term}`);
       difficultyAvgList.push(
-        average(dummyGradeData.concat(dataHolder.difficultyList)) + 3
+        average(dummyGradeData.concat(dataHolder.difficultyList))
       );
     }
 
@@ -82,7 +82,7 @@
     for (let dataHolder of profData) {
       courseList.push(`${dataHolder.course} - ${dataHolder.term}`);
       perceptionAvgList.push(
-        average(dummyGradeData.concat(dataHolder.perceptionList)) + 7
+        average(dummyGradeData.concat(dataHolder.perceptionList))
       );
 
       for (let comment of dummyComments.concat(dataHolder.commentsList)) {
