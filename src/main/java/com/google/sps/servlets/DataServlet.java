@@ -216,6 +216,7 @@ public class DataServlet extends HttpServlet {
   }
 
   private HttpURLConnection creatingPostRequestCommentAnalyzer() throws IOException {
+    // TO DO: Find a way to hide the API Key for security reasons.
     String apiKey = "AIzaSyBnjF0OVUD3BGiuYFMSVe1_g134AKz3xQY";
     URL urlCommentAnalyzer =
         new URL("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey);
@@ -238,6 +239,8 @@ public class DataServlet extends HttpServlet {
     jsonObject.put("comment", textJsonObject.put("text", text));
     jsonObject.put("languages", Arrays.asList("en"));
     jsonObject.put(
+        // TOXICITY is the JSONObject where the API chooses to place the score.
+        // Must be capitalized.
         "requestedAttributes", toxicityJsonObject.put("TOXICITY", toxicityScoreJsonObject));
     return jsonObject;
   }
