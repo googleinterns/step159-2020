@@ -12,7 +12,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.sps.data.ProfDataHolder;
+import com.google.sps.data.ProfDataForTerm;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ProfessorData extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     try {
-      List<ProfDataHolder> profPageData = getAllDataFromProf(db, request);
+      List<ProfDataForTerm> profPageData = getAllDataFromProf(db, request);
       String profPageDataJSON = makeJSON(profPageData);
       response.setContentType("application/json;");
       response.getWriter().println(profPageDataJSON);
@@ -37,9 +37,9 @@ public class ProfessorData extends HttpServlet {
     }
   }
 
-  public List<ProfDataHolder> getAllDataFromProf(DatastoreService db, HttpServletRequest request)
+  public List<ProfDataForTerm> getAllDataFromProf(DatastoreService db, HttpServletRequest request)
       throws EntityNotFoundException {
-    List<ProfDataHolder> profData = new ArrayList();
+    List<ProfDataForTerm> profData = new ArrayList();
     Key profKey = KeyFactory.stringToKey(request.getParameter("prof-key"));
 
     Filter profFilter = new FilterPredicate("professorKey", FilterOperator.EQUAL, profKey);
@@ -48,12 +48,8 @@ public class ProfessorData extends HttpServlet {
 
     for (Entity term : foundTerms) {
       List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
-      ProfDataHolder profDataHolderElement = new ProfDataHolder();
+      ProfDataForTerm profDataHolderElement = new ProfDataForTerm();
       profDataHolderElement.setTerm(term.getProperty("term").toString());
-      profDataHolderElement.setCourse(
-          db.get(term.getParent()).getProperty("course-name").toString());
-      profDataHolderElement.setCourseKey(KeyFactory.keyToString(db.get(term.getParent()).getKey()));
-      profDataHolderElement.setTermKey(KeyFactory.keyToString(term.getKey()));
 
       List<Object> hoursList = new ArrayList();
       List<Object> difficultyList = new ArrayList();
