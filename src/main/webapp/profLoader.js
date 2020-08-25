@@ -3,6 +3,9 @@
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
+  const average = (list) =>
+    list.reduce((prev, curr) => prev + curr, 0) / list.length;
+
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const profKey = urlParams.get("prof-key");
@@ -41,9 +44,6 @@
   });
 
   function makeDiffComparisonChart(profData) {
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
     const courseList = [];
     const difficultyAvgList = [];
 
@@ -75,9 +75,6 @@
   }
 
   function makePerceptionComparisonChart(profData) {
-    const average = (list) =>
-      list.reduce((prev, curr) => prev + curr, 0) / list.length;
-
     const courseList = [];
     const perceptionAvgList = [];
     const commentList = [];
