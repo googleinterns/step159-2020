@@ -447,10 +447,6 @@
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
 
-  document
-    .getElementById("myBtn")
-    .addEventListener("click", passRatingProperties);
-
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
