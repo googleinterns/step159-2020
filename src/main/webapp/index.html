@@ -7,36 +7,15 @@
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <meta name="google-signin-client_id" content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com">
         <script src="search-script.js"></script>
+        <script src="login-script.js"></script>
     </head>
     <body>
         <div id="login-box">
-            <div class="g-signin2" id="login-button" data-onsuccess="onSignIn"></div>
+            <div class="g-signin2" id="login-button" data-onsuccess="signIn"></div>
+            <div id="login-message"></div>
         </div>
         <div class="hidden" id="class-info">
             <div id="school-name"></div>
-            <form id="course-form" onsubmit="addCourse()">
-                <p>Enter course info:</p>
-                <div id="class-textarea">
-                    <textarea name="course-name" id="course-name" placeholder="Class Name" maxlength=1500></textarea>
-                    <textarea name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500></textarea>
-                </div>
-                <div id="class-selectboxes">
-                    <fieldset>
-                        <legend>How many units?</legend>      
-                        <input type="radio" name="num-units" value="1">1<br>      
-                        <input type="radio" name="num-units" value="2">2<br>      
-                        <input type="radio" name="num-units" value="3">3<br>      
-                    </fieldset> 
-                    <label for="term">Term:</label>
-                    <select id="term" name="term">
-                        <option value="Spring 2020">Spring 2020</option>
-                        <option value="Fall 2019">Fall 2019</option>
-                        <option value="Spring 2019">Spring 2019</option>
-                        <option value="Fall 2018">Fall 2018</option>
-                    </select>
-                </div>
-                <input type="submit"/>
-            </form>
             <div id="course-search">
                 <p>What course are you searching for?</p>
                 <div id="search-textarea">
@@ -48,6 +27,7 @@
                         <option value="">Select term...</option>
                         <option value="Spring 2020">Spring 2020</option>
                         <option value="Fall 2019">Fall 2019</option>
+                        <option value="Summer 2019">Summer 2019</option>
                         <option value="Spring 2019">Spring 2019</option>
                         <option value="Fall 2018">Fall 2018</option>
                     </select>
@@ -59,6 +39,7 @@
                     </fieldset>   
                 </div>   
                 <button id="search-button" onclick="showCourses()">See courses!</button>
+                <div id="search-message"></div>
                 <div id=search-results></div>
             </div>
             <button id="logout-button" onclick="signOut()">Sign out</button>

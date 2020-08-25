@@ -4,7 +4,6 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -15,6 +14,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
+import com.google.cloud.translate.v3.LocationName;
+import com.google.cloud.translate.v3.TranslateTextRequest;
+import com.google.cloud.translate.v3.TranslateTextResponse;
+import com.google.cloud.translate.v3.TranslationServiceClient;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,11 +39,16 @@ import org.json.JSONObject;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
-  private Key currentTermKey;
+  private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
-  private final DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
-  // Will re-add constructor later for testing.
+  public DataServlet() throws IOException {
+    this.languageService = LanguageServiceClient.create();
+  }
+
+  public DataServlet(LanguageServiceClient languageServiceClient) {
+    this.languageService = languageServiceClient;
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -63,22 +71,23 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get written feedback.
-    addTermRating(request);
+    addTermRating(request, datastore);
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
   }
 
-  public void addTermRating(HttpServletRequest request) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  public void addTermRating(HttpServletRequest request, DatastoreService datastore)
+      throws IOException {
     StringBuilder stringBuilder = new StringBuilder();
     String line = null;
+    // Talked with Luke and as we won't do validation testing, I will not
+    // test either of the try-catch loops.
     try {
       BufferedReader reader = request.getReader();
       while ((line = reader.readLine()) != null) {
         stringBuilder.append(line);
       }
     } catch (Exception exception) {
-      /*report an error*/
       throw new IOException("Error reading body of request");
     }
 
@@ -90,6 +99,9 @@ public class DataServlet extends HttpServlet {
     Long workHours;
     Long difficulty;
     String userId;
+    String grade;
+    Boolean translate;
+
     try {
       JSONObject jsonObject = new JSONObject(stringBuilder.toString());
       termKeyString = jsonObject.getString("termKey");
@@ -99,10 +111,16 @@ public class DataServlet extends HttpServlet {
       professorRating = (long) jsonObject.getFloat("ratingProf");
       workHours = (long) jsonObject.getFloat("hours");
       difficulty = (long) jsonObject.getFloat("difficulty");
+      grade = jsonObject.getString("grade");
       userId = jsonObject.getString("id");
+      translate = Boolean.parseBoolean(jsonObject.getString("translate"));
     } catch (JSONException exception) {
-      // If it could not parse string.
       throw new IOException("Error parsing JSON request string");
+    }
+
+    if (translate) {
+      termFeedback = translateTextToEnglish(termFeedback);
+      professorFeedback = translateTextToEnglish(professorFeedback);
     }
 
     float termScore = getSentimentScore(termFeedback);
@@ -132,6 +150,7 @@ public class DataServlet extends HttpServlet {
     termRatingEntity.setProperty("comments-term", termFeedback);
     termRatingEntity.setProperty("toxicity-term-comments", toxicityTermComment);
     termRatingEntity.setProperty("toxicity-prof-comments", toxicityProfComment);
+    termRatingEntity.setProperty("grade", grade);
     termRatingEntity.setProperty("reviewer-id", userId);
     termRatingEntity.setProperty("score-term", termScore);
     termRatingEntity.setProperty("perception-term", termRating);
@@ -144,12 +163,11 @@ public class DataServlet extends HttpServlet {
   }
 
   private float getSentimentScore(String feedback) throws IOException {
-    LanguageServiceClient languageService = LanguageServiceClient.create();
     Document feedbackDoc =
         Document.newBuilder().setContent(feedback).setType(Document.Type.PLAIN_TEXT).build();
-    Sentiment sentiment = languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
+    Sentiment sentiment = this.languageService.analyzeSentiment(feedbackDoc).getDocumentSentiment();
     float score = sentiment.getScore();
-    languageService.close();
+    // Won't be closing languageService as we want to use constructor.
     return score;
   }
 
@@ -224,5 +242,26 @@ public class DataServlet extends HttpServlet {
     jsonObject.put(
         "requestedAttributes", toxicityJsonObject.put("TOXICITY", toxicityScoreJsonObject));
     return jsonObject;
+  }
+
+  private String translateTextToEnglish(String text) throws IOException {
+    String projectId = "nina-laura-dagm-step-2020";
+    try (TranslationServiceClient client = TranslationServiceClient.create()) {
+      LocationName parent = LocationName.of(projectId, "global");
+
+      TranslateTextRequest request =
+          TranslateTextRequest.newBuilder()
+              .setParent(parent.toString())
+              .setMimeType("text/plain")
+              .setTargetLanguageCode("en")
+              .addContents(text)
+              .build();
+
+      TranslateTextResponse response = client.translateText(request);
+      return response.getTranslationsList().get(0).getTranslatedText();
+
+    } catch (IOException exception) {
+      throw new IOException("Could not translate comments");
+    }
   }
 }
