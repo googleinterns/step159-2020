@@ -70,10 +70,9 @@ public final class DataServletTest {
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
 
-    double sentimentScore = (double) -0.8999999761581421;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
-            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.8999999761581421))
+            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -105,8 +104,9 @@ public final class DataServletTest {
     assertEquals(Long.valueOf(4), termRatingEntity.getProperty("difficulty"));
     assertEquals("The professor was amazing.", termRatingEntity.getProperty("comments-professor"));
     assertEquals(Long.valueOf(3), termRatingEntity.getProperty("perception-professor"));
-    assertEquals(sentimentScore, termRatingEntity.getProperty("score-term"));
-    assertEquals(sentimentScore, termRatingEntity.getProperty("score-professor"));
+    // Values of Sentiment Scores.
+    assertEquals((double) -0.8999999761581421, termRatingEntity.getProperty("score-term"));
+    assertEquals((double) -0.8999999761581421, termRatingEntity.getProperty("score-professor"));
   }
 
   @Test
@@ -118,10 +118,9 @@ public final class DataServletTest {
     BufferedReader originalRatingBufferedReader = new BufferedReader(originalRatingReader);
     when(request.getReader()).thenReturn(originalRatingBufferedReader);
 
-    double sentimentScore = (double) -0.699999988079071;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
-            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.699999988079071))
+            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.699999988079071)) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -161,8 +160,9 @@ public final class DataServletTest {
     assertEquals(Long.valueOf(5), termRatingEntity.getProperty("difficulty"));
     assertEquals("This teacher was wonderful.", termRatingEntity.getProperty("comments-professor"));
     assertEquals(Long.valueOf(3), termRatingEntity.getProperty("perception-professor"));
-    assertEquals(sentimentScore, termRatingEntity.getProperty("score-term"));
-    assertEquals(sentimentScore, termRatingEntity.getProperty("score-professor"));
+    // Values of Sentiment Scores.
+    assertEquals((double) -0.699999988079071, termRatingEntity.getProperty("score-term"));
+    assertEquals((double) -0.699999988079071, termRatingEntity.getProperty("score-professor"));
   }
 
   public void createSchoolCourseAndTermEntities(
