@@ -110,6 +110,12 @@ public class DataServlet extends HttpServlet {
 
     double toxicityTermComment = getToxicityScore(termFeedback);
     double toxicityProfComment = getToxicityScore(professorFeedback);
+    if (toxicityTermComment >= 0.90) {
+      termFeedback = "Could not show comment due to toxicity.";
+    }
+    if (toxicityTermComment >= 0.90) {
+      professorFeedback = "Could not show comment due to toxicity.";
+    }
 
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
@@ -193,7 +199,7 @@ public class DataServlet extends HttpServlet {
     }
   }
 
-  private HttpURLConnection creatingPostRequestCommentAnalyzer() {
+  private HttpURLConnection creatingPostRequestCommentAnalyzer() throws IOException {
     String apiKey = "AIzaSyBnjF0OVUD3BGiuYFMSVe1_g134AKz3xQY";
     URL urlCommentAnalyzer =
         new URL("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey);
@@ -202,12 +208,13 @@ public class DataServlet extends HttpServlet {
     connection.setDoOutput(true);
     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
     connection.setRequestProperty("Accept", "application/json");
+    connection.setReadTimeout(10000);
     // Set HTTP request method.
     connection.setRequestMethod("POST");
     return connection;
   }
 
-  private JSONObject jsonObjectCommentAnalyzerRequest(String text) {
+  private JSONObject jsonObjectCommentAnalyzerRequest(String text) throws IOException {
     JSONObject jsonObject = new JSONObject();
     JSONObject textJsonObject = new JSONObject();
     JSONObject toxicityJsonObject = new JSONObject();
