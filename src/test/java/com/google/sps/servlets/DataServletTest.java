@@ -58,7 +58,7 @@ public final class DataServletTest {
     Reader reader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
-    
+
     Float sentimentScore = (float) -0.8999999761581421;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
@@ -74,7 +74,7 @@ public final class DataServletTest {
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "3");
-    
+
     // ACT.
     dataServletInstance.addTermRating(request, datastore);
     Entity termRatingEntity =
@@ -84,7 +84,7 @@ public final class DataServletTest {
                 /* propertyName */ "reviewer-id",
                 /* propertyValue */ "9223372036854775807")
             .get(0);
-    
+
     // ASSERT.
     assertEquals("I do not like this.", termRatingEntity.getProperty("comments-term"));
     assertEquals("9223372036854775807", termRatingEntity.getProperty("reviewer-id"));
@@ -104,7 +104,7 @@ public final class DataServletTest {
     Reader originalRatingReader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader originalRatingBufferedReader = new BufferedReader(originalRatingReader);
     when(request.getReader()).thenReturn(originalRatingBufferedReader);
-    
+
     Float sentimentScore = (float) -0.699999988079071;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
@@ -119,10 +119,10 @@ public final class DataServletTest {
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "3");
-    
+
     // ACT.
     dataServletInstance.addTermRating(request, datastore);
-    
+
     // SETUP.
     Reader newRatingReader = new FileReader("src/main/webapp/WEB-INF/testOverwriteRating.txt");
     BufferedReader NewRatingBufferedReader = new BufferedReader(newRatingReader);
