@@ -296,9 +296,9 @@
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
 
-  //   $(function () {
-  //     $('[data-toggle="tooltip"]').tooltip();
-  //   });
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 
   document
     .getElementById("button")
