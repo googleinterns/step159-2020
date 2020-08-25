@@ -205,7 +205,6 @@
   }
 
   async function postRatingProperties(url, data = {}) {
-    console.log("working");
     // Default options are marked with *.
     const response = await fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -292,7 +291,6 @@
 
   async function passRatingProperties() {
     const urlAndData = await getRatingPropertiesToStore();
-    console.log(urlAndData[1]);
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
 
@@ -301,6 +299,6 @@
   });
 
   document
-    .getElementById("button")
+    .getElementById("form-submit")
     .addEventListener("click", passRatingProperties);
 })();
