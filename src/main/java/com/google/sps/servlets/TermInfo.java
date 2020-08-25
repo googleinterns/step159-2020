@@ -39,8 +39,13 @@ public class TermInfo extends HttpServlet {
     String term = db.get(termKey).getProperty("term").toString();
     String enrolled = db.get(termKey).getProperty("num-enrolled").toString();
     String courseName = db.get(courseKey).getProperty("course-name").toString();
+    String profKey = KeyFactory.keyToString((Key) db.get(termKey).getProperty("professorKey"));
+    String profName =
+        db.get((Key) db.get(termKey).getProperty("professorKey"))
+            .getProperty("professor-name")
+            .toString();
 
-    return Arrays.asList(courseName, term, enrolled);
+    return Arrays.asList(courseName, term, enrolled, profName, profKey);
   }
 
   private String makeJSON(Object changeItem) {
