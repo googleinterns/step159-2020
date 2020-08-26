@@ -18,7 +18,7 @@ function createReportItem(reportEntity) {
 
   const userEmail = document.createElement("strong");
   userEmail.setAttribute("class", "d-block text-gray-dark");
-  userEmail.innerHTML = `User Email: ${reportEntity.properties.user}`;
+  userEmail.innerHTML = `User Email: ${reportEntity.properties.email}`;
 
   const reportBody = document.createElement("p");
   reportBody.setAttribute(

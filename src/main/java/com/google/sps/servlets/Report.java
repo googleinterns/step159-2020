@@ -19,7 +19,7 @@ public class Report extends HttpServlet {
     Entity newReport = new Entity("Report");
     newReport.setProperty("type", request.getParameter("report-type"));
     newReport.setProperty("report", request.getParameter("report"));
-    newReport.setProperty("user", request.getParameter("email"));
+    newReport.setProperty("email", request.getParameter("email"));
     db.put(newReport);
     response.sendRedirect("/report.html");
   }
