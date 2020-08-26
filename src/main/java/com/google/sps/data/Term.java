@@ -65,9 +65,9 @@ public class Term implements Comparable<Term> {
   @Override
   public int compareTo(Term term) {
     if (year == term.year) {
-      return termList.indexOf(season) - term.termList.indexOf(term.season);
+      return term.termList.indexOf(term.season) - termList.indexOf(season);
     } else {
-      return year - term.year;
+      return term.year - year;
     }
   }
 
