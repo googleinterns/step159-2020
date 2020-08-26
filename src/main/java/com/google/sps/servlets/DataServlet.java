@@ -32,6 +32,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /** An item on a todo list. */
@@ -216,9 +217,10 @@ public class DataServlet extends HttpServlet {
   }
 
   private HttpURLConnection creatingPostRequestCommentAnalyzer() throws IOException {
-    String apiKey = "AIzaSyBnjF0OVUD3BGiuYFMSVe1_g134AKz3xQY";
     URL urlCommentAnalyzer =
-        new URL("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey);
+        new URL(
+            "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key="
+                + System.getenv("API_KEY"));
     HttpURLConnection connection = (HttpURLConnection) urlCommentAnalyzer.openConnection();
     // Enable output for the connection.
     connection.setDoOutput(true);
