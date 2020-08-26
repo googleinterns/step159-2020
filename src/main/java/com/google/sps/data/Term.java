@@ -9,6 +9,7 @@ public class Term {
   int numTerms;
   int currTerm;
   ArrayList<String> termList;
+  Boolean quarter;
 
   final List<String> QTR_SCHOOLS = Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
   final ArrayList<String> QTR_TERMS =
@@ -19,6 +20,7 @@ public class Term {
   public Term(String termString, Boolean isQuarter) {
     season = termString.split(" ")[0];
     year = Integer.parseInt(termString.split(" ")[1]);
+    quarter = isQuarter;
     if (isQuarter) {
       termList = QTR_TERMS;
     } else {
@@ -36,19 +38,19 @@ public class Term {
     return year;
   }
 
-  public String getNext() {
+  public Term getNext() {
     if (currTerm + 1 < numTerms) {
-      return termList.get(currTerm + 1) + " " + String.valueOf(year);
+      return new Term(termList.get(currTerm + 1) + " " + String.valueOf(year), quarter);
     } else {
-      return termList.get(0) + " " + String.valueOf(year + 1);
+      return new Term(termList.get(0) + " " + String.valueOf(year + 1), quarter);
     }
   }
 
-  public String getPrev() {
+  public Term getPrev() {
     if (currTerm == 0) {
-      return termList.get(numTerms - 1) + " " + String.valueOf(year - 1);
+      return new Term(termList.get(numTerms - 1) + " " + String.valueOf(year - 1), quarter);
     } else {
-      return termList.get(currTerm - 1) + " " + String.valueOf(year);
+      return new Term(termList.get(currTerm - 1) + " " + String.valueOf(year), quarter);
     }
   }
 
