@@ -2,7 +2,7 @@ package com.google.sps.data;
 
 import java.util.*;
 
-public class Term {
+public class Term implements Comparable<Term> {
   String season;
   int year;
   ListIterator termIterator;
@@ -60,5 +60,18 @@ public class Term {
 
   public String toString() {
     return season + " " + String.valueOf(year);
+  }
+
+  @Override
+  public int compareTo(Term term) {
+    if (year == term.year) {
+      return termList.indexOf(season) - term.termList.indexOf(term.season);
+    } else {
+      return year - term.year;
+    }
+  }
+
+  public int compare(Term one, Term two) {
+    return one.compareTo(two);
   }
 }

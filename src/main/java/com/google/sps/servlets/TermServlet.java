@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Collections;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -88,6 +89,7 @@ public class TermServlet extends HttpServlet {
       terms.add(prevTerm);
       terms.add(nextTerm);
     }
+    Collections.sort(terms);
     return terms; // TODO: Sort for correct display order
   }
 
