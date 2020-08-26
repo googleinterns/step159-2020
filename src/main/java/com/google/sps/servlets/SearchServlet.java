@@ -133,7 +133,7 @@ public class SearchServlet extends HttpServlet {
       Filter termFilter;
       if (fuzzy) {
         List<String> terms = new ArrayList<>();
-        Term termObject = new Term(term, school);
+        Term termObject = new Term(term, TermServlet.isQuarter(school));
         terms.add(termObject.getPrev());
         terms.add(term);
         terms.add(termObject.getNext());

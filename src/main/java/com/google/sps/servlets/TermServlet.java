@@ -13,8 +13,11 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.data.Term;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +32,16 @@ public class TermServlet extends HttpServlet {
   static final List<String> QTR_SCHOOLS =
       Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
 
+  final String QTR_TERMS[] = {
+    "Winter", "Winter", "Winter", "Spring", "Spring", "Spring",
+    "Summer", "Summer", "Summer", "Fall", "Fall", "Fall"
+  };
+
+  final String SEMESTER_TERMS[] = {
+    "Spring", "Spring", "Spring", "Spring", "Spring", "Summer",
+    "Summer", "Fall", "Fall", "Fall", "Fall", "Fall"
+  };
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Boolean quarter = isQuarter(request.getParameter("school-name"));
@@ -41,5 +54,20 @@ public class TermServlet extends HttpServlet {
   /* Return term system of a school. */
   public static Boolean isQuarter(String schoolName) {
     return QTR_SCHOOLS.contains(schoolName);
+  }
+
+  private Term getCurrTerm(Boolean isQuarter) {
+    java.util.Date date = new Date(); // Initializes to current date.
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    int month = cal.get(Calendar.MONTH);
+    String season;
+    if (isQuarter) {
+      season = QTR_TERMS[month];
+    } else {
+      season = SEMESTER_TERMS[month];
+    }
+    int year = cal.get(Calendar.YEAR);
+    return new Term(season + " " + String.valueOf(year), isQuarter);
   }
 }

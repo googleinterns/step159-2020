@@ -5,7 +5,6 @@ import java.util.*;
 public class Term {
   String season;
   int year;
-  String school;
   ListIterator termIterator;
   int numTerms;
   int currTerm;
@@ -17,11 +16,10 @@ public class Term {
   final ArrayList<String> SEMESTER_TERMS =
       new ArrayList<String>(Arrays.asList("Spring", "Summer", "Fall"));
 
-  public Term(String termString, String termSchool) {
+  public Term(String termString, Boolean isQuarter) {
     season = termString.split(" ")[0];
     year = Integer.parseInt(termString.split(" ")[1]);
-    school = termSchool;
-    if (QTR_SCHOOLS.contains(school)) {
+    if (isQuarter) {
       termList = QTR_TERMS;
     } else {
       termList = SEMESTER_TERMS;
@@ -36,10 +34,6 @@ public class Term {
 
   public int getYear() {
     return year;
-  }
-
-  public String getSchool() {
-    return school;
   }
 
   public String getNext() {
