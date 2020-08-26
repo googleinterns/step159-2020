@@ -450,7 +450,36 @@
     $('[data-toggle="tooltip"]').tooltip();
   });
 
+  async function getLatestRating() {
+    const userId = await verify();
+    const termKey = urlParams.get("term-key");
+    const url = new URL("/latest-rating", window.location.origin);
+    url.searchParams.set("reviewer-id", userId);
+    url.searchParams.set("term-key", termKey);
+    const response = await fetch(url);
+    const formInfo = await response.json();
+
+    if (formInfo == null) {
+      document.getElementById("message-rating").innerHTML =
+        "You have not submitted a rating for this term.";
+      console.log("null");
+    } else {
+      document.getElementById("term-input").innerHTML = formInfo["termInput"];
+      document.getElementById("prof-input").innerHTML = formInfo["profInput"];
+      document.getElementById("rating-term").innerHTML = formInfo["ratingTerm"];
+      document.getElementById("rating-prof").innerHTML = formInfo["ratingProf"];
+      document.getElementById("hours").innerHTML = formInfo["hours"];
+      document.getElementById("difficulty").innerHTML = formInfo["difficulty"];
+      document.getElementById("grade").innerHTML = formInfo["grade"];
+      console.log("worked");
+    }
+  }
+
   document
     .getElementById("form-submit")
     .addEventListener("click", passRatingProperties);
+
+  document
+    .getElementById("latest-rating")
+    .addEventListener("click", getLatestRating);
 })();
