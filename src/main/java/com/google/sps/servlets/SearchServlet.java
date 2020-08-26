@@ -259,7 +259,7 @@ public class SearchServlet extends HttpServlet {
     Query courseQuery = new Query("Course-Info");
     courseQuery.setFilter(CompositeFilterOperator.and(filters));
     List<Entity> results = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
-    return results.size() == 0;
+    return results.isEmpty();
   }
 
   private Key findTermKey(
