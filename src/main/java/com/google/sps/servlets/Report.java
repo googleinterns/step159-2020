@@ -15,12 +15,13 @@ public class Report extends HttpServlet {
   private DatastoreService db = DatastoreServiceFactory.getDatastoreService();
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Entity newBug = new Entity("Report");
-    newBug.setProperty("type", request.getParameter("report-type"));
-    newBug.setProperty("description", request.getParameter("description"));
-    newBug.setProperty("user-email", request.getParameter("user-email"));
-    db.put(newBug);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Entity newReport = new Entity("Report");
+    newReport.setProperty("type", request.getParameter("report-type"));
+    newReport.setProperty("report", request.getParameter("report"));
+    newReport.setProperty("user-email", request.getParameter("email"));
+    db.put(newReport);
+    response.sendRedirect("/report.html");
   }
 
   private String makeJSON(Object changeItem) {

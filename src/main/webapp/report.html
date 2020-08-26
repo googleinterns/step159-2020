@@ -29,7 +29,7 @@
             <label for="validationTextarea"
               >Which Figure is the Error In?</label
             >
-            <select id="bug-type" name="report-type" class="custom-select">
+            <select id="report-type" name="report-type" class="custom-select">
               <option value="graphics">Graphics</option>
               <option value="search">Search</option>
               <option value="ratings">Adding Ratings</option>
@@ -40,10 +40,11 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="description">Describe the error here</label>
+            <label for="report">Describe the error here</label>
             <textarea
               class="form-control is-invalid"
-              id="description"
+              id="report"
+              name="report"
               maxlength="1500"
               required
             ></textarea>
@@ -52,10 +53,11 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="user-email">Email Address</label>
+            <label for="email">Email Address</label>
             <input
               class="form-control is-invalid"
-              id="user-email"
+              id="email"
+              name="email"
               type="email"
               required
             />
