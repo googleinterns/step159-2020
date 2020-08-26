@@ -50,6 +50,10 @@ public class ProfessorData extends HttpServlet {
       List<Entity> termRatings = findChildren(db, "Rating", term.getKey());
       ProfDataForTerm profDataHolderElement = new ProfDataForTerm();
       profDataHolderElement.setTerm(term.getProperty("term").toString());
+      profDataHolderElement.setCourse(
+          db.get(term.getParent()).getProperty("course-name").toString());
+      profDataHolderElement.setCourseKey(KeyFactory.keyToString(db.get(term.getParent()).getKey()));
+      profDataHolderElement.setTermKey(KeyFactory.keyToString(term.getKey()));
 
       List<Object> hoursList = new ArrayList();
       List<Object> difficultyList = new ArrayList();

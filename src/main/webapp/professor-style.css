@@ -35,3 +35,12 @@
   padding-top: 75px;
   width: 85%;
 }
+
+#link-container {
+  flex-flow: row wrap;
+  padding-top: 25px;
+}
+
+#link-container a {
+  padding: 0 10px;
+}
