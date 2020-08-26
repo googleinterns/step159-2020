@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Collections;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +90,7 @@ public class TermServlet extends HttpServlet {
       terms.add(nextTerm);
     }
     Collections.sort(terms);
-    return terms; // TODO: Sort for correct display order
+    return terms;
   }
 
   private List<String> termsToString(List<Term> terms) {
