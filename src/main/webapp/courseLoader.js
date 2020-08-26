@@ -251,7 +251,7 @@
     };
     document.getElementById("term-form").reset();
 
-    const url = newURL(
+    const url = addingAttributesToURL(
       ratingProperties.courseKey,
       ratingProperties.termKey,
       ratingProperties.termInput,
@@ -265,7 +265,7 @@
     return [url, ratingProperties];
   }
 
-  function newURL(
+  function addingAttributesToURL(
     termKey,
     courseKey,
     termInput,
