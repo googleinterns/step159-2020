@@ -32,6 +32,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /** An item on a todo list. */
@@ -121,15 +122,15 @@ public class DataServlet extends HttpServlet {
       professorFeedback = translateTextToEnglish(professorFeedback);
     }
 
-    float termScore = getSentimentScore(termFeedback);
-    float professorScore = getSentimentScore(professorFeedback);
+    Float termScore = getSentimentScore(termFeedback);
+    Float professorScore = getSentimentScore(professorFeedback);
 
     double toxicityTermComment = getToxicityScore(termFeedback);
     double toxicityProfComment = getToxicityScore(professorFeedback);
     if (toxicityTermComment >= 0.90) {
       termFeedback = "Could not show comment due to toxicity.";
     }
-    if (toxicityProfComment >= 0.90) {
+    if (toxicityTermComment >= 0.90) {
       professorFeedback = "Could not show comment due to toxicity.";
     }
 
@@ -216,10 +217,10 @@ public class DataServlet extends HttpServlet {
   }
 
   private HttpURLConnection creatingPostRequestCommentAnalyzer() throws IOException {
-    // TO DO: Find a way to hide the API Key for security reasons.
-    String apiKey = "AIzaSyBnjF0OVUD3BGiuYFMSVe1_g134AKz3xQY";
     URL urlCommentAnalyzer =
-        new URL("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey);
+        new URL(
+            "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key="
+                + System.getenv("API_KEY"));
     HttpURLConnection connection = (HttpURLConnection) urlCommentAnalyzer.openConnection();
     // Enable output for the connection.
     connection.setDoOutput(true);
@@ -239,8 +240,6 @@ public class DataServlet extends HttpServlet {
     jsonObject.put("comment", textJsonObject.put("text", text));
     jsonObject.put("languages", Arrays.asList("en"));
     jsonObject.put(
-        // TOXICITY is the JSONObject where the API chooses to place the score.
-        // Must be capitalized.
         "requestedAttributes", toxicityJsonObject.put("TOXICITY", toxicityScoreJsonObject));
     return jsonObject;
   }

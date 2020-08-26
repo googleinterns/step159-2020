@@ -443,19 +443,14 @@
 
   async function passRatingProperties() {
     const urlAndData = await getRatingPropertiesToStore();
-    console.log(urlAndData[1]);
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
-
-  document
-    .getElementById("myBtn")
-    .addEventListener("click", passRatingProperties);
 
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
 
   document
-    .getElementById("button")
+    .getElementById("form-submit")
     .addEventListener("click", passRatingProperties);
 })();
