@@ -11,17 +11,17 @@ public class Term {
   int currTerm;
   ArrayList<String> termList;
 
+  final List<String> QTR_SCHOOLS = Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
   final ArrayList<String> QTR_TERMS =
       new ArrayList<String>(Arrays.asList("Winter", "Spring", "Summer", "Fall"));
   final ArrayList<String> SEMESTER_TERMS =
       new ArrayList<String>(Arrays.asList("Spring", "Summer", "Fall"));
-  // TODO: Potentially add in a summer term.
 
-  public Term(String termString, String termSchool, Boolean isQuarter) {
+  public Term(String termString, String termSchool) {
     season = termString.split(" ")[0];
     year = Integer.parseInt(termString.split(" ")[1]);
     school = termSchool;
-    if (isQuarter) {
+    if (QTR_SCHOOLS.contains(school)) {
       termList = QTR_TERMS;
     } else {
       termList = SEMESTER_TERMS;
