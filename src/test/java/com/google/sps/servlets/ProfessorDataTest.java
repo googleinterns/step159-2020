@@ -1,8 +1,4 @@
-// // // Copyright 2019 Google LLC
-// // //
-// // Licensed under the Apache License, Version 2.0 (the "License");
-// // you may not use this file except in compliance with the License.
-// // You may obtain a copy of the License at
+// // Copyright 2019 Google LLC
 // //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +20,7 @@ import static org.mockito.Mockito.when;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -33,7 +30,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.sps.data.TermDataHolder;
+import com.google.sps.data.ProfDataForTerm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,19 +41,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public final class LiveCourseDataTest {
+public final class ProfessorDataTest {
   private static final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
   private AddSchoolData schoolData;
-  private LiveCourseData liveCourseData;
+  private ProfessorData professorData;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     helper.setUp();
     schoolData = new AddSchoolData();
-    liveCourseData = new LiveCourseData();
+    professorData = new ProfessorData();
   }
 
   @AfterEach
@@ -64,22 +61,45 @@ public final class LiveCourseDataTest {
     helper.tearDown();
   }
 
-  @Mock HttpServletRequest request;
+  @Mock HttpServletRequest requestA;
   @Mock HttpServletRequest requestB;
+  @Mock HttpServletRequest requestC;
 
   @Test
-  public void GettingRatingData_AllProperties() {
+  public void GettingRatingData_AllProperties() throws EntityNotFoundException {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
+
+    List<Long> expectedHoursListA = new ArrayList(Arrays.asList((long) 12));
+    List<Long> expectedDifficultyListA = new ArrayList(Arrays.asList((long) 7));
+    List<Long> expectedPerceptionListA = new ArrayList(Arrays.asList((double) 0.8));
+    List<Long> expectedCommentsListA = new ArrayList(Arrays.asList("Great"));
+
+    List<Long> expectedHoursListB = new ArrayList(Arrays.asList((long) 11));
+    List<Long> expectedDifficultyListB = new ArrayList(Arrays.asList((long) 6));
+    List<Long> expectedPerceptionListB = new ArrayList(Arrays.asList((double) 0.79));
+    List<Long> expectedCommentsListB = new ArrayList(Arrays.asList("Good"));
+
     createRequest(
-        /* requestServelt */ request,
-        /* schoolName */ "MIT",
+        /* requestServelt */ requestA,
+        /* schoolName */ "mit",
         /* courseName */ "6.006",
         /* termName */ "Spring 2020",
         /* units */ "12",
         /* profName */ "Jason Ku");
-    schoolData.addSchoolData(db, request);
+    createRequest(
+        /* requestServelt */ requestB,
+        /* schoolName */ "mit",
+        /* courseName */ "6.006",
+        /* termName */ "Fall 2020",
+        /* units */ "12",
+        /* profName */ "Jason Ku");
+
+    schoolData.addSchoolData(db, requestA);
+    schoolData.addSchoolData(db, requestB);
     Key parent = findQueryMatch(db, "Term", "term", "Spring 2020").get(0).getKey();
-    String parentStr = KeyFactory.keyToString(parent);
+    Key parent1 = findQueryMatch(db, "Term", "term", "Fall 2020").get(0).getKey();
+    String profKeyStr = KeyFactory.keyToString((Key) db.get(parent).getProperty("professorKey"));
+
     addRatingEntity(
         /* database */ db,
         /* hours */ 12,
@@ -91,31 +111,31 @@ public final class LiveCourseDataTest {
         /* termComment */ "Great",
         /* professorComment */ "Terrible",
         /* parentEntity */ parent);
+    addRatingEntity(
+        /* database */ db,
+        /* hours */ 11,
+        /* difficulty */ 6,
+        /* termScore */ 7,
+        /* profScore */ 8,
+        /* termPerception */ 0.81,
+        /* professorPerception */ 0.79,
+        /* termComment */ "Good",
+        /* professorComment */ "Bad",
+        /* parentEntity */ parent1);
 
-    createRequest(/* requestServelt */ requestB, /* term-key */ parentStr);
+    createRequest(/* requestServelt */ requestC, /* prof-key */ profKeyStr);
 
-    List<Object> expectedHoursList = new ArrayList(Arrays.asList(Arrays.asList((long) 12)));
-    List<Object> expectedDifficultyList = new ArrayList(Arrays.asList(Arrays.asList((long) 7)));
-    List<Object> expectedTermScoreList = new ArrayList(Arrays.asList(Arrays.asList((long) 8)));
-    List<Object> expectedProfessorScoreList = new ArrayList(Arrays.asList(Arrays.asList((long) 9)));
-    List<Object> expectedTermPerceptionList =
-        new ArrayList(Arrays.asList(Arrays.asList((double) 0.82)));
-    List<Object> expectedProfessorPerceptionList =
-        new ArrayList(Arrays.asList(Arrays.asList((double) 0.8)));
-    List<Object> expectedTermCommentsList = new ArrayList(Arrays.asList(Arrays.asList("Terrible")));
-    List<Object> expectedProfessorCommentsList =
-        new ArrayList(Arrays.asList(Arrays.asList("Great")));
+    List<ProfDataForTerm> answer = professorData.getAllDataFromProf(db, requestC);
 
-    TermDataHolder answer = liveCourseData.getAllDataFromTerm(db, requestB);
+    assertEquals(expectedHoursListA, answer.get(0).getHoursList());
+    assertEquals(expectedDifficultyListA, answer.get(0).getDifficultyList());
+    assertEquals(expectedPerceptionListA, answer.get(0).getPerceptionList());
+    assertEquals(expectedCommentsListA, answer.get(0).getCommentsList());
 
-    assertEquals(expectedHoursList, answer.getHoursList());
-    assertEquals(expectedDifficultyList, answer.getDifficultyList());
-    assertEquals(expectedTermScoreList, answer.getTermScoreList());
-    assertEquals(expectedProfessorScoreList, answer.getProfessorScoreList());
-    assertEquals(expectedTermPerceptionList, answer.getTermPerceptionList());
-    assertEquals(expectedProfessorPerceptionList, answer.getProfessorPerceptionList());
-    assertEquals(expectedTermCommentsList, answer.getTermCommentsList());
-    assertEquals(expectedProfessorCommentsList, answer.getProfessorCommentsList());
+    assertEquals(expectedHoursListB, answer.get(1).getHoursList());
+    assertEquals(expectedDifficultyListB, answer.get(1).getDifficultyList());
+    assertEquals(expectedPerceptionListB, answer.get(1).getPerceptionList());
+    assertEquals(expectedCommentsListB, answer.get(1).getCommentsList());
   }
 
   private void createRequest(
@@ -133,8 +153,8 @@ public final class LiveCourseDataTest {
     when(request.getParameter("num-enrolled")).thenReturn("300");
   }
 
-  private void createRequest(HttpServletRequest request, String termKeyStr) {
-    when(request.getParameter("term-key")).thenReturn(termKeyStr);
+  private void createRequest(HttpServletRequest request, String profKeyStr) {
+    when(request.getParameter("prof-key")).thenReturn(profKeyStr);
   }
 
   private List<Entity> findQueryMatch(

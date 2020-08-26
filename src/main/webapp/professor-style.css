@@ -1,0 +1,46 @@
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.flex-container {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.flex-child {
+  flex: 1;
+  padding: 100px;
+}
+
+.form-container {
+  padding-top: 100px;
+}
+
+.my-3 {
+  margin: 20px 125px;
+}
+
+.plr-20 {
+  padding: 5rem 20rem;
+}
+
+.container-chart {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 75px;
+  padding-left: 15px;
+  padding-top: 75px;
+  width: 85%;
+}
+
+#link-container {
+  flex-flow: row wrap;
+  padding-top: 25px;
+}
+
+#link-container a {
+  padding: 0 10px;
+}

@@ -7,10 +7,14 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,9 +49,9 @@ public class AddSchoolData extends HttpServlet {
     String termName = request.getParameter("term");
     String profName = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
+    Long numEnrolled = Long.parseLong(request.getParameter("num-enrolled"));
 
     Boolean isNewSchool = isNewSchoolDetector(schoolName);
-    Boolean isNewCourse = isNewCourseDetector(courseName);
     Boolean isNewProfessor = isNewProfessorDetector(profName);
 
     Entity school = null;
@@ -59,23 +63,24 @@ public class AddSchoolData extends HttpServlet {
       school = createSchool(schoolName);
       course = createCourse(courseName, units, school.getKey());
       professor = createProfessor(profName, school.getKey());
-      term = createTerm(termName, professor.getKey(), course.getKey());
+      term = createTerm(termName, numEnrolled, professor.getKey(), course.getKey());
     } else {
+      Boolean isNewCourse = isNewCourseDetector(schoolName, courseName, units);
       if (isNewCourse) {
         if (isNewProfessor) {
           course = createCourse(courseName, units, existingSchoolKey);
           professor = createProfessor(profName, existingSchoolKey);
-          term = createTerm(termName, professor.getKey(), course.getKey());
+          term = createTerm(termName, numEnrolled, professor.getKey(), course.getKey());
         } else {
           course = createCourse(courseName, units, existingSchoolKey);
-          term = createTerm(termName, existingProfessorKey, course.getKey());
+          term = createTerm(termName, numEnrolled, existingProfessorKey, course.getKey());
         }
       } else {
         if (isNewProfessor) {
           professor = createProfessor(profName, existingSchoolKey);
-          term = createTerm(termName, professor.getKey(), existingCourseKey);
+          term = createTerm(termName, numEnrolled, professor.getKey(), existingCourseKey);
         } else {
-          term = createTerm(termName, existingProfessorKey, existingCourseKey);
+          term = createTerm(termName, numEnrolled, existingProfessorKey, existingCourseKey);
         }
       }
     }
@@ -90,6 +95,21 @@ public class AddSchoolData extends HttpServlet {
     return result;
   }
 
+  private List<Entity> findCourseMatch(String schoolName, String courseName, Long units) {
+    Key schoolKey = findQueryMatch("School", "school-name", schoolName).get(0).getKey();
+
+    List<Filter> filters = new ArrayList();
+    Filter courseFilter = new FilterPredicate("course-name", FilterOperator.EQUAL, courseName);
+    Filter unitFilter = new FilterPredicate("units", FilterOperator.EQUAL, units);
+    filters.add(courseFilter);
+    filters.add(unitFilter);
+
+    Query courseQuery =
+        new Query("Course").setAncestor(schoolKey).setFilter(CompositeFilterOperator.and(filters));
+    List<Entity> result = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
+    return result;
+  }
+
   private Boolean isNewSchoolDetector(String schoolName) {
     List<Entity> querySchool = findQueryMatch("School", "school-name", schoolName);
     if (!querySchool.isEmpty()) {
@@ -99,8 +119,8 @@ public class AddSchoolData extends HttpServlet {
     return true;
   }
 
-  private Boolean isNewCourseDetector(String courseName) {
-    List<Entity> queryCourse = findQueryMatch("Course", "course-name", courseName);
+  private Boolean isNewCourseDetector(String schoolName, String courseName, Long units) {
+    List<Entity> queryCourse = findCourseMatch(schoolName, courseName, units);
     if (!queryCourse.isEmpty()) {
       existingCourseKey = queryCourse.get(0).getKey();
       return false;
@@ -136,10 +156,12 @@ public class AddSchoolData extends HttpServlet {
     return newProfessor;
   }
 
-  private Entity createTerm(String term, Key professor, Key parent) {
+  private Entity createTerm(String term, Long numEnrolled, Key professor, Key parent) {
     Entity newTerm = new Entity("Term", parent);
     newTerm.setProperty("term", term);
+    newTerm.setProperty("num-enrolled", numEnrolled);
     newTerm.setProperty("professorKey", professor);
+    newTerm.setProperty("timeStamp", findTermDate(term));
     return newTerm;
   }
 
@@ -161,5 +183,29 @@ public class AddSchoolData extends HttpServlet {
     } catch (DatastoreFailureException | IllegalArgumentException e) {
       throw e;
     }
+  }
+
+  private Date findTermDate(String termName) {
+    String[] termList = termName.split(" ");
+
+    int month = 0;
+    int termYear = Integer.parseInt(termList[1]);
+    if (termList[0].equals("Spring")) {
+      month = 2;
+    } else if (termList[0].equals("Summer")) {
+      month = 5;
+    } else if (termList[0].equals("Fall") || termList[0].equals("Autumn")) {
+      month = 8;
+    } else if (termList[0].equals("Winter")) {
+      month = 0;
+    } else {
+      throw new IllegalArgumentException();
+    }
+
+    Calendar startDay = Calendar.getInstance();
+    startDay.set(termYear, month, 1);
+    Date dateTime = startDay.getTime();
+
+    return dateTime;
   }
 }

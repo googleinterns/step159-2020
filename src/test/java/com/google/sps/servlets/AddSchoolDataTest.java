@@ -324,6 +324,7 @@ public final class AddSchoolDataTest {
     when(request.getParameter("term")).thenReturn(termName);
     when(request.getParameter("num-units")).thenReturn(units);
     when(request.getParameter("prof-name")).thenReturn(profName);
+    when(request.getParameter("num-enrolled")).thenReturn("200");
     return request;
   }
 }

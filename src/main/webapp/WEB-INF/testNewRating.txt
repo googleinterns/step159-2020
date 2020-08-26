@@ -1,0 +1,14 @@
+{
+  "schoolName" : "google",
+  "courseName" : "6.006",
+  "profName" : "Srini",
+  "term" : "Spring 2020",
+  "units" : 3,
+  "termInput" : "I do not like this.",
+  "profInput" : "The professor was amazing.",
+  "ratingTerm" : 1,
+  "ratingProf" : 3,
+  "hours" : 8,
+  "difficulty" : 4,
+  "ID" : "9223372036854775807",
+  "translate" : "false"}
