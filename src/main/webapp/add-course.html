@@ -11,7 +11,7 @@
     </head>
     <body>
         <div id="private-login-box">
-            <div class="g-signin2" id="login-button" data-onsuccess="signInPrivate"></div>
+            <div class="g-signin2" id="private-login-button" data-onsuccess="signInPrivate"></div>
             <div id="private-login-message"></div>
         </div>
         <div class="hidden" id="private-class-info">
@@ -38,9 +38,10 @@
                     </select>
                 </div>
                 <textarea name="school-name" id="school-name" placeholder="School Name" maxlength=1500></textarea>
-                <input type="submit"/>
+                <input class="course-button" id="add-button" type="submit" />
             </form>
-            <button id="logout-button" onclick="signOutPrivate()">Sign out</button>
+            <button class="course-button" id="add-to-search" onclick="redirect('index.html')">Search for courses</button>
+            <button class="course-button" id="private-logout-button" onclick="signOutPrivate()">Sign out</button>
         </div>
     </body>
 </html>

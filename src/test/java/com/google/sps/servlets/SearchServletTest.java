@@ -254,8 +254,8 @@ public final class SearchServletTest {
       String units,
       String school) {
     request = Mockito.mock(HttpServletRequest.class);
-    when(request.getParameter("courseName")).thenReturn(name);
-    when(request.getParameter("profName")).thenReturn(professor);
+    when(request.getParameter("course-name")).thenReturn(name);
+    when(request.getParameter("prof-name")).thenReturn(professor);
     when(request.getParameter("term")).thenReturn(term);
     when(request.getParameter("units")).thenReturn(units);
     when(request.getParameter("school-name")).thenReturn(school);

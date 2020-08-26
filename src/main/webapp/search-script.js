@@ -26,10 +26,7 @@ async function showCourses() {
   url.searchParams.set("school-name", school);
   const response = await fetch(url);
   const searchResults = await response.json();
-  if (searchResults.hasOwnProperty("message")) {
-    // TODO: Make a div for this message so specific styling is easier.
-    courseResults.innerHTML += searchResults.message + "<br />";
-  }
+  searchMessage.innerHTML = searchResults.message + "<br />";
   const courses = JSON.parse(searchResults.courses);
   courses.forEach((course) =>
     courseResults.appendChild(createListElement(course))
@@ -63,7 +60,7 @@ async function addCourse() {
   const courseName = document.getElementById("course-name").value;
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
-  const schoolName = document.getElementById("schoool-name").value;
+  const schoolName = document.getElementById("school-name").value;
   const units = countUnits("num-units");
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
@@ -73,4 +70,8 @@ async function addCourse() {
   url.searchParams.set("school-name", schoolName);
   const response = await fetch(url, { method: "POST" });
   return response;
+}
+
+function redirect(newSite) {
+  location.href = new URL("/" + newSite, window.location.origin);
 }
