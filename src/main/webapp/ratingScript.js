@@ -59,8 +59,7 @@ function addingAttributesToURL(ratingProperties) {
 }
 
 async function passRatingProperties() {
-  document.getElementById("message-rating").innerHTML =
-    "Your form has been populated!";
+  document.getElementById("message-rating").innerHTML = "";
   const urlAndData = await getRatingPropertiesToStore();
   postRatingProperties(urlAndData[0], urlAndData[1]);
 }
