@@ -394,12 +394,6 @@
     return response.json(); // Parses JSON response into native JavaScript objects and returns a Promise.
   }
 
-  function onLoad() {
-    gapi.load("auth2", function () {
-      gapi.auth2.init();
-    });
-  }
-
   async function verify() {
     const auth2 = gapi.auth2.getAuthInstance();
     const googleUser = auth2.currentUser.get();

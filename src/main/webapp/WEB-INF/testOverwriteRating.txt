@@ -1,14 +1,11 @@
 {
-  "schoolName" : "google",
-  "courseName" : "6.006",
-  "profName" : "Srini",
-  "term" : "Spring 2020",
-  "units" : 3,
+  termKey : agR0ZXN0ciILEgZTY2hvb2wYAQwLEgZDb3Vyc2UYAgwLEgRUZXJtGAMM,
   "termInput" : "I don't like this class.",
   "profInput" : "This teacher was wonderful.",
   "ratingTerm" : 1,
   "ratingProf" : 3,
   "hours" : 10,
   "difficulty" : 5,
-  "ID" : "9223372036854775807",
-  "translate" : "false"}
+  "id" : "9223372036854775807",
+  "translate" : "false",
+  "grade" : "C"}

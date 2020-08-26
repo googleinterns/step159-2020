@@ -4,7 +4,6 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -134,7 +133,7 @@ public class DataServlet extends HttpServlet {
     if (toxicityProfComment >= 0.90) {
       professorFeedback = "Could not show comment due to toxicity.";
     }
-    
+
     // Check whether user has reviewed that term.
     List<Entity> termRatingQueryList =
         queryEntities(
@@ -219,7 +218,9 @@ public class DataServlet extends HttpServlet {
 
   private HttpURLConnection creatingPostRequestCommentAnalyzer() throws IOException {
     URL urlCommentAnalyzer =
-        new URL("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + System.getenv("API_KEY"));
+        new URL(
+            "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key="
+                + System.getenv("API_KEY"));
     HttpURLConnection connection = (HttpURLConnection) urlCommentAnalyzer.openConnection();
     // Enable output for the connection.
     connection.setDoOutput(true);
@@ -242,7 +243,7 @@ public class DataServlet extends HttpServlet {
         "requestedAttributes", toxicityJsonObject.put("TOXICITY", toxicityScoreJsonObject));
     return jsonObject;
   }
-  
+
   private String translateTextToEnglish(String text) throws IOException {
     String projectId = "nina-laura-dagm-step-2020";
     try (TranslationServiceClient client = TranslationServiceClient.create()) {
