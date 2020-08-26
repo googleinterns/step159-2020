@@ -429,15 +429,14 @@
       translate: document.getElementById("translate").value,
     };
     document.getElementById("term-form").reset();
-    const url = newURL(ratingProperties);
+    const url = addingAttributesToURL(ratingProperties);
     return [url, ratingProperties];
   }
 
-  function newURL(ratingProperties) {
+  function addingAttributesToURL(ratingProperties) {
     const url = new URL("/data", window.location.origin);
     url.searchParams.set("course-key", ratingProperties.courseKey);
     url.searchParams.set("term-key", ratingProperties.termKey);
-
     url.searchParams.set("hour", ratingProperties.hours);
     url.searchParams.set("difficulty", ratingProperties.difficulty);
     url.searchParams.set("term-input", ratingProperties.termInput);
@@ -453,11 +452,11 @@
     postRatingProperties(urlAndData[0], urlAndData[1]);
   }
 
-  document
-    .getElementById("myBtn")
-    .addEventListener("click", passRatingProperties);
-
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
+
+  document
+    .getElementById("form-submit")
+    .addEventListener("click", passRatingProperties);
 })();
