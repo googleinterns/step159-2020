@@ -130,7 +130,7 @@ public class DataServlet extends HttpServlet {
     if (toxicityTermComment >= 0.90) {
       termFeedback = "Could not show comment due to toxicity.";
     }
-    if (toxicityTermComment >= 0.90) {
+    if (toxicityProfComment >= 0.90) {
       professorFeedback = "Could not show comment due to toxicity.";
     }
 
@@ -183,10 +183,10 @@ public class DataServlet extends HttpServlet {
   private double getToxicityScore(String comment) throws IOException {
     HttpURLConnection commentAnalyzerConnection = creatingPostRequestCommentAnalyzer();
     // Create JSON request.
-    JSONObject jsonObjectCommentAnalyzer = jsonObjectCommentAnalyzerRequest(comment);
+    JSONObject responseAnalysisRequest = getResponseAnalysisRequest(comment);
 
     OutputStreamWriter writer = new OutputStreamWriter(commentAnalyzerConnection.getOutputStream());
-    writer.write(jsonObjectCommentAnalyzer.toString());
+    writer.write(responseAnalysisRequest.toString());
     writer.close();
 
     int responseCode =
@@ -232,7 +232,7 @@ public class DataServlet extends HttpServlet {
     return connection;
   }
 
-  private JSONObject jsonObjectCommentAnalyzerRequest(String text) throws IOException {
+  private JSONObject getResponseAnalysisRequest(String text) throws IOException {
     JSONObject jsonObject = new JSONObject();
     JSONObject textJsonObject = new JSONObject();
     JSONObject toxicityJsonObject = new JSONObject();

@@ -423,11 +423,11 @@
       translate: document.getElementById("translate").value,
     };
     document.getElementById("term-form").reset();
-    const url = newURL(ratingProperties);
+    const url = addingAttributesToURL(ratingProperties);
     return [url, ratingProperties];
   }
 
-  function newURL(ratingProperties) {
+  function addingAttributesToURL(ratingProperties) {
     const url = new URL("/data", window.location.origin);
     url.searchParams.set("course-key", ratingProperties.courseKey);
     url.searchParams.set("term-key", ratingProperties.termKey);
