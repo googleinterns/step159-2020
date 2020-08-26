@@ -39,6 +39,7 @@ public class LatestRating extends HttpServlet {
       previousRatingInfo.put(
           "ratingProf", previousRatingEntity.getProperty("perception-professor"));
       previousRatingInfo.put("grade", previousRatingEntity.getProperty("grade"));
+      previousRatingInfo.put("translation", previousRatingEntity.getProperty("translation"));
     }
     response.setContentType("application/json;");
     response.getWriter().println(previousRatingInfo);

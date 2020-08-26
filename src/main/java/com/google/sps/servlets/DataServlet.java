@@ -158,6 +158,7 @@ public class DataServlet extends HttpServlet {
     termRatingEntity.setProperty("comments-professor", professorFeedback);
     termRatingEntity.setProperty("score-professor", professorScore);
     termRatingEntity.setProperty("perception-professor", professorRating);
+    termRatingEntity.setProperty("translation", Boolean.toString(translate));
     datastore.put(termRatingEntity);
   }
 
