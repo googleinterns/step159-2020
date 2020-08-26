@@ -54,6 +54,10 @@ public class Term {
     }
   }
 
+  public Boolean isQuarter() {
+    return quarter;
+  }
+
   public String toString() {
     return season + " " + String.valueOf(year);
   }

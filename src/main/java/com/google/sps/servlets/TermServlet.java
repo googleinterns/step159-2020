@@ -15,6 +15,7 @@ package com.google.sps.servlets;
 
 import com.google.sps.data.Term;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,6 +48,9 @@ public class TermServlet extends HttpServlet {
     Boolean quarter = isQuarter(request.getParameter("school-name"));
     JSONObject json = new JSONObject();
     json.put("quarter", quarter);
+    Term currTerm = getCurrTerm(quarter);
+    List<String> terms = termsToString(getTerms(currTerm, 2));
+    json.put("terms", terms);
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
@@ -56,6 +60,7 @@ public class TermServlet extends HttpServlet {
     return QTR_SCHOOLS.contains(schoolName);
   }
 
+  /* Get term that corresponds with the current date. */
   private Term getCurrTerm(Boolean isQuarter) {
     java.util.Date date = new Date(); // Initializes to current date.
     Calendar cal = Calendar.getInstance();
@@ -69,5 +74,28 @@ public class TermServlet extends HttpServlet {
     }
     int year = cal.get(Calendar.YEAR);
     return new Term(season + " " + String.valueOf(year), isQuarter);
+  }
+
+  /* Go num terms forwards and backwards. */
+  private List<Term> getTerms(Term currTerm, int num) {
+    List<Term> terms = new ArrayList<>();
+    terms.add(currTerm);
+    Term nextTerm = new Term(currTerm.toString(), currTerm.isQuarter());
+    Term prevTerm = new Term(currTerm.toString(), currTerm.isQuarter());
+    for (int i = 0; i < num; i++) {
+      prevTerm = prevTerm.getPrev();
+      nextTerm = nextTerm.getNext();
+      terms.add(prevTerm);
+      terms.add(nextTerm);
+    }
+    return terms; // TODO: Sort for correct display order
+  }
+
+  private List<String> termsToString(List<Term> terms) {
+    List<String> str = new ArrayList<>();
+    for (Term term : terms) {
+      str.add(term.toString());
+    }
+    return str;
   }
 }
