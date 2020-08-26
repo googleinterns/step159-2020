@@ -257,13 +257,7 @@ public class SearchServlet extends HttpServlet {
     filters.add(new FilterPredicate("school", FilterOperator.EQUAL, school));
 
     Query courseQuery = new Query("Course-Info");
-    if (!filters.isEmpty()) {
-      if (filters.size() == 1) {
-        courseQuery.setFilter(filters.get(0));
-      } else {
-        courseQuery.setFilter(CompositeFilterOperator.and(filters));
-      }
-    }
+    courseQuery.setFilter(CompositeFilterOperator.and(filters));
     List<Entity> results = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
     return results.size() == 0;
   }
