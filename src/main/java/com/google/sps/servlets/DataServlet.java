@@ -130,7 +130,7 @@ public class DataServlet extends HttpServlet {
     if (toxicityTermComment >= 0.90) {
       termFeedback = "Could not show comment due to toxicity.";
     }
-    if (toxicityTermComment >= 0.90) {
+    if (toxicityProfComment >= 0.90) {
       professorFeedback = "Could not show comment due to toxicity.";
     }
 
