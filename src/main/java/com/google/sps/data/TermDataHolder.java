@@ -46,6 +46,14 @@ public class TermDataHolder {
     professorCommentsList = newProfessorCommentsList;
   }
 
+  public void setGradesList(List<Object> newGradesList) {
+    gradesList = newGradesList;
+  }
+
+  public List<Object> getGradesList() {
+    return gradesList;
+  }
+
   public List<Object> getHoursList() {
     return hoursList;
   }

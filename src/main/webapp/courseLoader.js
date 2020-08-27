@@ -35,6 +35,7 @@
     fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         google.charts.setOnLoadCallback(() => {
           makeGraphs(data);
           makeTermRatingChart(data);
@@ -259,13 +260,37 @@
     return prevTermData.map((data) => data.properties.term);
   }
 
-  function makeGradeChart() {
+  function makeGradeChart(termDataObject) {
+    const gradeMapper = {
+      "A+": 97.5,
+      A: 95,
+      "A-": 92.5,
+      "B+": 87.5,
+      B: 85,
+      "B-": 82.5,
+      "C+": 77.5,
+      C: 75,
+      "C-": 72.5,
+      "D+": 67.5,
+      D: 65,
+      "D-": 62.5,
+      F: 55,
+    };
+    const numericalGrade = [];
+    for (let grade of termDataObject.gradesList) {
+      if (grade != "I") {
+        numericalGrade.push(gradeMapper[grade]);
+      }
+    }
+
+    console.log(numericalGrade);
+
     data = new google.visualization.DataTable();
     data.addColumn("number", "X Value");
     data.addColumn("number", "Y Value");
     data.addColumn({ type: "boolean", role: "scope" });
     data.addColumn({ type: "string", role: "style" });
-    data.addRows(createBellData(dummyGradeData));
+    data.addRows(createBellData(numericalGrade.concat(dummyGradeData)));
 
     const options = {
       height: 600,
