@@ -53,121 +53,124 @@
 
   function loadAllComments(termDataObject) {
     const termCommentsList = termDataObject.termCommentsList;
-    const dummyComments = ["dummy comment 1", "dummy comment 2"].concat(
-      termCommentsList
-    );
-    loadComments(dummyComments, /* isCourse */ true);
+    loadComments(termCommentsList, /* isCourse */ true);
   }
 
   function makeGraphs(termDataObject) {
-    const hourList = dummyHoursData.concat(termDataObject.hoursList);
-    const hourData = new google.visualization.arrayToDataTable(hourList);
-    const hourOptions = {
-      colors: ["#f1a79d"],
-      title: "Hours Spent per Week",
-      titleTextStyle: {
-        color: "#808080",
-        fontSize: 16,
-        bold: false,
-        italic: false,
-      },
-      legend: { position: "none" },
-      hAxis: {
-        title: "Hours",
+    if (termDataObject.hoursList.length < 2) {
+      const hourChartHolder = document.getElementById("hours-chart");
+      hourChartHolder.remove();
+    } else {
+      const hourList = [["Hours"]].concat(termDataObject.hoursList);
+      const hourData = new google.visualization.arrayToDataTable(hourList);
+      const hourOptions = {
+        colors: ["#f1a79d"],
+        title: "Hours Spent per Week",
         titleTextStyle: {
           color: "#808080",
-          fontSize: 12,
-          bold: false,
-          italic: false,
-          fontName: "Roboto",
-        },
-        textStyle: {
-          color: "#808080",
-          fontName: "Roboto",
-          fontSize: 11,
+          fontSize: 16,
           bold: false,
           italic: false,
         },
-      },
-      vAxis: {
-        textStyle: {
-          color: "#808080",
-          fontName: "Roboto",
-          fontSize: 11,
-          bold: false,
-          italic: false,
+        legend: { position: "none" },
+        hAxis: {
+          title: "Hours",
+          titleTextStyle: {
+            color: "#808080",
+            fontSize: 12,
+            bold: false,
+            italic: false,
+            fontName: "Roboto",
+          },
+          textStyle: {
+            color: "#808080",
+            fontName: "Roboto",
+            fontSize: 11,
+            bold: false,
+            italic: false,
+          },
         },
-      },
-      histogram: {
-        hideBucketItems: true,
-      },
-      chartArea: {
-        left: 120,
-      },
-    };
-    const hourChart = new google.visualization.Histogram(
-      document.getElementById("hours-chart")
-    );
-    hourChart.draw(hourData, hourOptions);
+        vAxis: {
+          textStyle: {
+            color: "#808080",
+            fontName: "Roboto",
+            fontSize: 11,
+            bold: false,
+            italic: false,
+          },
+        },
+        histogram: {
+          hideBucketItems: true,
+        },
+        chartArea: {
+          left: 120,
+        },
+      };
+      const hourChart = new google.visualization.Histogram(
+        document.getElementById("hours-chart")
+      );
+      hourChart.draw(hourData, hourOptions);
+    }
 
-    const diffList = dummyDiffData.concat(termDataObject.difficultyList);
-    const diffData = new google.visualization.arrayToDataTable(diffList);
-    const diffOptions = {
-      colors: ["#f1d19d"],
-      title: "Difficulty of Class",
-      titleTextStyle: {
-        color: "#808080",
-        fontSize: 16,
-        bold: false,
-        italic: false,
-      },
-      legend: { position: "none" },
-      hAxis: {
-        title: "Difficulty",
+    if (termDataObject.difficultyList.length < 2) {
+      const difficultyChartHolder = document.getElementById("diff-chart");
+      difficultyChartHolder.remove();
+    } else {
+      const diffList = [["Difficulty"]].concact(termDataObject.difficultyList);
+      const diffData = new google.visualization.arrayToDataTable(diffList);
+      const diffOptions = {
+        colors: ["#f1d19d"],
+        title: "Difficulty of Class",
         titleTextStyle: {
           color: "#808080",
-          fontSize: 12,
-          bold: false,
-          italic: false,
-          fontName: "Roboto",
-        },
-        textStyle: {
-          color: "#808080",
-          fontName: "Roboto",
-          fontSize: 11,
+          fontSize: 16,
           bold: false,
           italic: false,
         },
-      },
-      vAxis: {
-        textStyle: {
-          color: "#808080",
-          fontName: "Roboto",
-          fontSize: 11,
-          bold: false,
-          italic: false,
+        legend: { position: "none" },
+        hAxis: {
+          title: "Difficulty",
+          titleTextStyle: {
+            color: "#808080",
+            fontSize: 12,
+            bold: false,
+            italic: false,
+            fontName: "Roboto",
+          },
+          textStyle: {
+            color: "#808080",
+            fontName: "Roboto",
+            fontSize: 11,
+            bold: false,
+            italic: false,
+          },
         },
-      },
-      histogram: {
-        hideBucketItems: true,
-        bucketSize: 2,
-      },
-      chartArea: {
-        left: 120,
-      },
-    };
-    const diffChart = new google.visualization.Histogram(
-      document.getElementById("diff-chart")
-    );
-    diffChart.draw(diffData, diffOptions);
+        vAxis: {
+          textStyle: {
+            color: "#808080",
+            fontName: "Roboto",
+            fontSize: 11,
+            bold: false,
+            italic: false,
+          },
+        },
+        histogram: {
+          hideBucketItems: true,
+          bucketSize: 2,
+        },
+        chartArea: {
+          left: 120,
+        },
+      };
+      const diffChart = new google.visualization.Histogram(
+        document.getElementById("diff-chart")
+      );
+      diffChart.draw(diffData, diffOptions);
+    }
   }
 
   async function makeTermRatingChart(termDataObject) {
-    const currentTermRatingAvg = average(
-      /* adds dummy data */ [21, 11, 9].concat(
-        termDataObject.termPerceptionList
-      )
-    );
+    const currentTermRatingAvg = average(termDataObject.termPerceptionList);
 
     const prevTermData = [];
     const avgData = [];
@@ -178,7 +181,7 @@
     }
 
     for (let termData of prevTermData) {
-      avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
+      avgData.push(average(termData.termPerceptionList));
     }
 
     const comparisonData = google.visualization.arrayToDataTable([
@@ -205,9 +208,7 @@
 
   async function makeTermPerceptionChart(termDataObject) {
     const currentPerceptionRatingAvg = average(
-      /* adds dummy data */ [21, 11, 9].concat(
-        termDataObject.termPerceptionList
-      )
+      termDataObject.termPerceptionList
     );
 
     const prevTermData = [];
@@ -219,7 +220,7 @@
     }
 
     for (let termData of prevTermData) {
-      avgData.push(average(termData.termPerceptionList.concat([17, 8, 5])));
+      avgData.push(average(termData.termPerceptionList));
     }
 
     const perceptionData = google.visualization.arrayToDataTable([
@@ -292,7 +293,7 @@
     data.addColumn("number", "Y Value");
     data.addColumn({ type: "boolean", role: "scope" });
     data.addColumn({ type: "string", role: "style" });
-    data.addRows(createBellData(numericalGrade.concat(dummyGradeData)));
+    data.addRows(createBellData(numericalGrade));
 
     const options = {
       height: 600,

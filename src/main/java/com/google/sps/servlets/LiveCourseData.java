@@ -36,11 +36,12 @@ public class LiveCourseData extends HttpServlet {
 
     termDataHolder.setHoursList(getDataFromTermRating(db, termKey, "hours"));
     termDataHolder.setDifficultyList(getDataFromTermRating(db, termKey, "difficulty"));
-    termDataHolder.setTermScoreList(getDataFromTermRating(db, termKey, "score-term"));
-    termDataHolder.setTermPerceptionList(getDataFromTermRating(db, termKey, "perception-term"));
+    termDataHolder.setTermScoreList(getDataFromTermRating(db, termKey, "perception-term"));
+    termDataHolder.setTermPerceptionList(getDataFromTermRating(db, termKey, "score-term"));
     termDataHolder.setProfessorPerceptionList(
+        getDataFromTermRating(db, termKey, "score-professor"));
+    termDataHolder.setProfessorScoreList(
         getDataFromTermRating(db, termKey, "perception-professor"));
-    termDataHolder.setProfessorScoreList(getDataFromTermRating(db, termKey, "score-professor"));
     termDataHolder.setTermCommentsList(getDataFromTermRating(db, termKey, "comments-term"));
     termDataHolder.setProfessorCommentsList(
         getDataFromTermRating(db, termKey, "comments-professor"));
