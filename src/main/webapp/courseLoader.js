@@ -261,21 +261,23 @@
   }
 
   function makeGradeChart(termDataObject) {
+    // prettier-ignore
     const gradeMapper = {
       "A+": 97.5,
-      A: 95,
+      "A": 95,
       "A-": 92.5,
       "B+": 87.5,
-      B: 85,
+      "B": 85,
       "B-": 82.5,
       "C+": 77.5,
-      C: 75,
+      "C": 75,
       "C-": 72.5,
       "D+": 67.5,
-      D: 65,
+      "D": 65,
       "D-": 62.5,
-      F: 55,
+      "F": 55,
     };
+
     const numericalGrade = [];
     for (let grade of termDataObject.gradesList) {
       if (grade != "I") {
