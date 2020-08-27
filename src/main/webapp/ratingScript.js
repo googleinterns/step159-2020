@@ -119,6 +119,10 @@ async function getLatestRating() {
   }
 }
 
+async function clearForm() {
+  document.getElementById("term-form").reset();
+}
+
 document
   .getElementById("form-submit")
   .addEventListener("click", passRatingProperties);
@@ -126,3 +130,5 @@ document
 document
   .getElementById("latest-rating")
   .addEventListener("click", getLatestRating);
+
+document.getElementById("clear-form").addEventListener("click", clearForm);
