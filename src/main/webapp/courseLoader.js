@@ -35,7 +35,6 @@
     fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         google.charts.setOnLoadCallback(() => {
           makeGraphs(data);
           makeTermRatingChart(data);
@@ -284,8 +283,6 @@
         numericalGrade.push(gradeMapper[grade]);
       }
     }
-
-    console.log(numericalGrade);
 
     data = new google.visualization.DataTable();
     data.addColumn("number", "X Value");
