@@ -70,7 +70,7 @@
     <div class="container-fluid bg-light p-5">
       <div class="container-xl my-4">
         <h1 class="p-4 text-center">Add Your Review</h1>
-        <form id="term-form" class="needs-validation" novalidate>
+        <form id="term-form" class="was-validated" novalidate>
           <div class="row">
             <div class="col">
               <p class="lead">Review your term</p>
@@ -186,14 +186,15 @@
                 placeholder="Difficulty (From 0 = Very Easy to 5 = Very Difficult)"
                 required
               />
-            </div>
-            <div class="valid-tooltip">Looks good!</div>
-            <div class="invalid-tooltip">
-              Please input a valid difficulty score.
+              <div class="valid-tooltip">Looks good!</div>
+              <div class="invalid-tooltip">
+                Please input a valid difficulty score.
+              </div>
             </div>
             <div class="col">
               <p class="lead">What was your grade in the class?</p>
               <select id="grade" name="grade" class="form-control mb-5">
+                <option value="None" disabled selected>Grade from Class</option>
                 <option value="A+">A+</option>
                 <option value="A">A</option>
                 <option value="A-">A-</option>
@@ -209,34 +210,43 @@
                 <option value="F">F</option>
                 <option value="I">I</option>
               </select>
+              <div class="valid-tooltip">Inputing grade is optional!</div>
             </div>
           </div>
           <div class="row">
             <div class="col">
               <p class="lead">Want to Translate to English?</p>
               <select class="custom-select mb-5" id="translate">
-                <option selected>Open select menu</option>
+                <option value="false" disabled selected>Wants to translate?</option>
                 <option value="true">Yes</option>
                 <option value="false">No</option>
               </select>
+              <div class="valid-tooltip">
+                Looks good!
+              </div>
             </div>
           </div>
         </form>
         <button
+          onclick="passRatingProperties()"
           id="form-submit"
           type="button"
-          class="btn btn-lg btn-outline-success"
+          class="btn btn-lg btn-outline-success btn-block"
+          data-toggle="button"
         >
           Submit
         </button>
-        <div id="retrieve-last-rating-message"></div>
+        
         <button
+          onclick="getLatestRating()"
           id="latest-rating"
           type="button"
-          class="btn btn-lg btn-outline-success"
+          class="btn btn-lg btn-outline-success btn-block"
+          data-toggle="button"
         >
           Retrieve Your Previous Rating.
         </button>
+        <div id="retrieve-last-rating-message" class="alert alert-light" role="alert></div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>
