@@ -113,11 +113,3 @@ async function getLatestRating() {
       .classList.add("alert-success");
   }
 }
-
-document
-  .getElementById("form-submit")
-  .addEventListener("click", passRatingProperties);
-
-document
-  .getElementById("latest-rating")
-  .addEventListener("click", getLatestRating);
