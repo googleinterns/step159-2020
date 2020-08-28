@@ -21,7 +21,7 @@ async function signIn(googleUser) {
     document.getElementById("login-box").classList.add("hidden");
     document.getElementById(
       "school-name"
-    ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
+    ).innerHTML = `Hi, ${profile.getName()}!`;
   } else {
     document.getElementById("login-message").innerHTML =
       "Email not verified. Try again.";
