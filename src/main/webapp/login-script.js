@@ -41,9 +41,6 @@ async function signInPrivate(googleUser) {
     // Successful sign-in.
     document.getElementById("private-class-info").classList.remove("hidden");
     document.getElementById("private-login-box").classList.add("hidden");
-    document.getElementById(
-      "private-school-name"
-    ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
   } else {
     document.getElementById("private-login-message").innerHTML =
       "Email not verified. Try again.";
