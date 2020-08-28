@@ -9,7 +9,7 @@ public class Term implements Comparable<Term> {
   int numTerms;
   int currTerm;
   ArrayList<String> termList;
-  Boolean quarter;
+  Boolean isQuarter;
 
   final List<String> QTR_SCHOOLS = Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
   final ArrayList<String> QTR_TERMS =
@@ -17,10 +17,10 @@ public class Term implements Comparable<Term> {
   final ArrayList<String> SEMESTER_TERMS =
       new ArrayList<String>(Arrays.asList("Spring", "Summer", "Fall"));
 
-  public Term(String termString, Boolean isQuarter) {
+  public Term(String termString, Boolean isQuarterSystem) {
     season = termString.split(" ")[0];
     year = Integer.parseInt(termString.split(" ")[1]);
-    quarter = isQuarter;
+    isQuarter = isQuarterSystem;
     if (isQuarter) {
       termList = QTR_TERMS;
     } else {
@@ -40,22 +40,22 @@ public class Term implements Comparable<Term> {
 
   public Term getNext() {
     if (currTerm + 1 < numTerms) {
-      return new Term(termList.get(currTerm + 1) + " " + String.valueOf(year), quarter);
+      return new Term(termList.get(currTerm + 1) + " " + String.valueOf(year), isQuarter);
     } else {
-      return new Term(termList.get(0) + " " + String.valueOf(year + 1), quarter);
+      return new Term(termList.get(0) + " " + String.valueOf(year + 1), isQuarter);
     }
   }
 
   public Term getPrev() {
     if (currTerm == 0) {
-      return new Term(termList.get(numTerms - 1) + " " + String.valueOf(year - 1), quarter);
+      return new Term(termList.get(numTerms - 1) + " " + String.valueOf(year - 1), isQuarter);
     } else {
-      return new Term(termList.get(currTerm - 1) + " " + String.valueOf(year), quarter);
+      return new Term(termList.get(currTerm - 1) + " " + String.valueOf(year), isQuarter);
     }
   }
 
   public Boolean isQuarter() {
-    return quarter;
+    return isQuarter;
   }
 
   public String toString() {
