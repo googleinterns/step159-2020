@@ -35,7 +35,7 @@ label, select {
 #search-to-add, #add-to-search {
   left: 5%;
   bottom: 5%;
-  position:fixed;
+  position: fixed;
 }
 
 .button-padding {
