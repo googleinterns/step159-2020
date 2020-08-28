@@ -108,8 +108,4 @@ function removeAllTerms() {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
-  const opt = document.createElement('option');
-  opt.appendChild(document.createTextNode("Select term..."));
-  opt.value = ""; 
-  parent.appendChild(opt);
 }
