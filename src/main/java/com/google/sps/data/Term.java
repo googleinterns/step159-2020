@@ -2,27 +2,26 @@ package com.google.sps.data;
 
 import java.util.*;
 
-public class Term {
+public class Term implements Comparable<Term> {
   String season;
   int year;
-  String school;
   ListIterator termIterator;
   int numTerms;
   int currTerm;
   ArrayList<String> termList;
+  Boolean isQuarter;
 
   final List<String> QTR_SCHOOLS = Arrays.asList("caltech", "calpoly", "stanford", "berkeley");
   final ArrayList<String> QTR_TERMS =
       new ArrayList<String>(Arrays.asList("Winter", "Spring", "Summer", "Fall"));
   final ArrayList<String> SEMESTER_TERMS =
       new ArrayList<String>(Arrays.asList("Spring", "Summer", "Fall"));
-  // TODO: Potentially add in a summer term.
 
-  public Term(String termString, String termSchool) {
+  public Term(String termString, Boolean isQuarterSystem) {
     season = termString.split(" ")[0];
     year = Integer.parseInt(termString.split(" ")[1]);
-    school = termSchool;
-    if (QTR_SCHOOLS.contains(school)) {
+    isQuarter = isQuarterSystem;
+    if (isQuarter) {
       termList = QTR_TERMS;
     } else {
       termList = SEMESTER_TERMS;
@@ -39,27 +38,40 @@ public class Term {
     return year;
   }
 
-  public String getSchool() {
-    return school;
-  }
-
-  public String getNext() {
+  public Term getNext() {
     if (currTerm + 1 < numTerms) {
-      return termList.get(currTerm + 1) + " " + String.valueOf(year);
+      return new Term(termList.get(currTerm + 1) + " " + String.valueOf(year), isQuarter);
     } else {
-      return termList.get(0) + " " + String.valueOf(year + 1);
+      return new Term(termList.get(0) + " " + String.valueOf(year + 1), isQuarter);
     }
   }
 
-  public String getPrev() {
+  public Term getPrev() {
     if (currTerm == 0) {
-      return termList.get(numTerms - 1) + " " + String.valueOf(year - 1);
+      return new Term(termList.get(numTerms - 1) + " " + String.valueOf(year - 1), isQuarter);
     } else {
-      return termList.get(currTerm - 1) + " " + String.valueOf(year);
+      return new Term(termList.get(currTerm - 1) + " " + String.valueOf(year), isQuarter);
     }
+  }
+
+  public Boolean isQuarter() {
+    return isQuarter;
   }
 
   public String toString() {
     return season + " " + String.valueOf(year);
+  }
+
+  @Override
+  public int compareTo(Term term) {
+    if (year == term.year) {
+      return term.termList.indexOf(term.season) - termList.indexOf(season);
+    } else {
+      return term.year - year;
+    }
+  }
+
+  public int compare(Term one, Term two) {
+    return one.compareTo(two);
   }
 }
