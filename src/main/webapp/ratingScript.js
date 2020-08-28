@@ -69,7 +69,8 @@ $(function () {
 });
 
 async function getLatestRating() {
-  document.getElementById("message-rating").innerHTML = "Fetching Rating...";
+  messageRetrievalElement = document.getElementById("retrieve-last-rating-message")
+  messageRetrievalElement.innerHTML = "Fetching Rating...";
   const userId = await verify();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -82,7 +83,7 @@ async function getLatestRating() {
   const formInfo = await response.json();
 
   if (Object.keys(formInfo).length == 0) {
-    document.getElementById("message-rating").innerHTML =
+    messageRetrievalElement.innerHTML =
       "You have not submitted a rating for this term";
   } else {
     document.getElementById("term-input").innerHTML = formInfo["termInput"];
@@ -93,7 +94,7 @@ async function getLatestRating() {
     document.getElementById("difficulty").value = formInfo["difficulty"];
     document.getElementById("grade").value = formInfo["grade"];
     document.getElementById("translate").value = formInfo["translation"];
-    document.getElementById("message-rating").innerHTML =
+    messageRetrievalElement.innerHTML =
       "Your form has been populated!";
   }
 }
