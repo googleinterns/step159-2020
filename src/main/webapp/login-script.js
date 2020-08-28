@@ -8,8 +8,15 @@ async function signIn(googleUser) {
   const id = await response.json();
   if (id.verified) {
     // Successful sign-in.
-    document.getElementById("class-info").classList.remove("hidden");
-    document.getElementById("login-box").classList.add("hidden");
+    document
+      .getElementById("class-info")
+      .classList.remove("hidden");
+    document
+      .getElementById("login-box")
+      .classList.add("hidden");
+    document
+      .getElementById("form-signin")
+      .classList.add("hidden");
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -30,8 +37,15 @@ async function signInPrivate(googleUser) {
   const id = await response.json();
   if (id.verified) {
     // Successful sign-in.
-    document.getElementById("private-class-info").classList.remove("hidden");
-    document.getElementById("private-login-box").classList.add("hidden");
+    document
+      .getElementById("private-class-info")
+      .classList.remove("hidden");
+    document
+      .getElementById("private-login-box")
+      .classList.add("hidden");
+    document
+      .getElementById("form-signin")
+      .classList.add("hidden");
     document.getElementById(
       "private-school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -57,13 +71,27 @@ async function verify() {
 function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  document.getElementById("class-info").classList.add("hidden");
-  document.getElementById("login-box").classList.remove("hidden");
+  document
+    .getElementById("class-info")
+    .classList.add("hidden");
+  document
+    .getElementById("login-box")
+    .classList.remove("hidden");
+  document
+    .getElementById("form-signin")
+    .classList.remove("hidden");
 }
 
 function signOutPrivate() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  document.getElementById("private-class-info").classList.add("hidden");
-  document.getElementById("private-login-box").classList.remove("hidden");
+  document
+    .getElementById("private-class-info")
+    .classList.add("hidden");
+  document
+    .getElementById("private-login-box")
+    .classList.remove("hidden");
+  document
+    .getElementById("form-signin")
+    .classList.remove("hidden");
 }
