@@ -35,7 +35,6 @@
     fetch(`/term-data?term-key=${termKey}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         google.charts.setOnLoadCallback(() => {
           makeGraphs(data);
           makeTermRatingChart(data);
@@ -58,8 +57,7 @@
 
   function makeGraphs(termDataObject) {
     if (termDataObject.hoursList.length < 2) {
-      const hourChartHolder = document.getElementById("hours-chart");
-      hourChartHolder.remove();
+      document.getElementById("histograms").remove();
     } else {
       const hourList = [["Hours"]].concat(termDataObject.hoursList);
       const hourData = new google.visualization.arrayToDataTable(hourList);
@@ -113,8 +111,7 @@
     }
 
     if (termDataObject.difficultyList.length < 2) {
-      const difficultyChartHolder = document.getElementById("diff-chart");
-      difficultyChartHolder.remove();
+      document.getElementById("histograms").remove();
     } else {
       const diffList = [["Difficulty"]].concact(termDataObject.difficultyList);
       const diffData = new google.visualization.arrayToDataTable(diffList);
@@ -285,8 +282,6 @@
         numericalGrade.push(gradeMapper[grade]);
       }
     }
-
-    console.log(numericalGrade);
 
     data = new google.visualization.DataTable();
     data.addColumn("number", "X Value");

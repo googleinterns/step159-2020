@@ -30,6 +30,7 @@ public class LiveCourseData extends HttpServlet {
     response.getWriter().println(coursePageDataJSON);
   }
 
+  // TODO: Rename Entity properties for perceptiona and score so they are not backwards
   public TermDataHolder getAllDataFromTerm(DatastoreService db, HttpServletRequest request) {
     TermDataHolder termDataHolder = new TermDataHolder();
     Key termKey = KeyFactory.stringToKey(request.getParameter("term-key"));
