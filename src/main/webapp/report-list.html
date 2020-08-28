@@ -12,22 +12,12 @@
       integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
       crossorigin="anonymous"
     />
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <script
-      src="https://apis.google.com/js/platform.js?onload=onLoad"
-      async
-      defer
-    ></script>
     <meta
       name="google-signin-client_id"
       content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
     />
-    <link rel="stylesheet" href="professor-style.css" />
   </head>
-  <body>
+  <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <span class="navbar-brand mb-0 h1">App Name</span>
       <button
@@ -54,20 +44,11 @@
         >
       </form>
     </nav>
-    <div class="jumbotron jumbotron-fluid my-0">
-      <div class="container">
-        <h1 class="display-4 text-center" id="prof-name">Professor Name</h1>
-        <div id="link-container" class="text-center"></div>
-      </div>
-    </div>
-    <div class="flex-container">
-      <div class="flex-child" id="difficulty-comp"></div>
-      <div class="flex-child" id="perception-comp"></div>
-    </div>
-    <div class="plr-20 container-fluid">
-      <div class="my-3 p-3 bg-white" id="prof-comments">
+    <div class="jumbotron jumbotron-fluid my-0 bg-light"></div>
+    <div class="plr-20 container-xl">
+      <div class="my-3 p-3 bg-light" id="reports-container">
         <h1 class="border-bottom border-gray pb-5 mb-0 text-center">
-          Professor Comments
+          Report List
         </h1>
       </div>
     </div>
@@ -87,11 +68,6 @@
       integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
       crossorigin="anonymous"
     ></script>
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <script src="dummyData.js"></script>
-    <script src="profLoader.js"></script>
+    <script src="reportsLoader.js"></script>
   </body>
 </html>

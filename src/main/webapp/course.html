@@ -13,10 +13,32 @@
     <link rel="stylesheet" href="course-style.css" />
   </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <span class="navbar-brand mb-0 h1">App Name</span>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="index.html">Search</a>
+          </li>
+        </ul>
+      </div>
+      <form class="form-inline my-2 my-lg-0">
+        <a class="btn btn-outline-light my-2 my-sm-0" href="/report.html"
+          >Report Bug</a
+        >
+      </form>
     </nav>
-
     <div class="jumbotron jumbotron-fluid my-0">
       <div class="container">
         <h1 class="display-4 text-center" id="course-name">Course Name</h1>
@@ -27,21 +49,17 @@
         <p class="text-muted text-center" id="num-enrolled">Num Enrolled</p>
       </div>
     </div>
-
     <div class="container-chart">
       <div id="grade-chart"></div>
     </div>
-
     <div class="flex-container">
       <div class="flex-child" id="hours-chart"></div>
       <div class="flex-child" id="diff-chart"></div>
     </div>
-
     <div class="flex-container">
       <div class="flex-child-p" id="term-rating-comp"></div>
       <div class="flex-child-p" id="term-perception-comp"></div>
     </div>
-
     <div class="plr-20 container-fluid">
       <div class="my-3 p-3 bg-white" id="course-comments">
         <h1 class="border-bottom border-gray p-5 mb-0 text-center">
@@ -49,7 +67,6 @@
         </h1>
       </div>
     </div>
-
     <div class="container-fluid bg-light p-5">
       <div class="container-xl my-4">
         <h1 class="p-4 text-center">Add Your Review</h1>
@@ -219,7 +236,7 @@
         >
           Submit
         </button>
-
+        
         <button
           onclick="getLatestRating()"
           id="latest-rating"
@@ -227,9 +244,9 @@
           class="btn btn-lg btn-outline-success btn-block"
           data-toggle="button"
         >
-          Autofill Form With Previous Rating
+          Retrieve Your Previous Rating.
         </button>
-        <div id="message-rating" class="alert alert-light" role="alert"></div>
+        <div id="retrieve-last-rating-message" class="alert alert-light" role="alert></div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>

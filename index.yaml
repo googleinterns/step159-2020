@@ -1,0 +1,6 @@
+indexes:
+  - kind: "Term"
+    ancestor: yes
+    properties:
+      - name: "timeStamp"
+        direction: desc

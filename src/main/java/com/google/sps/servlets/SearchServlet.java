@@ -223,24 +223,43 @@ public class SearchServlet extends HttpServlet {
 
   /* Public for testing. */
   public static void addCourse(HttpServletRequest request, DatastoreService db) {
-    AddSchoolData addSchool = new AddSchoolData();
-    addSchool.addSchoolData(db, request);
-
     String name = request.getParameter("course-name");
     String prof = request.getParameter("prof-name");
     Long units = Long.parseLong(request.getParameter("num-units"));
     String term = request.getParameter("term");
     String school = request.getParameter("school-name");
 
-    Entity newCourse = new Entity("Course-Info");
-    newCourse.setProperty("name", name);
-    newCourse.setProperty("search-name", name.toLowerCase());
-    newCourse.setProperty("professor", prof);
-    newCourse.setProperty("search-professor", prof.toLowerCase());
-    newCourse.setProperty("units", units);
-    newCourse.setProperty("term", term);
-    newCourse.setProperty("school", school); // Already lowercase.
-    db.put(newCourse);
+    Boolean isNewCourse = checkNewCourse(name, prof, units, term, school, db);
+
+    if (isNewCourse) {
+      Entity newCourse = new Entity("Course-Info");
+      newCourse.setProperty("name", name);
+      newCourse.setProperty("search-name", name.toLowerCase());
+      newCourse.setProperty("professor", prof);
+      newCourse.setProperty("search-professor", prof.toLowerCase());
+      newCourse.setProperty("units", units);
+      newCourse.setProperty("term", term);
+      newCourse.setProperty("school", school); // Already lowercase.
+      db.put(newCourse);
+
+      AddSchoolData addSchool = new AddSchoolData();
+      addSchool.addSchoolData(db, request);
+    }
+  }
+
+  private static Boolean checkNewCourse(
+      String name, String prof, Long units, String term, String school, DatastoreService db) {
+    List<Filter> filters = new ArrayList<>();
+    filters.add(new FilterPredicate("search-name", FilterOperator.EQUAL, name.toLowerCase()));
+    filters.add(new FilterPredicate("search-professor", FilterOperator.EQUAL, prof.toLowerCase()));
+    filters.add(new FilterPredicate("units", FilterOperator.EQUAL, units));
+    filters.add(new FilterPredicate("term", FilterOperator.EQUAL, term));
+    filters.add(new FilterPredicate("school", FilterOperator.EQUAL, school));
+
+    Query courseQuery = new Query("Course-Info");
+    courseQuery.setFilter(CompositeFilterOperator.and(filters));
+    List<Entity> results = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
+    return results.size() == 0;
   }
 
   private Key findTermKey(

@@ -69,14 +69,12 @@ $(function () {
 });
 
 async function getLatestRating() {
-  let messageRatingElement = document.getElementById("message-rating")
-  messageRatingElement
+  let messageRetrievalElement = document.getElementById("retrieve-last-rating-message")
+  messageRetrievalElement
     .classList.remove("alert-light");
-  messageRatingElement
+  messageRetrievalElement
     .classList.add("alert-secondary");
-  messageRatingElement.innerHTML =
-    "Fetching your rating...";
-
+  messageRetrievalElement.innerHTML = "Fetching Rating...";
   const userId = await verify();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -89,11 +87,11 @@ async function getLatestRating() {
   const formInfo = await response.json();
 
   if (Object.keys(formInfo).length == 0) {
-    messageRatingElement
+    messageRetrievalElement
       .classList.remove("alert-secondary");
-    messageRatingElement
+    messageRetrievalElement
       .classList.add("alert-danger");
-    messageRatingElement.innerHTML =
+    messageRetrievalElement.innerHTML =
       "You have not submitted a rating for this term";
   } else {
     document.getElementById("term-input").innerHTML = formInfo["termInput"];
@@ -104,12 +102,12 @@ async function getLatestRating() {
     document.getElementById("difficulty").value = formInfo["difficulty"];
     document.getElementById("grade").value = formInfo["grade"];
     document.getElementById("translate").value = formInfo["translation"];
-
-    messageRatingElement.innerHTML =
-      "Your form has been populated!";
+    
     messageRatingElement
       .classList.remove("alert-secondary");
     messageRatingElement
       .classList.add("alert-success");
+    messageRetrievalElement.innerHTML =
+      "Your form has been populated!";
   }
 }
