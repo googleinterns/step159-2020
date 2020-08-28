@@ -17,6 +17,9 @@ async function signIn(googleUser) {
     document
       .getElementById("form-signin")
       .classList.add("hidden");
+    document
+      .getElementById("body")
+      .classList.remove("body");
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -46,6 +49,9 @@ async function signInPrivate(googleUser) {
     document
       .getElementById("form-signin")
       .classList.add("hidden");
+    document
+      .getElementById("body")
+      .classList.remove("body");
     document.getElementById(
       "private-school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -80,6 +86,9 @@ function signOut() {
   document
     .getElementById("form-signin")
     .classList.remove("hidden");
+  document
+    .getElementById("body")
+    .classList.add("body");
 }
 
 function signOutPrivate() {
@@ -94,4 +103,7 @@ function signOutPrivate() {
   document
     .getElementById("form-signin")
     .classList.remove("hidden");
+  document
+    .getElementById("body")
+    .classList.add("body");
 }

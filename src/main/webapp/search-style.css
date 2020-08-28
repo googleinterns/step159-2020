@@ -51,7 +51,6 @@ fieldset {
 html,
 body {
   height: 100%;
-  background-color: #1a1a1a;
 }
 
 #form-signin {
@@ -61,22 +60,28 @@ body {
   width: 100%;
 }
 
+.body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #1a1a1a;
+}
+
 #t1 {
   font-size: 120px;
   font-family: "Arvo", serif;
   color: white;
+  letter-spacing: 12px;
 }
 
-#F {
-  color: #4285f4;
-}
-
-#Y {
-  color: #db4437;
-}
-
-#I {
-  color: #f4b400;
+#t2 {
+  font-size: 120px;
+  font-family: "Arvo", serif;
+  color: #81b8ec;
+  letter-spacing: 12px;
 }
 
 .ml11 {
@@ -110,4 +115,5 @@ body {
 .ml11 .letter {
   display: inline-block;
   line-height: 1em;
+  letter-spacing: 10px;
 }
