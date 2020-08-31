@@ -9,13 +9,13 @@ async function signIn(googleUser) {
   if (id.verified) {
     // Successful sign-in.
     const termList = await getTermList();
-    const select = document.getElementById("search-term");
-    const opt = document.createElement('option');
-    opt.appendChild(document.createTextNode("Select term..."));
-    opt.value = ""; 
-    select.appendChild(opt);
+    const selectElement = document.getElementById("search-term");
+    const optionElement = document.createElement('option');
+    optionElement.appendChild(document.createTextNode("Select term..."));
+    optionElement.value = ""; 
+    selectElement.appendChild(optionElement);
     for (let term of termList) {
-        select.appendChild(createOptionElement(term));
+        selectElement.appendChild(createOptionElement(term));
     }
     document.getElementById("class-info").classList.remove("hidden");
     document.getElementById("login-box").classList.add("hidden");
@@ -93,11 +93,11 @@ function getUserSchool() {
   return email.substring(start + 1, end);
 }
 
-function createOptionElement(val) {
-  const opt = document.createElement('option');
-  opt.appendChild(document.createTextNode(val));
-  opt.value = val; 
-  return opt;
+function createOptionElement(optionValue) {
+  const optionElement = document.createElement('option');
+  optionElement.appendChild(document.createTextNode(optionValue));
+  optionElement.value = optionValue; 
+  return optionElement;
 }
 
 function removeAllTerms() {
@@ -105,8 +105,4 @@ function removeAllTerms() {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
-  const opt = document.createElement('option');
-  opt.appendChild(document.createTextNode("Select term..."));
-  opt.value = ""; 
-  parent.appendChild(opt);
 }

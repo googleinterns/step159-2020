@@ -46,18 +46,18 @@ public class TermServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Boolean quarter = isQuarter(request.getParameter("school-name"));
+    Boolean isQuarter = getIsQuarter(request.getParameter("school-name"));
     JSONObject json = new JSONObject();
-    json.put("quarter", quarter);
-    Term currTerm = getCurrTerm(quarter);
-    List<String> terms = termsToString(getTerms(currTerm, 2));
+    json.put("quarter", isQuarter);
+    Term currTerm = getCurrTerm(isQuarter);
+    List<String> terms = termsToString(getTerms(currTerm, /* maxTermOffset */ 2));
     json.put("terms", terms);
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
 
   /* Return term system of a school. */
-  public static Boolean isQuarter(String schoolName) {
+  public static Boolean getIsQuarter(String schoolName) {
     return QTR_SCHOOLS.contains(schoolName);
   }
 
@@ -78,12 +78,12 @@ public class TermServlet extends HttpServlet {
   }
 
   /* Go num terms forwards and backwards. */
-  private List<Term> getTerms(Term currTerm, int num) {
+  private List<Term> getTerms(Term currTerm, int maxTermOffset) {
     List<Term> terms = new ArrayList<>();
     terms.add(currTerm);
     Term nextTerm = new Term(currTerm.toString(), currTerm.isQuarter());
     Term prevTerm = new Term(currTerm.toString(), currTerm.isQuarter());
-    for (int i = 0; i < num; i++) {
+    for (int i = 0; i < maxTermOffset; i++) {
       prevTerm = prevTerm.getPrev();
       nextTerm = nextTerm.getNext();
       terms.add(prevTerm);
