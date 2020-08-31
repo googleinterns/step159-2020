@@ -2,21 +2,54 @@
   display: none;
 }
 
-label, select {
+label,
+select {
   margin-bottom: 20px;
 }
 
 #login-box {
-    margin: auto;
-    padding: 30px;
-    width: 120px;
+  margin: auto;
+  padding: 30px;
+  width: 120p;
 }
 
-#search-button:hover, #logout-button:hover {
+#search-textarea,
+#search-selectboxes,
+#class-textarea,
+#class-selectboxes {
+  display: flex;
+}
+
+textarea,
+select,
+fieldset {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: inline-block;
+  margin: 8px 0;
+  padding: 12px 20px;
+  width: 50%;
+}
+
+.search-button {
+  background-color: #4caf50;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  margin: 8px 0;
+  padding: 14px 20px;
+  width: 100%;
+}
+
+#search-button:hover,
+#logout-button:hover {
   background-color: #45a049;
 }
 
-#private-class-info, #course-search {
+#private-class-info,
+#course-search {
   margin: auto;
   width: 80%;
 }
@@ -26,13 +59,15 @@ label, select {
   margin: auto;
 }
 
-#private-logout-button, #logout-button {
-  bottom:   5%;
+#private-logout-button,
+#logout-button {
+  bottom: 5%;
   position: fixed;
-  right:    5%;
+  right: 5%;
 }
 
-#search-to-add, #add-to-search {
+#search-to-add,
+#add-to-search {
   left: 5%;
   bottom: 5%;
   position: fixed;
@@ -40,6 +75,76 @@ label, select {
 
 .button-padding {
   padding: 20px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+#form-signin {
+  margin: 400px auto;
+  max-width: 850px;
+  padding: 15px;
+  width: 100%;
+}
+
+.body {
+  align-items: center;
+  background-color: #1a1a1a;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+#t1 {
+  color: white;
+  font-size: 120px;
+  font-family: "Arvo", serif;
+  letter-spacing: 12px;
+}
+
+#t2 {
+  color: #81b8ec;
+  font-size: 120px;
+  font-family: "Arvo", serif;
+  letter-spacing: 12px;
+}
+
+.ml11 {
+  font-weight: 700;
+  font-size: 3.5em;
+}
+
+.ml11 .text-wrapper {
+  display: inline-block;
+  position: relative;
+  padding-top: 0.1em;
+  padding-right: 0.05em;
+  padding-bottom: 0.15em;
+}
+
+.ml11 .line {
+  background-color: #fff;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  transform-origin: 0 50%;
+  width: 3px;
+}
+
+.ml11 .line1 {
+  left: 0;
+  top: 0;
+}
+
+.ml11 .letter {
+  display: inline-block;
+  line-height: 1em;
+  letter-spacing: 12px;
 }
 
 #search-results {
