@@ -12,31 +12,30 @@ label, select {
     width: 120px;
 }
 
-#search-textarea, #search-selectboxes, #class-textarea, #class-selectboxes {
-    display: flex;
-}
-
-textarea, select, fieldset {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  display: inline-block;
-  margin: 8px 0;
-  padding: 12px 20px;
-  width: 50%;
-}
-
-.course-button {
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer; 
-  margin: 8px 0;
-  padding: 14px 20px;
-  width: 100%;
-}
-
 #search-button:hover, #logout-button:hover {
   background-color: #45a049;
+}
+
+#private-class-info {
+  margin: auto;
+  width: 80%;
+}
+
+.button-container {
+  margin: auto;
+}
+
+#private-logout-button {
+  bottom:   5%;
+  position: absolute;
+  right:    5%; 
+}
+
+#add-to-search {
+  display: block; 
+  margin: 0 auto;
+}
+
+.button-padding {
+  padding: 20px;
 }
