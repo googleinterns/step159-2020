@@ -72,7 +72,9 @@ public final class DataServletTest {
 
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
-            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
+            .setDocumentSentiment(
+                Sentiment.newBuilder()
+                    .setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -92,7 +94,8 @@ public final class DataServletTest {
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
-                /* propertyValue */ "9223372036854775807")
+                /* propertyValue */ "9223372036854775807",
+                KeyFactory.stringToKey(termKeyString))
             .get(0);
 
     // ASSERT.
@@ -120,7 +123,9 @@ public final class DataServletTest {
 
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
-            .setDocumentSentiment(Sentiment.newBuilder().setScore((float) -0.699999988079071)) // Sentiment Score of Text.
+            .setDocumentSentiment(
+                Sentiment.newBuilder()
+                    .setScore((float) -0.699999988079071)) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -149,7 +154,8 @@ public final class DataServletTest {
             .queryEntities(
                 /* entityName */ "Rating",
                 /* propertyName */ "reviewer-id",
-                /* propertyValue */ "9223372036854775807")
+                /* propertyValue */ "9223372036854775807",
+                KeyFactory.stringToKey(termKeyString))
             .get(0);
     // ASSERT.
     assertEquals("C", termRatingEntity.getProperty("grade"));
