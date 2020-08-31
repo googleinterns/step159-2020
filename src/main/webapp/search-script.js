@@ -41,6 +41,7 @@ function createListElement(course) {
   url.searchParams.set("term-key", course.termKey);
   url.searchParams.set("course-key", course.courseKey);
   link.setAttribute("href", url);
+  link.setAttribute("target", "_blank"); // Open in new window.
   link.innerText =
     course.name + " - " + course.professor + " (" + course.term + ")";
   liElement.appendChild(link);
