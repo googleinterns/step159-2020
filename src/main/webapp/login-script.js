@@ -1,10 +1,16 @@
-function changeElementSignIn() {
-  document
-    .getElementById("class-info")
-    .classList.remove("hidden");
-  document
-    .getElementById("login-box")
-    .classList.add("hidden");
+function changeElementSignIn(privateBool) {
+  let classInfo = "";
+  let loginBox = "";
+
+  if (privateBool) {
+    classInfo = "private-class-info";
+    loginBox = "private-login-box";
+  } else {
+    classInfo = "class-info";
+    loginBox = "login-box";
+  }
+  document.getElementById(classInfo).classList.remove("hidden");
+  document.getElementById(loginBox).classList.add("hidden");
   document
     .getElementById("form-signin")
     .classList.add("hidden");
@@ -16,10 +22,19 @@ function changeElementSignIn() {
     .classList.add("bg-light");
 }
 
-function changeElementSignOut() {
-  document
-    .getElementById("private-class-info")
-    .classList.add("hidden");
+function changeElementSignOut(privateBool) {
+  let classInfo = "";
+  let loginBox = "";
+
+  if (privateBool) {
+    classInfo = "private-class-info";
+    loginBox = "private-login-box";
+  } else {
+    classInfo = "class-info";
+    loginBox = "login-box";
+  }
+
+  document.getElementById(classInfo).classList.add(loginBox);
   document
     .getElementById("private-login-box")
     .classList.remove("hidden");
@@ -53,7 +68,7 @@ async function signIn(googleUser) {
     for (let term of termList) {
       select.appendChild(createOptionElement(term));
     }
-    changeElementSignIn();
+    changeElementSignIn(false);
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}!`;
@@ -74,7 +89,7 @@ async function signInPrivate(googleUser) {
   const id = await response.json();
   if (id.verified) {
     // Successful sign-in.
-    changeElementSignIn();
+    changeElementSignIn(true);
   } else {
     document.getElementById("private-login-message").innerHTML =
       "Email not verified. Try again.";
@@ -98,13 +113,13 @@ function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
   removeAllTerms(); // Clear term list.
-  changeElementSignOut();
+  changeElementSignOut(false);
 }
 
 function signOutPrivate() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  changeElementSignOut();
+  changeElementSignOut(true);
 }
 
 async function getTermList() {
