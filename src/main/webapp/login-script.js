@@ -7,17 +7,16 @@ async function signIn(googleUser) {
   const id = await loginResponse.json();
   if (id.verified) {
     // Successful sign-in.
+    hideLandingElements();
     const termList = await getTermList();
     const selectElement = document.getElementById("search-term");
-    const optionElement = document.createElement('option');
+    const optionElement = document.createElement("option");
     optionElement.appendChild(document.createTextNode("Select term..."));
-    optionElement.value = ""; 
+    optionElement.value = "";
     selectElement.appendChild(optionElement);
     for (let term of termList) {
-        selectElement.appendChild(createOptionElement(term));
+      selectElement.appendChild(createOptionElement(term));
     }
-    document.getElementById("class-info").classList.remove("hidden");
-    document.getElementById("login-box").classList.add("hidden");
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}!`;
@@ -42,8 +41,10 @@ async function signInPrivate(googleUser) {
   const id = await response.json();
   if (id.whitelist) {
     // Successful sign-in.
-    document.getElementById("private-class-info").classList.remove("hidden");
-    document.getElementById("private-login-box").classList.add("hidden");
+    hideLandingElements();
+    document.getElementById(
+      "private-school-name"
+    ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
   } else {
     document.getElementById("private-login-message").innerHTML =
       "Email not verified. Try again.";
@@ -85,16 +86,44 @@ async function verify() {
 function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  removeAllTerms(); // Clear term list.
-  document.getElementById("class-info").classList.add("hidden");
-  document.getElementById("login-box").classList.remove("hidden");
+  showLandingElements();
 }
 
 function signOutPrivate() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  document.getElementById("private-class-info").classList.add("hidden");
-  document.getElementById("private-login-box").classList.remove("hidden");
+  showLandingElements();
+}
+
+function hideLandingElements() {
+  document
+    .getElementById("private-class-info")
+    .classList.remove("hidden");
+  document
+    .getElementById("private-login-box")
+    .classList.add("hidden");
+  document
+    .getElementById("form-signin")
+    .classList.add("hidden");
+  document
+    .getElementById("body")
+    .classList.remove("body");
+  removeAllTerms(); // Clear term list.
+}
+
+function showLandingElements() {
+  document
+    .getElementById("private-class-info")
+    .classList.add("hidden");
+  document
+    .getElementById("private-login-box")
+    .classList.remove("hidden");
+  document
+    .getElementById("form-signin")
+    .classList.remove("hidden");
+  document
+    .getElementById("body")
+    .classList.add("body");
 }
 
 async function getTermList() {
@@ -116,9 +145,9 @@ function getUserSchool() {
 }
 
 function createOptionElement(optionValue) {
-  const optionElement = document.createElement('option');
+  const optionElement = document.createElement("option");
   optionElement.appendChild(document.createTextNode(optionValue));
-  optionElement.value = optionValue; 
+  optionElement.value = optionValue;
   return optionElement;
 }
 
