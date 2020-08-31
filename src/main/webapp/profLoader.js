@@ -113,10 +113,6 @@
     const commentWrapper = document.createElement("div");
     commentWrapper.setAttribute("class", "media text-muted pt-3");
 
-    const commentUser = document.createElement("strong");
-    commentUser.setAttribute("class", "d-block text-gray-dark");
-    commentUser.innerHTML = "@username";
-
     const commentBody = document.createElement("p");
     commentBody.setAttribute(
       "class",
@@ -124,7 +120,6 @@
     );
     commentBody.innerHTML = commentText;
 
-    commentBody.insertAdjacentElement("afterbegin", commentUser);
     commentWrapper.appendChild(commentBody);
     commentContainer.appendChild(commentWrapper);
   }

@@ -34,19 +34,17 @@ function changeElementSignOut(privateBool) {
     loginBox = "login-box";
   }
 
-  document.getElementById(classInfo).classList.add(loginBox);
-  document
-    .getElementById("private-login-box")
-    .classList.remove("hidden");
+  document.getElementById(classInfo).classList.add("hidden");
+  document.getElementById(loginBox).classList.remove("hidden");
   document
     .getElementById("form-signin")
-    .classList.add("hidden");
+    .classList.remove("hidden");
   document
     .getElementById("body")
-    .classList.remove("body");
+    .classList.add("body");
   document
     .getElementById("body")
-    .classList.add("bg-light");
+    .classList.remove("bg-light");
 }
 
 async function signIn(googleUser) {
