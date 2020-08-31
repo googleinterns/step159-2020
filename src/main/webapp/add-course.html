@@ -13,8 +13,8 @@
         <meta name="google-signin-client_id" content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com">
 
     </head>
-    <body>
-        <div class="container-fluid bg-light p-5">
+    <body class="bg-light">
+        <div class="container-fluid p-5">
             <div id="private-login-box">
                 <div class="g-signin2" id="private-login-button" data-onsuccess="signInPrivate"></div>
                 <div id="private-login-message"></div>
@@ -24,15 +24,15 @@
                     <h1 class="p-4 text-center">Enter course info:</h1>
                     <div class="form-row" id="class-textarea">
                         <div class="form-group col-md-6">
-                            <input type="text" class="form-control" name="course-name" id="course-name" placeholder="Class Name" maxlength=1500></textarea>
+                            <input type="text" class="form-control" name="course-name" id="course-name" placeholder="Class Name" maxlength=1500>
                         </div>
                         <div class="form-group col-md-6">
-                            <input type="text" class="form-control" name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500></textarea>
+                            <input type="text" class="form-control" name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4" id="class-selectboxes">
-                            <label for="unit-choice">How many units?</label>
+                            <label for="num-units">How many units?</label>
                             <select id="num-units" name="num-units" class="form-control">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -57,15 +57,16 @@
                             <label for="term">School:</label>
                             <input type="text" class="form-control" name="school-name" id="school-name" placeholder="School Name" rows="1" maxlength=1500></textarea>
                         </div>
+                    </div>
                     <div class="button-container">
-                        <input class="course-button btn btn-lg btn-outline-success" id="add-button" type="submit"/>
+                        <input class="course-button btn btn-lg btn-outline-success" id="add-button" value="Add Course!" type="submit"/>
                     </div>
                 </form>
             </div>
-            <div class="button-container button-padding">
+            <div class="button-container">
                 <button class="course-button btn btn-lg btn-outline-success" id="add-to-search" onclick="redirect('index.html')">Search for courses</button>
             </div>
-            <div class="button-container button-padding">
+            <div class="button-container">
                 <button class="course-button btn btn-lg btn-outline-success" id="private-logout-button" onclick="signOutPrivate()">Sign out</button>
             </div>
         </div>

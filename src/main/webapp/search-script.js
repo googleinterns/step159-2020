@@ -14,8 +14,8 @@ async function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
+  const units = document.getElementById("search-units").value;
   const searchMessage = document.getElementById("search-message");
-  const units = countUnits("search-units");
   const school = getUserSchool();
   courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
@@ -41,6 +41,7 @@ function createListElement(course) {
   url.searchParams.set("term-key", course.termKey);
   url.searchParams.set("course-key", course.courseKey);
   link.setAttribute("href", url);
+  link.setAttribute("target", "_blank"); // Open in new window.
   link.innerText =
     course.name + " - " + course.professor + " (" + course.term + ")";
   liElement.appendChild(link);
