@@ -49,9 +49,7 @@
 
     for (let dataHolder of profData) {
       courseList.push(`${dataHolder.course} - ${dataHolder.term}`);
-      difficultyAvgList.push(
-        average(dummyGradeData.concat(dataHolder.difficultyList))
-      );
+      difficultyAvgList.push(average(dataHolder.difficultyList));
     }
 
     const difficultyData = google.visualization.arrayToDataTable([
@@ -81,11 +79,9 @@
 
     for (let dataHolder of profData) {
       courseList.push(`${dataHolder.course} - ${dataHolder.term}`);
-      perceptionAvgList.push(
-        average(dummyGradeData.concat(dataHolder.perceptionList))
-      );
+      perceptionAvgList.push(average(dataHolder.perceptionList));
 
-      for (let comment of dummyComments.concat(dataHolder.commentsList)) {
+      for (let comment of dataHolder.commentsList) {
         commentList.push(comment);
       }
     }
