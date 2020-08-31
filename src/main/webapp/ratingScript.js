@@ -37,7 +37,7 @@ async function getRatingPropertiesToStore() {
     difficulty: document.getElementById("difficulty").value,
     grade: document.getElementById("grade").value,
     id: await verify(),
-    translate: document.getElementById("translate").value,
+    translate: document.getElementById("translate").checked,
   };
   document.getElementById("term-form").reset();
   const url = addingAttributesToURL(ratingProperties);

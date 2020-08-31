@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -139,7 +140,8 @@ public class DataServlet extends HttpServlet {
         queryEntities(
             /* entityName */ "Rating",
             /* propertyName */ "reviewer-id",
-            /* propertyValue */ userId);
+            /* propertyValue */ userId,
+            KeyFactory.stringToKey(termKeyString));
 
     Entity termRatingEntity =
         termRatingQueryList.isEmpty()
@@ -171,11 +173,12 @@ public class DataServlet extends HttpServlet {
     return score;
   }
 
-  public List<Entity> queryEntities(String entityName, String propertyName, String propertyValue)
+  public List<Entity> queryEntities(
+      String entityName, String propertyName, String propertyValue, Key ancestorKey)
       throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter filter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
-    Query query = new Query(entityName).setFilter(filter);
+    Query query = new Query(entityName).setFilter(filter).setAncestor(ancestorKey);
     // This is initialized when authentication happens, so should not be empty.
     List<Entity> queryList = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
     return queryList;

@@ -50,9 +50,14 @@
       </div>
     </div>
     <div class="container-chart">
-      <div id="grade-chart"></div>
+      <div
+        id="grade-chart"
+        data-toggle="tooltip"
+        data-placement="top"
+        title="If all grades are the same distribution will not show!"
+      ></div>
     </div>
-    <div class="flex-container">
+    <div class="flex-container" id="histograms">
       <div class="flex-child" id="hours-chart"></div>
       <div class="flex-child" id="diff-chart"></div>
     </div>
@@ -216,13 +221,13 @@
           <div class="row">
             <div class="col">
               <p class="lead">Want to Translate to English?</p>
-              <select class="custom-select mb-5" id="translate">
-                <option value="false" disabled selected>
-                  Want to translate?
-                </option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
+              <input
+                type="checkbox"
+                id="translate"
+                class="form-control mb-5"
+                name="translate"
+              />
+              <label for="translate">Mark to Translate</label><br />
               <div class="valid-tooltip">Looks good!</div>
             </div>
           </div>
@@ -246,7 +251,7 @@
         >
           Retrieve Your Previous Rating
         </button>
-
+        
         <button
           onclick="clearForm()"
           id="clear-form"
