@@ -227,7 +227,7 @@
                 class="form-control mb-5"
                 name="translate"
               />
-              <label for="translate">Mark to Translate.</label><br />
+              <label for="translate">Mark to Translate</label><br />
               <div class="valid-tooltip">Looks good!</div>
             </div>
           </div>
@@ -249,13 +249,34 @@
           class="btn btn-lg btn-outline-success btn-block"
           data-toggle="button"
         >
-          Retrieve Your Previous Rating.
+          Retrieve Your Previous Rating
         </button>
+        
+        <button
+          onclick="clearForm()"
+          id="clear-form"
+          type="button"
+          class="btn btn-lg btn-outline-success btn-block"
+          data-toggle="button"
+        >
+          Clear Form
+        </button>
+        
         <div
-          id="retrieve-last-rating-message"
-          class="alert alert-light"
+          id="retrieve-last-rating-container"
+          class="alert alert-light alert-dismissible fade show"
           role="alert"
-        ></div>
+        >
+          <strong id="retrieve-last-rating-message"></strong>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>
