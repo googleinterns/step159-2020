@@ -61,13 +61,14 @@ async function addCourse() {
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
   const schoolName = document.getElementById("school-name").value;
-  const units = countUnits("num-units");
+  const units = document.getElementById("num-units").value;
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
   url.searchParams.set("prof-name", profName);
   url.searchParams.set("num-units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", schoolName);
+  url.searchParams.set("num-enrolled", "300");
   const response = await fetch(url, { method: "POST" });
   return response;
 }

@@ -46,6 +46,29 @@ fieldset {
 #search-button:hover,
 #logout-button:hover {
   background-color: #45a049;
+
+#private-class-info {
+  margin: auto;
+  width: 80%;
+}
+
+.button-container {
+  margin: auto;
+}
+
+#private-logout-button {
+  bottom:   5%;
+  position: absolute;
+  right:    5%; 
+}
+
+#add-to-search {
+  display: block; 
+  margin: 0 auto;
+}
+
+.button-padding {
+  padding: 20px;
 }
 
 html,

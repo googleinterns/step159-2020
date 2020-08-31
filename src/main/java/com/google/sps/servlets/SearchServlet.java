@@ -133,10 +133,10 @@ public class SearchServlet extends HttpServlet {
       Filter termFilter;
       if (fuzzy) {
         List<String> terms = new ArrayList<>();
-        Term termObject = new Term(term, school);
-        terms.add(termObject.getPrev());
+        Term termObject = new Term(term, TermServlet.getIsQuarter(school));
+        terms.add(termObject.getPrev().toString());
         terms.add(term);
-        terms.add(termObject.getNext());
+        terms.add(termObject.getNext().toString());
         termFilter = new FilterPredicate("term", FilterOperator.IN, terms);
       } else {
         termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
@@ -259,7 +259,7 @@ public class SearchServlet extends HttpServlet {
     Query courseQuery = new Query("Course-Info");
     courseQuery.setFilter(CompositeFilterOperator.and(filters));
     List<Entity> results = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
-    return results.size() == 0;
+    return results.isEmpty();
   }
 
   private Key findTermKey(
