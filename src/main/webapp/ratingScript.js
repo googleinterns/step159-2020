@@ -59,7 +59,7 @@ function addingAttributesToURL(ratingProperties) {
 }
 
 async function passRatingProperties() {
-  document.getElementById("message-rating").innerHTML = "";
+  document.getElementById("retrieve-last-rating-message").innerHTML = "";
   const urlAndData = await getRatingPropertiesToStore();
   postRatingProperties(urlAndData[0], urlAndData[1]);
 }
@@ -72,8 +72,11 @@ async function getLatestRating() {
   let messageRetrievalElement = document.getElementById(
     "retrieve-last-rating-message"
   );
-  messageRetrievalElement.classList.remove("alert-light");
-  messageRetrievalElement.classList.add("alert-secondary");
+  let messageRetrievalElementContainer = document.getElementById(
+    "retrieve-last-rating-container"
+  );
+  messageRetrievalElementContainer.classList.remove("alert-light");
+  messageRetrievalElementContainer.classList.add("alert-secondary");
   messageRetrievalElement.innerHTML = "Fetching Rating...";
   const userId = await verify();
   const queryString = window.location.search;
@@ -87,8 +90,8 @@ async function getLatestRating() {
   const formInfo = await response.json();
 
   if (Object.keys(formInfo).length == 0) {
-    messageRetrievalElement.classList.remove("alert-secondary");
-    messageRetrievalElement.classList.add("alert-danger");
+    messageRetrievalElementContainer.classList.remove("alert-secondary");
+    messageRetrievalElementContainer.classList.add("alert-danger");
     messageRetrievalElement.innerHTML =
       "You have not submitted a rating for this term";
   } else {
@@ -101,8 +104,8 @@ async function getLatestRating() {
     document.getElementById("grade").value = formInfo["grade"];
     document.getElementById("translate").value = formInfo["translation"];
 
-    messageRatingElement.classList.remove("alert-secondary");
-    messageRatingElement.classList.add("alert-success");
+    messageRetrievalElementContainer.classList.remove("alert-secondary");
+    messageRetrievalElementContainer.classList.add("alert-success");
     messageRetrievalElement.innerHTML = "Your form has been populated!";
   }
 }

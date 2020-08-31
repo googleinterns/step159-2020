@@ -256,11 +256,27 @@
         >
           Clear Form.
         </button>
-        <div
+        <!-- <div
           id="retrieve-last-rating-message"
           class="alert alert-light"
           role="alert"
-        ></div>
+        ></div> -->
+
+        <div
+          id="retrieve-last-rating-container"
+          class="alert alert-light alert-dismissible fade show"
+          role="alert"
+        >
+          <strong id="retrieve-last-rating-message"></strong>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.3/dist/jstat.min.js"></script>
