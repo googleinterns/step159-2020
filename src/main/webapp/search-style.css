@@ -82,34 +82,27 @@ body {
   height: 100%;
 }
 
-#form-signin {
-  margin: 400px auto;
-  max-width: 850px;
-  padding: 15px;
-  width: 100%;
-}
-
 .body {
-  align-items: center;
-  background-color: #1a1a1a;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
+  align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
+  background-color: #1a1a1a;
 }
 
 #t1 {
-  color: white;
   font-size: 120px;
   font-family: "Arvo", serif;
+  color: white;
   letter-spacing: 12px;
 }
 
 #t2 {
-  color: #81b8ec;
   font-size: 120px;
   font-family: "Arvo", serif;
+  color: #81b8ec;
   letter-spacing: 12px;
 }
 
@@ -119,26 +112,26 @@ body {
 }
 
 .ml11 .text-wrapper {
-  display: inline-block;
   position: relative;
+  display: inline-block;
   padding-top: 0.1em;
   padding-right: 0.05em;
   padding-bottom: 0.15em;
 }
 
 .ml11 .line {
-  background-color: #fff;
-  height: 100%;
-  left: 0;
   opacity: 0;
   position: absolute;
-  transform-origin: 0 50%;
+  left: 0;
+  height: 100%;
   width: 3px;
+  background-color: #fff;
+  transform-origin: 0 50%;
 }
 
 .ml11 .line1 {
-  left: 0;
   top: 0;
+  left: 0;
 }
 
 .ml11 .letter {
