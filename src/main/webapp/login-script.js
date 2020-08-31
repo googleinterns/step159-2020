@@ -3,7 +3,6 @@ async function signIn(googleUser) {
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
-  url.searchParams.set("private", "false");
   const loginResponse = await fetch(url, { method: "POST" });
   const id = await loginResponse.json();
   if (id.verified) {
@@ -22,6 +21,14 @@ async function signIn(googleUser) {
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}!`;
+    console.log(id.whitelist);
+    if (id.whitelist) { 
+      document.getElementById("redirect-button-container").classList.remove("hidden");
+      console.log("showing");
+    } else {
+      document.getElementById("redirect-button-container").classList.add("hidden");
+      console.log("hiding");
+    }
   } else {
     document.getElementById("login-message").innerHTML =
       "Email not verified. Try again.";
@@ -34,10 +41,9 @@ async function signInPrivate(googleUser) {
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
-  url.searchParams.set("private", "true");
   const response = await fetch(url, { method: "POST" });
   const id = await response.json();
-  if (id.verified) {
+  if (id.whitelist) {
     // Successful sign-in.
     document.getElementById("private-class-info").classList.remove("hidden");
     document.getElementById("private-login-box").classList.add("hidden");
