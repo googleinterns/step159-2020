@@ -48,24 +48,26 @@ fieldset {
   background-color: #45a049;
 }
 
-#private-class-info {
+#private-class-info, #course-search {
   margin: auto;
   width: 80%;
 }
 
 .button-container {
+  text-align: center;
   margin: auto;
 }
 
-#private-logout-button {
-  bottom: 5%;
-  position: absolute;
-  right: 5%;
+#private-logout-button, #logout-button {
+  bottom:   5%;
+  position: fixed;
+  right:    5%;
 }
 
-#add-to-search {
-  display: block;
-  margin: 0 auto;
+#search-to-add, #add-to-search {
+  left: 5%;
+  bottom: 5%;
+  position: fixed;
 }
 
 .button-padding {
@@ -140,4 +142,7 @@ body {
   display: inline-block;
   line-height: 1em;
   letter-spacing: 12px;
+  
+#search-results {
+  padding: 20px;
 }
