@@ -21,13 +21,10 @@ async function signIn(googleUser) {
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}!`;
-    console.log(id.whitelist);
     if (id.whitelist) { 
       document.getElementById("redirect-button-container").classList.remove("hidden");
-      console.log("showing");
     } else {
       document.getElementById("redirect-button-container").classList.add("hidden");
-      console.log("hiding");
     }
   } else {
     document.getElementById("login-message").innerHTML =
