@@ -51,6 +51,25 @@ async function signInPrivate(googleUser) {
   }
 }
 
+async function signInReports(googleUser) {
+  const profile = googleUser.getBasicProfile();
+  const token = googleUser.getAuthResponse().id_token;
+  const url = new URL("/login", window.location.origin);
+  url.searchParams.set("token", token);
+  const response = await fetch(url, { method: "POST" });
+  const id = await response.json();
+  if (id.whitelist) {
+    // Successful sign-in.
+    document.getElementById("reports-container").classList.remove("hidden");
+    document.getElementById("reports-login-message").classList.add("hidden");
+  } else {
+    document.getElementById("reports-container").classList.add("hidden");
+    document.getElementById("reports-login-message").classList.remove("hidden");
+    document.getElementById("reports-login-message").innerHTML =
+      "You do not have access to view this page.";
+  }
+}
+
 /* Returns a Promise for the backend-generated ID of a user. */
 async function verify() {
   const auth2 = gapi.auth2.getAuthInstance();
