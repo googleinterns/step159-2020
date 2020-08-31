@@ -12,6 +12,9 @@ function changeElementSignIn(privateBool) {
   document.getElementById(classInfo).classList.remove("hidden");
   document.getElementById(loginBox).classList.add("hidden");
   document
+    .getElementById("navbar")
+    .classList.remove("hidden");
+  document
     .getElementById("form-signin")
     .classList.add("hidden");
   document
@@ -36,6 +39,9 @@ function changeElementSignOut(privateBool) {
 
   document.getElementById(classInfo).classList.add("hidden");
   document.getElementById(loginBox).classList.remove("hidden");
+  document
+    .getElementById("navbar")
+    .classList.add("hidden");
   document
     .getElementById("form-signin")
     .classList.remove("hidden");
