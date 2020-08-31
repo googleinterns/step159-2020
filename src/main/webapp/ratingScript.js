@@ -37,7 +37,7 @@ async function getRatingPropertiesToStore() {
     difficulty: document.getElementById("difficulty").value,
     grade: document.getElementById("grade").value,
     id: await verify(),
-    translate: document.getElementById("translate").value,
+    translate: document.getElementById("translate").checked,
   };
   document.getElementById("term-form").reset();
   const url = addingAttributesToURL(ratingProperties);
@@ -69,11 +69,11 @@ $(function () {
 });
 
 async function getLatestRating() {
-  let messageRetrievalElement = document.getElementById("retrieve-last-rating-message")
-  messageRetrievalElement
-    .classList.remove("alert-light");
-  messageRetrievalElement
-    .classList.add("alert-secondary");
+  let messageRetrievalElement = document.getElementById(
+    "retrieve-last-rating-message"
+  );
+  messageRetrievalElement.classList.remove("alert-light");
+  messageRetrievalElement.classList.add("alert-secondary");
   messageRetrievalElement.innerHTML = "Fetching Rating...";
   const userId = await verify();
   const queryString = window.location.search;
@@ -87,10 +87,8 @@ async function getLatestRating() {
   const formInfo = await response.json();
 
   if (Object.keys(formInfo).length == 0) {
-    messageRetrievalElement
-      .classList.remove("alert-secondary");
-    messageRetrievalElement
-      .classList.add("alert-danger");
+    messageRetrievalElement.classList.remove("alert-secondary");
+    messageRetrievalElement.classList.add("alert-danger");
     messageRetrievalElement.innerHTML =
       "You have not submitted a rating for this term";
   } else {
@@ -102,12 +100,9 @@ async function getLatestRating() {
     document.getElementById("difficulty").value = formInfo["difficulty"];
     document.getElementById("grade").value = formInfo["grade"];
     document.getElementById("translate").value = formInfo["translation"];
-    
-    messageRatingElement
-      .classList.remove("alert-secondary");
-    messageRatingElement
-      .classList.add("alert-success");
-    messageRetrievalElement.innerHTML =
-      "Your form has been populated!";
+
+    messageRatingElement.classList.remove("alert-secondary");
+    messageRatingElement.classList.add("alert-success");
+    messageRetrievalElement.innerHTML = "Your form has been populated!";
   }
 }
