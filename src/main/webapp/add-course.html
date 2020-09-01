@@ -4,49 +4,89 @@
         <meta charset="UTF-8">
         <title>Add Course Page</title>
         <link rel="stylesheet" href="search-style.css">
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
+            integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
+            crossorigin="anonymous"
+        />
         <meta name="google-signin-client_id" content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com">
-        <script src="search-script.js"></script>
-        <script src="login-script.js"></script>
+
     </head>
-    <body>
-        <div id="private-login-box">
-            <div class="g-signin2" id="private-login-button" data-onsuccess="signInPrivate"></div>
-            <div id="private-login-message"></div>
-        </div>
-        <div class="hidden" id="private-class-info">
-            <div id="private-school-name"></div>
-            <form id="course-form" onsubmit="addCourse()">
-                <p>Enter course info:</p>
-                <div id="class-textarea">
-                    <textarea name="course-name" id="course-name" placeholder="Class Name" maxlength=1500></textarea>
-                    <textarea name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500></textarea>
-                </div>
-                <div id="class-selectboxes">
-                    <fieldset>
-                        <legend>How many units?</legend>      
-                        <input type="radio" name="num-units" value="1">1<br>      
-                        <input type="radio" name="num-units" value="2">2<br>      
-                        <input type="radio" name="num-units" value="3">3<br>      
-                    </fieldset> 
-                    <label for="term">Term:</label>
-                    <select id="term" name="term">
-                        <option value="Fall 2020">Fall 2020</option>
-                        <option value="Summer 2020">Summer 2020</option>
-                        <option value="Spring 2020">Spring 2020</option>
-                        <option value="Winter 2020">Winter 2020</option>
-                        <option value="Fall 2019">Fall 2019</option>
-                        <option value="Summer 2019">Summer 2019</option>
-                        <option value="Spring 2019">Spring 2019</option>
-                        <option value="Winter 2019">Winter 2019</option>
-                        <option value="Fall 2018">Fall 2018</option>
-                    </select>
-                </div>
-                <textarea name="school-name" id="school-name" placeholder="School Name" maxlength=1500></textarea>
-                <input class="course-button" id="add-button" type="submit" />
-            </form>
-            <button class="course-button" id="add-to-search" onclick="redirect('index.html')">Search for courses</button>
-            <button class="course-button" id="private-logout-button" onclick="signOutPrivate()">Sign out</button>
+    <body class="bg-light">
+        <div class="container-fluid p-5">
+            <div id="private-login-box">
+                <div class="g-signin2" id="private-login-button" data-onsuccess="signInPrivate"></div>
+                <div id="private-login-message"></div>
+            </div>
+            <div class="hidden container-xl my-4" id="private-class-info">
+                <form id="course-form" onsubmit="addCourse()">
+                    <h1 class="p-4 text-center">Enter course info:</h1>
+                    <div class="form-row" id="class-textarea">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" name="course-name" id="course-name" placeholder="Class Name" maxlength=1500>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" name="prof-name" id="prof-name" placeholder="Professor Name" maxlength=1500>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4" id="class-selectboxes">
+                            <label for="num-units">How many units?</label>
+                            <select id="num-units" name="num-units" class="form-control">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="term">Term:</label>
+                            <select id="term" name="term" class="form-control">
+                                <option value="Fall 2020">Fall 2020</option>
+                                <option value="Summer 2020">Summer 2020</option>
+                                <option value="Spring 2020">Spring 2020</option>
+                                <option value="Winter 2020">Winter 2020</option>
+                                <option value="Fall 2019">Fall 2019</option>
+                                <option value="Summer 2019">Summer 2019</option>
+                                <option value="Spring 2019">Spring 2019</option>
+                                <option value="Winter 2019">Winter 2019</option>
+                                <option value="Fall 2018">Fall 2018</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="term">School:</label>
+                            <input type="text" class="form-control" name="school-name" id="school-name" placeholder="School Name" rows="1" maxlength=1500></textarea>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <input class="course-button btn btn-lg btn-outline-success" id="add-button" value="Add Course!" type="submit"/>
+                    </div>
+                </form>
+            </div>
+            <div class="button-container">
+                <button class="course-button btn btn-lg btn-outline-success" id="add-to-search" onclick="redirect('index.html')">Search for courses</button>
+            </div>
+            <div class="button-container">
+                <button class="course-button btn btn-lg btn-outline-success" id="private-logout-button" onclick="signOutPrivate()">Sign out</button>
+            </div>
         </div>
     </body>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"
+      integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
+      crossorigin="anonymous"
+    ></script>
+    <script src="search-script.js"></script>
+    <script src="login-script.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </html>

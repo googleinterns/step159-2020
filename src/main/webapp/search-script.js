@@ -14,8 +14,8 @@ async function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
+  const units = document.getElementById("search-units").value;
   const searchMessage = document.getElementById("search-message");
-  const units = countUnits("search-units");
   const school = getUserSchool();
   courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
@@ -41,6 +41,7 @@ function createListElement(course) {
   url.searchParams.set("term-key", course.termKey);
   url.searchParams.set("course-key", course.courseKey);
   link.setAttribute("href", url);
+  link.setAttribute("target", "_blank"); // Open in new window.
   link.innerText =
     course.name + " - " + course.professor + " (" + course.term + ")";
   liElement.appendChild(link);
@@ -61,13 +62,14 @@ async function addCourse() {
   const profName = document.getElementById("prof-name").value;
   const termName = document.getElementById("term").value;
   const schoolName = document.getElementById("school-name").value;
-  const units = countUnits("num-units");
+  const units = document.getElementById("num-units").value;
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
   url.searchParams.set("prof-name", profName);
   url.searchParams.set("num-units", units);
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", schoolName);
+  url.searchParams.set("num-enrolled", "300");
   const response = await fetch(url, { method: "POST" });
   return response;
 }
@@ -75,3 +77,46 @@ async function addCourse() {
 function redirect(newSite) {
   location.href = new URL("/" + newSite, window.location.origin);
 }
+
+// Wrap every letter in a span
+// Source: https://tobiasahlin.com/moving-letters/
+const textWrapper = document.querySelector(".ml11 .letters");
+textWrapper.innerHTML = textWrapper.textContent.replace(
+  /([^\x00-\x80]|\w)/g,
+  "<span class='letter'>$&</span>"
+);
+
+anime
+  .timeline({ loop: true })
+  .add({
+    targets: ".ml11 .line",
+    scaleY: [0, 1],
+    opacity: [0.5, 1],
+    easing: "easeOutExpo",
+    duration: 700,
+  })
+  .add({
+    targets: ".ml11 .line",
+    translateX: [
+      0,
+      document.querySelector(".ml11 .letters").getBoundingClientRect().width +
+        10,
+    ],
+    easing: "easeOutExpo",
+    duration: 700,
+    delay: 100,
+  })
+  .add({
+    targets: ".ml11 .letter",
+    opacity: [0, 1],
+    easing: "easeOutExpo",
+    duration: 600,
+    offset: "-=775",
+    delay: (el, i) => 34 * (i + 1),
+  })
+  .add({
+    targets: ".ml11",
+    opacity: 0,
+    duration: 1000,
+    delay: 10000,
+  });

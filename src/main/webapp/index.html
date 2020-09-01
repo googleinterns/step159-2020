@@ -1,43 +1,97 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Search Page</title>
-        <link rel="stylesheet" href="search-style.css">
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <meta name="google-signin-client_id" content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com">
-        <script src="search-script.js"></script>
-        <script src="login-script.js"></script>
-    </head>
-    <body>
-        <div id="login-box">
-            <div class="g-signin2" id="login-button" data-onsuccess="signIn"></div>
-            <div id="login-message"></div>
-        </div>
-        <div class="hidden" id="class-info">
-            <div id="school-name"></div>
-            <div id="course-search">
-                <p>What course are you searching for?</p>
-                <div id="search-textarea">
-                    <textarea id="search-course" maxlength=1500 placeholder="Class Name"></textarea>
-                    <textarea id="search-prof" maxlength=1500 placeholder="Professor"></textarea>
-                </div>
-                <div id="search-selectboxes">
-                    <select id="search-term">
-                    </select>
-                    <fieldset>      
-                        <legend>How many units?</legend>      
-                        <input type="checkbox" name="search-units" value="1">1<br>      
-                        <input type="checkbox" name="search-units" value="2">2<br>      
-                        <input type="checkbox" name="search-units" value="3">3<br>      
-                    </fieldset>   
-                </div>   
-                <button class="course-button" id="search-button" onclick="showCourses()">See courses!</button>
-                <div id="search-message"></div>
-                <div id=search-results></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Search Page</title>
+    <link rel="stylesheet" href="search-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
+      integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Arvo"
+    />
+    <meta
+      name="google-signin-client_id"
+      content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container-fluid p-5">
+      <h1 class="ml11">
+        <span id="t1">Course</span>
+        <span class="text-wrapper">
+          <span class="line"></span>
+          <span class="letters" id="t2">FYI</span>
+        </span>
+      </h1>
+      <div id="login-box">
+        <div class="g-signin2" id="login-button" data-onsuccess="signIn"></div>
+        <div id="login-message"></div>
+      </div>
+      <div class="hidden container-xl my-4 " id="class-info">
+        <div id="school-name"></div>
+        <div id="course-search">
+          <h1 class="p-4 text-center">What course are you searching for?</h1>
+          <div class="form-row align-items-center" id="search-textarea">
+            <div class="form-group col-md-6">
+              <input type="text" id="search-course" class="form-control" maxlength=1500 placeholder="Class Name"></textarea>
             </div>
-            <button class="course-button" id="search-to-add" onclick="redirect('add-course.html')">Add courses</button>
-            <button class="course-button" id="logout-button" onclick="signOut()">Sign out</button>
-        </div>    
+            <div class="form-group col-md-6">
+              <input type="text" id="search-prof" class="form-control" maxlength=1500 placeholder="Professor"></textarea>
+            </div>
+          </div>
+          <div class="form-row align-items-center" id="search-selectboxes">
+            <div class="form-group col-md-6">  
+              <label for="search-units">How many units?</label>
+              <select id="search-units" name="search-units" class="form-control">    
+                <option value="">Select units...<br>
+                <option value="1">1<br>      
+                <option value="2">2<br>      
+                <option value="3">3<br>     
+              </select> 
+             </div>
+             <div class="form-group col-md-6"> 
+              <label for="search-term">Term:</label>
+              <select class="form-control" name="search-term" id="search-term"></select>
+             </div>
+           </div>
+           <div class="button-container button-padding">
+               <button class="course-button btn btn-lg btn-outline-success" id="search-button" onclick="showCourses()">See courses!</button>
+           </div>
+           <div id="search-message"></div>
+           <div id=search-results></div>
+         </div>
+         <div class="button-container button-padding hidden" id="redirect-button-container">
+            <button class="course-button btn btn-lg btn-outline-success" id="search-to-add" onclick="redirect('add-course.html')">Add courses</button>
+         </div>
+         <div class="button-container button-padding">
+           <button class="course-button btn btn-lg btn-outline-success" id="logout-button" onclick="signOut()">Sign out</button>
+         </div>
+        </div> 
+      </div>   
     </body>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"
+      integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    <script src="search-script.js"></script>
+    <script src="login-script.js"></script>
+  </body>
 </html>
