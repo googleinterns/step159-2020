@@ -58,24 +58,32 @@ async function signIn(googleUser) {
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
-  url.searchParams.set("private", "false");
   const loginResponse = await fetch(url, { method: "POST" });
   const id = await loginResponse.json();
   if (id.verified) {
     // Successful sign-in.
-    const termList = await getTermList();
-    const select = document.getElementById("search-term");
-    const opt = document.createElement("option");
-    opt.appendChild(document.createTextNode("Select term..."));
-    opt.value = "";
-    select.appendChild(opt);
-    for (let term of termList) {
-      select.appendChild(createOptionElement(term));
-    }
     changeElementSignIn(false);
+    const termList = await getTermList();
+    const selectElement = document.getElementById("search-term");
+    const optionElement = document.createElement("option");
+    optionElement.appendChild(document.createTextNode("Select term..."));
+    optionElement.value = "";
+    selectElement.appendChild(optionElement);
+    for (let term of termList) {
+      selectElement.appendChild(createOptionElement(term));
+    }
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}!`;
+    if (id.whitelist) {
+      document
+        .getElementById("redirect-button-container")
+        .classList.remove("hidden");
+    } else {
+      document
+        .getElementById("redirect-button-container")
+        .classList.add("hidden");
+    }
   } else {
     document.getElementById("login-message").innerHTML =
       "Email not verified. Try again.";
@@ -88,16 +96,45 @@ async function signInPrivate(googleUser) {
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
   url.searchParams.set("token", token);
-  url.searchParams.set("private", "true");
   const response = await fetch(url, { method: "POST" });
   const id = await response.json();
-  if (id.verified) {
+  if (id.whitelist) {
     // Successful sign-in.
     changeElementSignIn(true);
+    document.getElementById(
+      "private-school-name"
+    ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
   } else {
     document.getElementById("private-login-message").innerHTML =
       "Email not verified. Try again.";
     signOutPrivate();
+  }
+}
+
+async function signInReports(googleUser) {
+  const profile = googleUser.getBasicProfile();
+  const token = googleUser.getAuthResponse().id_token;
+  const url = new URL("/login", window.location.origin);
+  url.searchParams.set("token", token);
+  const response = await fetch(url, { method: "POST" });
+  const id = await response.json();
+  if (id.whitelist) {
+    // Successful sign-in.
+    document
+      .getElementById("reports-container")
+      .classList.remove("hidden");
+    document
+      .getElementById("reports-login-message")
+      .classList.add("hidden");
+  } else {
+    document
+      .getElementById("reports-container")
+      .classList.add("hidden");
+    document
+      .getElementById("reports-login-message")
+      .classList.remove("hidden");
+    document.getElementById("reports-login-message").innerHTML =
+      "You do not have access to view this page.";
   }
 }
 
@@ -116,7 +153,6 @@ async function verify() {
 function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  removeAllTerms(); // Clear term list.
   changeElementSignOut(false);
 }
 
@@ -144,11 +180,11 @@ function getUserSchool() {
   return email.substring(start + 1, end);
 }
 
-function createOptionElement(val) {
-  const opt = document.createElement("option");
-  opt.appendChild(document.createTextNode(val));
-  opt.value = val;
-  return opt;
+function createOptionElement(optionValue) {
+  const optionElement = document.createElement("option");
+  optionElement.appendChild(document.createTextNode(optionValue));
+  optionElement.value = optionValue;
+  return optionElement;
 }
 
 function removeAllTerms() {
@@ -156,8 +192,4 @@ function removeAllTerms() {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
-  const opt = document.createElement("option");
-  opt.appendChild(document.createTextNode("Select term..."));
-  opt.value = "";
-  parent.appendChild(opt);
 }

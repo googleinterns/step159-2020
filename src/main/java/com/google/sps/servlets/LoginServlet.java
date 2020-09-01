@@ -5,7 +5,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.sps.data.LoginObject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
@@ -28,39 +27,51 @@ public class LoginServlet extends HttpServlet {
           "crumley@google.com",
           "lgmt@google.com");
 
-  public LoginObject verifyToken(HttpServletRequest request) throws IOException {
+  public JSONObject verifyToken(HttpServletRequest request) throws IOException {
     String idTokenString = request.getParameter("token");
-    Boolean checkWhitelist = Boolean.parseBoolean(request.getParameter("private"));
     UrlFetchTransport transport = UrlFetchTransport.getDefaultInstance();
     GsonFactory json = GsonFactory.getDefaultInstance();
     GoogleIdTokenVerifier verifier =
         new GoogleIdTokenVerifier.Builder(transport, json)
             .setAudience(Collections.singletonList(clientId))
             .build();
+
+    JSONObject response = new JSONObject();
+
     try {
       GoogleIdToken idToken = verifier.verify(idTokenString);
       if (idToken != null) {
         Payload payload = idToken.getPayload();
         String userId = payload.getSubject();
-        if (checkWhitelist && !(whitelist.contains(payload.getEmail()))) {
-          return new LoginObject("", false, "NOT AUTHORIZED");
+        response.put("userId", userId);
+        response.put("verified", "true");
+        if (whitelist.contains(payload.getEmail())) {
+          response.put("whitelist", true);
+        } else {
+          response.put("whitelist", false);
         }
-        return new LoginObject(userId, true, "");
+        return response;
+      } else {
+        response.put("verified", false);
+        response.put("whitelist", false);
+        return response;
       }
-      return new LoginObject("", false, "NULL TOKEN");
     } catch (GeneralSecurityException e) {
-      return new LoginObject("", false, "SECURITY ERROR");
+      response.put("verified", "false");
+      response.put("whitelist", "false");
+      response.put("message", "SECURITY ERROR");
+      return response;
     } catch (IllegalArgumentException e) {
-      return new LoginObject("", false, "ARGUMENT ERROR");
+      response.put("verified", "false");
+      response.put("whitelist", "false");
+      response.put("message", "ARGUMENT ERROR");
+      return response;
     }
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    LoginObject login = verifyToken(request);
-    JSONObject json = new JSONObject();
-    json.put("id", login.getId());
-    json.put("verified", login.getSuccess());
+    JSONObject json = verifyToken(request);
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
