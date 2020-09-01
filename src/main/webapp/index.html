@@ -19,7 +19,7 @@
       content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
     />
   </head>
-  <body id="body" class="body" class="bg-light">
+  <body id="body" class="body">
     <div id="navbar" class="hidden">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a href="index.html">
@@ -120,25 +120,28 @@
               ></select>
             </div>
           </div>
-          <div class="button-container">
+          <div class="button-container button-padding">
             <button
               class="course-button btn btn-lg btn-outline-success"
               id="search-button"
               onclick="showCourses()"
             >
-              See Courses!
+              See courses!
             </button>
           </div>
           <div id="search-message"></div>
           <div id="search-results"></div>
         </div>
-        <div class="button-container button-padding">
+        <div
+          class="button-container button-padding hidden"
+          id="redirect-button-container"
+        >
           <button
             class="course-button btn btn-lg btn-outline-success"
             id="search-to-add"
             onclick="redirect('add-course.html')"
           >
-            Add Courses
+            Add courses
           </button>
         </div>
         <div class="button-container button-padding">
@@ -147,7 +150,7 @@
             id="logout-button"
             onclick="signOut()"
           >
-            Sign Out
+            Sign out
           </button>
         </div>
       </div>
