@@ -76,12 +76,13 @@ public final class DataServletTest {
     Reader reader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
-
+    
+    float sentimentScore = (float) -0.8999999761581421);
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(
                 Sentiment.newBuilder()
-                    .setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
+                    .setScore(sentimentScore) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -127,12 +128,13 @@ public final class DataServletTest {
     Reader originalRatingReader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader originalRatingBufferedReader = new BufferedReader(originalRatingReader);
     when(request.getReader()).thenReturn(originalRatingBufferedReader);
-
+    
+    float sentimentScore = (float) -0.699999988079071);
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(
                 Sentiment.newBuilder()
-                    .setScore((float) -0.699999988079071)) // Sentiment Score of Text.
+                    .setScore(sentimentScore) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -186,12 +188,13 @@ public final class DataServletTest {
     Reader reader = new FileReader("src/main/webapp/WEB-INF/testTranslation.txt");
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
-
+    
+    float sentimentScore = (float) -0.8999999761581421);
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(
                 Sentiment.newBuilder()
-                    .setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
+                    .setScore(sentimentScore) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -245,12 +248,13 @@ public final class DataServletTest {
     Reader reader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
-
+    
+    float sentimentScore = (float) -0.8999999761581421);
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(
                 Sentiment.newBuilder()
-                    .setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
+                    .setScore(sentimentScore) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
@@ -328,12 +332,13 @@ public final class DataServletTest {
     Reader reader = new FileReader("src/main/webapp/WEB-INF/testNewRating.txt");
     BufferedReader bufferedReader = new BufferedReader(reader);
     when(request.getReader()).thenReturn(bufferedReader);
-
+    
+    float sentimentScore = (float) -0.8999999761581421;
     AnalyzeSentimentResponse response =
         AnalyzeSentimentResponse.newBuilder()
             .setDocumentSentiment(
                 Sentiment.newBuilder()
-                    .setScore((float) -0.8999999761581421)) // Sentiment Score of Text.
+                    .setScore(sentimentScore) // Sentiment Score of Text.
             .build();
     when(languageService.analyzeSentiment(any(Document.class))).thenReturn(response);
 
