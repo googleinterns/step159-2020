@@ -59,7 +59,7 @@ function addingAttributesToURL(ratingProperties) {
 }
 
 async function passRatingProperties() {
-  if (validSubmission() == true) {
+  if (validSubmission()) {
     document.getElementById("retrieve-last-rating-message").innerHTML = "";
     const urlAndData = await getRatingPropertiesToStore();
     postRatingProperties(urlAndData[0], urlAndData[1]);
