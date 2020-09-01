@@ -130,7 +130,6 @@ function validSubmission() {
   for (i = 0; i < allFormFields.length; i++) {
     // If any field is not field out properly.
     if (!allFormFields[i].checkValidity()) {
-      console.log(allFormFields[i]);
       successfulSubmissionMessage.innerHTML =
         "Invalid Submission, check form fields";
       return false;
