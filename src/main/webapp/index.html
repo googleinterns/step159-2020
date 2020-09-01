@@ -19,61 +19,142 @@
       content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
     />
   </head>
-  <body class="bg-light">
+  <body id="body" class="body">
+    <div id="navbar" class="hidden">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="index.html">
+          <span class="navbar-brand mb-0 h1">
+            Course
+            <span id="logo">FYI</span>
+          </span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="index.html">Search</a>
+            </li>
+          </ul>
+        </div>
+        <form class="form-inline my-2 my-lg-0">
+          <a class="btn btn-outline-light my-2 my-sm-0" href="/report.html"
+            >Report Bug</a
+          >
+        </form>
+      </nav>
+    </div>
     <div class="container-fluid p-5">
-      <h1 class="ml11">
-        <span id="t1">Course</span>
-        <span class="text-wrapper">
-          <span class="line"></span>
-          <span class="letters" id="t2">FYI</span>
-        </span>
-      </h1>
-      <div id="login-box">
-        <div class="g-signin2" id="login-button" data-onsuccess="signIn"></div>
-        <div id="login-message"></div>
-      </div>
-      <div class="hidden container-xl my-4 " id="class-info">
+      <form id="form-signin">
+        <div class="container">
+          <h1 class="text-center ml11">
+            <span id="t1">Course</span>
+            <span class="text-wrapper">
+              <span class="line line1"></span>
+              <span class="letters" id="t2">FYI</span>
+            </span>
+          </h1>
+          <div id="login-box">
+            <div
+              class="g-signin2"
+              id="login-button"
+              data-onsuccess="signIn"
+            ></div>
+            <div id="login-message"></div>
+          </div>
+        </div>
+      </form>
+      <div class="hidden container-xl my-4" id="class-info">
         <div id="school-name"></div>
         <div id="course-search">
           <h1 class="p-4 text-center">What course are you searching for?</h1>
           <div class="form-row align-items-center" id="search-textarea">
             <div class="form-group col-md-6">
-              <input type="text" id="search-course" class="form-control" maxlength=1500 placeholder="Class Name"></textarea>
+              <input
+                type="text"
+                id="search-course"
+                class="form-control"
+                maxlength="1500"
+                placeholder="Class Name"
+              />
             </div>
             <div class="form-group col-md-6">
-              <input type="text" id="search-prof" class="form-control" maxlength=1500 placeholder="Professor"></textarea>
+              <input
+                type="text"
+                id="search-prof"
+                class="form-control"
+                maxlength="1500"
+                placeholder="Professor"
+              />
             </div>
           </div>
           <div class="form-row align-items-center" id="search-selectboxes">
-            <div class="form-group col-md-6">  
+            <div class="form-group col-md-6">
               <label for="search-units">How many units?</label>
-              <select id="search-units" name="search-units" class="form-control">    
-                <option value="">Select units...<br>
-                <option value="1">1<br>      
-                <option value="2">2<br>      
-                <option value="3">3<br>     
-              </select> 
-             </div>
-             <div class="form-group col-md-6"> 
+              <select
+                id="search-units"
+                name="search-units"
+                class="form-control"
+              >
+                <option value="">Select units...<br /></option>
+                <option value="1">1<br /></option>
+                <option value="2">2<br /></option>
+                <option value="3">3<br /></option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
               <label for="search-term">Term:</label>
-              <select class="form-control" name="search-term" id="search-term"></select>
-             </div>
-           </div>
-           <div class="button-container button-padding">
-               <button class="course-button btn btn-lg btn-outline-success" id="search-button" onclick="showCourses()">See courses!</button>
-           </div>
-           <div id="search-message"></div>
-           <div id=search-results></div>
-         </div>
-         <div class="button-container button-padding hidden" id="redirect-button-container">
-            <button class="course-button btn btn-lg btn-outline-success" id="search-to-add" onclick="redirect('add-course.html')">Add courses</button>
-         </div>
-         <div class="button-container button-padding">
-           <button class="course-button btn btn-lg btn-outline-success" id="logout-button" onclick="signOut()">Sign out</button>
-         </div>
-        </div> 
-      </div>   
-    </body>
+              <select
+                class="form-control"
+                name="search-term"
+                id="search-term"
+              ></select>
+            </div>
+          </div>
+          <div class="button-container button-padding">
+            <button
+              class="course-button btn btn-lg btn-outline-success"
+              id="search-button"
+              onclick="showCourses()"
+            >
+              See courses!
+            </button>
+          </div>
+          <div id="search-message"></div>
+          <div id="search-results"></div>
+        </div>
+        <div
+          class="button-container button-padding hidden"
+          id="redirect-button-container"
+        >
+          <button
+            class="course-button btn btn-lg btn-outline-success"
+            id="search-to-add"
+            onclick="redirect('add-course.html')"
+          >
+            Add courses
+          </button>
+        </div>
+        <div class="button-container button-padding">
+          <button
+            class="course-button btn btn-lg btn-outline-success"
+            id="logout-button"
+            onclick="signOut()"
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    </div>
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"

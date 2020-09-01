@@ -3,8 +3,10 @@
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
-  const average = (list) =>
-    list.reduce((prev, curr) => prev + curr, 0) / list.length;
+  function average(list) {
+    const flatList = [].concat.apply([], list);
+    return flatList.reduce((prev, curr) => prev + curr, 0) / flatList.length;
+  }
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -63,7 +65,7 @@
       height: 450,
       bars: "horizontal",
       bar: { groupWidth: "30%" },
-      hAxis: { title: "Avg Term Perception" },
+      hAxis: { title: "Avg Term Difficulty" },
     };
 
     const chart = new google.charts.Bar(
@@ -113,10 +115,6 @@
     const commentWrapper = document.createElement("div");
     commentWrapper.setAttribute("class", "media text-muted pt-3");
 
-    const commentUser = document.createElement("strong");
-    commentUser.setAttribute("class", "d-block text-gray-dark");
-    commentUser.innerHTML = "@username";
-
     const commentBody = document.createElement("p");
     commentBody.setAttribute(
       "class",
@@ -124,7 +122,6 @@
     );
     commentBody.innerHTML = commentText;
 
-    commentBody.insertAdjacentElement("afterbegin", commentUser);
     commentWrapper.appendChild(commentBody);
     commentContainer.appendChild(commentWrapper);
   }
