@@ -42,13 +42,22 @@ public class DataServlet extends HttpServlet {
   private final List<Object> commentsList = new ArrayList<>();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private LanguageServiceClient languageService;
+  private TranslationServiceClient translateService;
 
   public DataServlet() throws IOException {
     this.languageService = LanguageServiceClient.create();
+    try {
+      this.translateService = TranslationServiceClient.create();
+    } catch (IOException exception) {
+      throw new IOException("Could not initialize TranslationServiceClient");
+    }
   }
 
-  public DataServlet(LanguageServiceClient languageServiceClient) {
+  public DataServlet(
+      LanguageServiceClient languageServiceClient,
+      TranslationServiceClient translateServiceClient) {
     this.languageService = languageServiceClient;
+    this.translateService = translateServiceClient;
   }
 
   @Override
@@ -250,22 +259,17 @@ public class DataServlet extends HttpServlet {
 
   private String translateTextToEnglish(String text) throws IOException {
     String projectId = "nina-laura-dagm-step-2020";
-    try (TranslationServiceClient client = TranslationServiceClient.create()) {
-      LocationName parent = LocationName.of(projectId, "global");
+    LocationName parent = LocationName.of(projectId, "global");
 
-      TranslateTextRequest request =
-          TranslateTextRequest.newBuilder()
-              .setParent(parent.toString())
-              .setMimeType("text/plain")
-              .setTargetLanguageCode("en")
-              .addContents(text)
-              .build();
+    TranslateTextRequest request =
+        TranslateTextRequest.newBuilder()
+            .setParent(parent.toString())
+            .setMimeType("text/plain")
+            .setTargetLanguageCode("en")
+            .addContents(text)
+            .build();
 
-      TranslateTextResponse response = client.translateText(request);
-      return response.getTranslationsList().get(0).getTranslatedText();
-
-    } catch (IOException exception) {
-      throw new IOException("Could not translate comments");
-    }
+    TranslateTextResponse response = this.translateService.translateText(request);
+    return response.getTranslationsList().get(0).getTranslatedText();
   }
 }
