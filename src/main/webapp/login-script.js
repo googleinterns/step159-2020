@@ -1,3 +1,58 @@
+function hideLandingSignIn(privateBool) {
+  let classInfo = "";
+  let loginBox = "";
+
+  if (privateBool) {
+    classInfo = "private-class-info";
+    loginBox = "private-login-box";
+  } else {
+    classInfo = "class-info";
+    loginBox = "login-box";
+  }
+  document.getElementById(classInfo).classList.remove("hidden");
+  document.getElementById(loginBox).classList.add("hidden");
+  document
+    .getElementById("navbar")
+    .classList.remove("hidden");
+  document
+    .getElementById("form-signin")
+    .classList.add("hidden");
+  document
+    .getElementById("body")
+    .classList.remove("body");
+  document
+    .getElementById("body")
+    .classList.add("bg-light");
+}
+
+function revealLandingSignOut(privateBool) {
+  let classInfo = "";
+  let loginBox = "";
+
+  if (privateBool) {
+    classInfo = "private-class-info";
+    loginBox = "private-login-box";
+  } else {
+    classInfo = "class-info";
+    loginBox = "login-box";
+  }
+
+  document.getElementById(classInfo).classList.add("hidden");
+  document.getElementById(loginBox).classList.remove("hidden");
+  document
+    .getElementById("navbar")
+    .classList.add("hidden");
+  document
+    .getElementById("form-signin")
+    .classList.remove("hidden");
+  document
+    .getElementById("body")
+    .classList.add("body");
+  document
+    .getElementById("body")
+    .classList.remove("bg-light");
+}
+
 async function signIn(googleUser) {
   const profile = googleUser.getBasicProfile();
   const token = googleUser.getAuthResponse().id_token;
@@ -7,7 +62,7 @@ async function signIn(googleUser) {
   const id = await loginResponse.json();
   if (id.verified) {
     // Successful sign-in.
-    hideLandingElements();
+    hideLandingSignIn(false);
     const termList = await getTermList();
     const selectElement = document.getElementById("search-term");
     const optionElement = document.createElement("option");
@@ -20,10 +75,14 @@ async function signIn(googleUser) {
     document.getElementById(
       "school-name"
     ).innerHTML = `Hi, ${profile.getName()}!`;
-    if (id.whitelist) { 
-      document.getElementById("redirect-button-container").classList.remove("hidden");
+    if (id.whitelist) {
+      document
+        .getElementById("redirect-button-container")
+        .classList.remove("hidden");
     } else {
-      document.getElementById("redirect-button-container").classList.add("hidden");
+      document
+        .getElementById("redirect-button-container")
+        .classList.add("hidden");
     }
   } else {
     document.getElementById("login-message").innerHTML =
@@ -41,7 +100,7 @@ async function signInPrivate(googleUser) {
   const id = await response.json();
   if (id.whitelist) {
     // Successful sign-in.
-    hideLandingElements();
+    hideLandingSignIn(true);
     document.getElementById(
       "private-school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -61,11 +120,19 @@ async function signInReports(googleUser) {
   const id = await response.json();
   if (id.whitelist) {
     // Successful sign-in.
-    document.getElementById("reports-container").classList.remove("hidden");
-    document.getElementById("reports-login-message").classList.add("hidden");
+    document
+      .getElementById("reports-container")
+      .classList.remove("hidden");
+    document
+      .getElementById("reports-login-message")
+      .classList.add("hidden");
   } else {
-    document.getElementById("reports-container").classList.add("hidden");
-    document.getElementById("reports-login-message").classList.remove("hidden");
+    document
+      .getElementById("reports-container")
+      .classList.add("hidden");
+    document
+      .getElementById("reports-login-message")
+      .classList.remove("hidden");
     document.getElementById("reports-login-message").innerHTML =
       "You do not have access to view this page.";
   }
@@ -86,44 +153,13 @@ async function verify() {
 function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  showLandingElements();
+  revealLandingSignOut(false);
 }
 
 function signOutPrivate() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  showLandingElements();
-}
-
-function hideLandingElements() {
-  document
-    .getElementById("private-class-info")
-    .classList.remove("hidden");
-  document
-    .getElementById("private-login-box")
-    .classList.add("hidden");
-  document
-    .getElementById("form-signin")
-    .classList.add("hidden");
-  document
-    .getElementById("body")
-    .classList.remove("body");
-  removeAllTerms(); // Clear term list.
-}
-
-function showLandingElements() {
-  document
-    .getElementById("private-class-info")
-    .classList.add("hidden");
-  document
-    .getElementById("private-login-box")
-    .classList.remove("hidden");
-  document
-    .getElementById("form-signin")
-    .classList.remove("hidden");
-  document
-    .getElementById("body")
-    .classList.add("body");
+  revealLandingSignOut(true);
 }
 
 async function getTermList() {

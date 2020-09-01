@@ -6,24 +6,28 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <title>Report List Page</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
       integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
       crossorigin="anonymous"
     />
-    <link
-      rel="stylesheet"
-      href="search-style.css"
-    />
+    <link rel="stylesheet" href="search-style.css" />
     <meta
       name="google-signin-client_id"
       content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
     />
+    <link rel="stylesheet" href="professor-style.css" />
   </head>
   <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <span class="navbar-brand mb-0 h1">App Name</span>
+      <a href="index.html">
+        <span class="navbar-brand mb-0 h1">
+          Course
+          <span id="logo">FYI</span>
+        </span>
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -50,7 +54,11 @@
     </nav>
     <div class="jumbotron jumbotron-fluid my-0 bg-light"></div>
     <div class="plr-20 container-xl">
-      <div class="g-signin2 hidden" id="reports-login-button" data-onsuccess="signInReports"></div>
+      <div
+        class="g-signin2 hidden"
+        id="reports-login-button"
+        data-onsuccess="signInReports"
+      ></div>
       <div id="reports-login-message"></div>
       <div class="my-3 p-3 bg-light hidden" id="reports-container">
         <h1 class="border-bottom border-gray pb-5 mb-0 text-center">
