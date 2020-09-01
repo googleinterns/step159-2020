@@ -120,25 +120,28 @@
               ></select>
             </div>
           </div>
-          <div class="button-container">
+          <div class="button-container button-padding">
             <button
               class="course-button btn btn-lg btn-outline-success"
               id="search-button"
               onclick="showCourses()"
             >
-              See Courses!
+              See courses!
             </button>
           </div>
           <div id="search-message"></div>
           <div id="search-results"></div>
         </div>
-        <div class="button-container button-padding">
+        <div
+          class="button-container button-padding hidden"
+          id="redirect-button-container"
+        >
           <button
             class="course-button btn btn-lg btn-outline-success"
             id="search-to-add"
             onclick="redirect('add-course.html')"
           >
-            Add Courses
+            Add courses
           </button>
         </div>
         <div class="button-container button-padding">
@@ -147,7 +150,7 @@
             id="logout-button"
             onclick="signOut()"
           >
-            Sign Out
+            Sign out
           </button>
         </div>
       </div>
