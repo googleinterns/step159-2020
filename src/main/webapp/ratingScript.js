@@ -59,9 +59,11 @@ function addingAttributesToURL(ratingProperties) {
 }
 
 async function passRatingProperties() {
-  document.getElementById("retrieve-last-rating-message").innerHTML = "";
-  const urlAndData = await getRatingPropertiesToStore();
-  postRatingProperties(urlAndData[0], urlAndData[1]);
+  if (validSubmission() == true) {
+    document.getElementById("retrieve-last-rating-message").innerHTML = "";
+    const urlAndData = await getRatingPropertiesToStore();
+    postRatingProperties(urlAndData[0], urlAndData[1]);
+  }
 }
 
 $(function () {
@@ -107,6 +109,35 @@ async function getLatestRating() {
     messageRetrievalElementContainer.classList.remove("alert-secondary");
     messageRetrievalElementContainer.classList.add("alert-success");
     messageRetrievalElement.innerHTML = "Your form has been populated!";
+  }
+}
+
+function validSubmission() {
+  const allFormFields = [
+    document.getElementById("term-input"),
+    document.getElementById("prof-input"),
+    document.getElementById("rating-term"),
+    document.getElementById("rating-prof"),
+    document.getElementById("hours"),
+    document.getElementById("difficulty"),
+    document.getElementById("grade"),
+  ];
+
+  let i;
+  let successfulSubmissionMessage = document.getElementById(
+    "sucessful-submission-message"
+  );
+  for (i = 0; i < allFormFields.length; i++) {
+    // If any field is not field out properly.
+    if (!allFormFields[i].checkValidity()) {
+      console.log(allFormFields[i]);
+      successfulSubmissionMessage.innerHTML =
+        "Invalid Submission, check form fields";
+      return false;
+    }
+    // If no field was submitted the wrong way.
+    successfulSubmissionMessage.innerHTML = "Successful Submission!";
+    return true;
   }
 }
 
