@@ -3,8 +3,10 @@
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.load("current", { packages: ["bar"] });
 
-  const average = (list) =>
-    list.reduce((prev, curr) => prev + curr, 0) / list.length;
+  function average(list) {
+    const flatList = [].concat.apply([], list);
+    return flatList.reduce((prev, curr) => prev + curr, 0) / flatList.length;
+  }
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -113,7 +115,7 @@
     if (termDataObject.difficultyList.length < 2) {
       document.getElementById("histograms").remove();
     } else {
-      const diffList = [["Difficulty"]].concact(termDataObject.difficultyList);
+      const diffList = [["Difficulty"]].concat(termDataObject.difficultyList);
       const diffData = new google.visualization.arrayToDataTable(diffList);
       const diffOptions = {
         colors: ["#f1d19d"],
@@ -167,8 +169,7 @@
   }
 
   async function makeTermRatingChart(termDataObject) {
-    const currentTermRatingAvg = average(termDataObject.termPerceptionList);
-
+    const currentTermRatingAvg = average(termDataObject.termScoreList);
     const prevTermData = [];
     const avgData = [];
     const prevTermNameList = await getPrevTermName(2);
@@ -178,7 +179,7 @@
     }
 
     for (let termData of prevTermData) {
-      avgData.push(average(termData.termPerceptionList));
+      avgData.push(average(termData.termScoreList));
     }
 
     const comparisonData = google.visualization.arrayToDataTable([
@@ -189,7 +190,7 @@
     ]);
 
     const options = {
-      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
+      colors: ["#f1a79d", "#81b8ec", "#f1d19d"],
       title: "Average Term Rating Comparison",
       height: 450,
       bars: "horizontal",
@@ -228,7 +229,7 @@
     ]);
 
     const options = {
-      colors: ["#81b8ec", "#f1a79d", "#f1d19d"],
+      colors: ["#f1d19d", "#81b8ec", "#f1a79d"],
       title: "Average Term Perception Comparison",
       height: 450,
       bars: "horizontal",
