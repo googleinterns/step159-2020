@@ -59,9 +59,14 @@ function addingAttributesToURL(ratingProperties) {
 }
 
 async function passRatingProperties() {
-  document.getElementById("retrieve-last-rating-message").innerHTML = "";
-  const urlAndData = await getRatingPropertiesToStore();
-  postRatingProperties(urlAndData[0], urlAndData[1]);
+  if (isValidSubmission()) {
+    document.getElementById("retrieve-last-rating-message").innerHTML = "";
+    document.getElementById("submission-status-message").innerHTML = "Successful Submission!";
+    const urlAndData = await getRatingPropertiesToStore();
+    postRatingProperties(urlAndData[0], urlAndData[1]);
+  } else {
+    document.getElementById("submission-status-message").innerHTML =  "Invalid Submission, check form fields";
+  }
 }
 
 $(function () {
@@ -107,6 +112,27 @@ async function getLatestRating() {
     messageRetrievalElementContainer.classList.remove("alert-secondary");
     messageRetrievalElementContainer.classList.add("alert-success");
     messageRetrievalElement.innerHTML = "Your form has been populated!";
+  }
+}
+
+function isValidSubmission() {
+  const allFormFields = [
+    document.getElementById("term-input"),
+    document.getElementById("prof-input"),
+    document.getElementById("rating-term"),
+    document.getElementById("rating-prof"),
+    document.getElementById("hours"),
+    document.getElementById("difficulty"),
+    document.getElementById("grade"),
+  ];
+  
+  for (let i = 0; i < allFormFields.length; i++) {
+    // If any field is not field out properly.
+    if (!allFormFields[i].checkValidity()) {
+      return false;
+    }
+    // If no field was submitted the wrong way.
+    return true;
   }
 }
 
