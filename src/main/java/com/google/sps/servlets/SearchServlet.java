@@ -169,8 +169,6 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
-    // filterLists.add(filters);
-    // filterLists.add(fuzzyFilters);
     return new FilterPair(filters, fuzzyFilters);
   }
 
