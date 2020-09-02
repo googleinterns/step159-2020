@@ -118,9 +118,9 @@ function validSubmission() {
   ];
 
   );
-  for (let i = 0; i < allFormFields.length; i++) {
+  for (let field of allFormFields) {
     // If any field is not field out properly.
-    if (!allFormFields[i].checkValidity()) {
+    if (!field.checkValidity()) {
       return false;
     }
     // If no field was submitted the wrong way.
