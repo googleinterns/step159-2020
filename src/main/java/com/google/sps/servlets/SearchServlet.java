@@ -196,6 +196,7 @@ public class SearchServlet extends HttpServlet {
     Boolean hasProf = !request.getParameter("prof-name").isEmpty();
     Pattern namePattern = Pattern.compile("/(?=a)b/"); // Always false.
     Pattern profPattern = Pattern.compile("/(?=a)b/"); // Always false.
+
     if (hasName) {
       String name = request.getParameter("course-name").toLowerCase();
       namePattern = Pattern.compile("^.*" + name + ".*$");
