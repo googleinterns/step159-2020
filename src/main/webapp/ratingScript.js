@@ -61,8 +61,11 @@ function addingAttributesToURL(ratingProperties) {
 async function passRatingProperties() {
   if (validSubmission() == true) {
     document.getElementById("retrieve-last-rating-message").innerHTML = "";
+    document.getElementById("submission-status-message").innerHTML = "Successful Submission!";
     const urlAndData = await getRatingPropertiesToStore();
     postRatingProperties(urlAndData[0], urlAndData[1]);
+  } else {
+    document.getElementById("submission-status-message").innerHTML =  "Invalid Submission, check form fields";
   }
 }
 
@@ -114,19 +117,13 @@ function validSubmission() {
     document.getElementById("grade"),
   ];
 
-  let i;
-  let successfulSubmissionMessage = document.getElementById(
-    "sucessful-submission-message"
   );
-  for (i = 0; i < allFormFields.length; i++) {
+  for (let i = 0; i < allFormFields.length; i++) {
     // If any field is not field out properly.
     if (!allFormFields[i].checkValidity()) {
-      successfulSubmissionMessage.innerHTML =
-        "Invalid Submission, check form fields";
       return false;
     }
     // If no field was submitted the wrong way.
-    successfulSubmissionMessage.innerHTML = "Successful Submission!";
     return true;
   }
 }
