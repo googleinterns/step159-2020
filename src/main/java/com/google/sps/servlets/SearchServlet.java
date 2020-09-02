@@ -25,6 +25,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
 import com.google.sps.data.Course;
+import com.google.sps.data.FilterPair;
 import com.google.sps.data.Term;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,12 +62,12 @@ public class SearchServlet extends HttpServlet {
   public JSONObject getMatchingCourses(HttpServletRequest request) {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     MatchResult matchResult = MatchResult.GOOD;
-    List<Filter> filters = getFilters(request, /* isFuzzy = */ false).get(0);
+    List<Filter> filters = getFilters(request, /* isFuzzy = */ false).getMain();
     List<Entity> results = getResults(filters, db);
     if (results.isEmpty()) {
-      List<ArrayList<Filter>> fuzzyFilters = getFilters(request, /* isFuzzy = */ true);
-      results = getResults(fuzzyFilters.get(0), db);
-      List<Entity> fuzzyResults = getResults(fuzzyFilters.get(1), db);
+      FilterPair fuzzyFilters = getFilters(request, /* isFuzzy = */ true);
+      results = getResults(fuzzyFilters.getMain(), db);
+      List<Entity> fuzzyResults = getResults(fuzzyFilters.getFuzzy(), db);
       List<Entity> processedResults = processResults(request, fuzzyResults);
       for (Entity e : processedResults) {
         if (!results.contains(e)) {
@@ -82,10 +83,10 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Create list of filters given parameters specified in request. */
-  private ArrayList<ArrayList<Filter>> getFilters(HttpServletRequest request, boolean fuzzy) {
-    ArrayList<Filter> filters = new ArrayList<>();
-    ArrayList<Filter> fuzzyFilters = new ArrayList<>();
-    ArrayList<ArrayList<Filter>> filterLists = new ArrayList<ArrayList<Filter>>();
+  private FilterPair getFilters(HttpServletRequest request, boolean fuzzy) {
+    List<Filter> filters = new ArrayList<>();
+    List<Filter> fuzzyFilters = new ArrayList<>();
+    // ArrayList<ArrayList<Filter>> filterLists = new ArrayList<ArrayList<Filter>>();
 
     String school = request.getParameter("school-name").toLowerCase();
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
@@ -168,9 +169,9 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
-    filterLists.add(filters);
-    filterLists.add(fuzzyFilters);
-    return filterLists;
+    // filterLists.add(filters);
+    // filterLists.add(fuzzyFilters);
+    return new FilterPair(filters, fuzzyFilters);
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
