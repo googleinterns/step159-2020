@@ -61,11 +61,13 @@ function addingAttributesToURL(ratingProperties) {
 async function passRatingProperties() {
   if (isValidSubmission()) {
     document.getElementById("retrieve-last-rating-message").innerHTML = "";
-    document.getElementById("submission-status-message").innerHTML = "Successful Submission!";
+    document.getElementById("submission-status-message").innerHTML =
+      "Successful Submission!";
     const urlAndData = await getRatingPropertiesToStore();
     postRatingProperties(urlAndData[0], urlAndData[1]);
   } else {
-    document.getElementById("submission-status-message").innerHTML =  "Invalid Submission, check form fields";
+    document.getElementById("submission-status-message").innerHTML =
+      "Invalid Submission, check form fields";
   }
 }
 
