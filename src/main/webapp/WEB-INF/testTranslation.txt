@@ -1,0 +1,11 @@
+{
+  termKey : agR0ZXN0ciILEgZTY2hvb2wYAQwLEgZDb3Vyc2UYAgwLEgRUZXJtGAMM,
+  "termInput" : "No me gusta esto.",
+  "profInput" : "The professor was amazing.",
+  "ratingTerm" : 1,
+  "ratingProf" : 3,
+  "hours" : 8,
+  "difficulty" : 4,
+  "id" : "9223372036854775807",
+  "translate" : "true",
+  "grade": "B"}

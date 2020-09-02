@@ -10,7 +10,7 @@ select {
 #login-box {
   margin: auto;
   padding: 30px;
-  width: 120p;
+  width: 120px;
 }
 
 #search-textarea,
@@ -68,8 +68,8 @@ fieldset {
 
 #search-to-add,
 #add-to-search {
-  left: 5%;
   bottom: 5%;
+  left: 5%;
   position: fixed;
 }
 
@@ -80,13 +80,6 @@ fieldset {
 html,
 body {
   height: 100%;
-}
-
-#form-signin {
-  margin: 400px auto;
-  max-width: 850px;
-  padding: 15px;
-  width: 100%;
 }
 
 .body {
@@ -149,4 +142,8 @@ body {
 
 #search-results {
   padding: 20px;
+}
+
+#logo {
+  color: #81b8ec;
 }
