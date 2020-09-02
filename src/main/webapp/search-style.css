@@ -68,8 +68,8 @@ fieldset {
 
 #search-to-add,
 #add-to-search {
-  left: 5%;
   bottom: 5%;
+  left: 5%;
   position: fixed;
 }
 
@@ -83,26 +83,26 @@ body {
 }
 
 .body {
+  align-items: center;
+  background-color: #1a1a1a;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
-  align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #1a1a1a;
 }
 
 #t1 {
+  color: white;
   font-size: 120px;
   font-family: "Arvo", serif;
-  color: white;
   letter-spacing: 12px;
 }
 
 #t2 {
+  color: #81b8ec;
   font-size: 120px;
   font-family: "Arvo", serif;
-  color: #81b8ec;
   letter-spacing: 12px;
 }
 
@@ -112,26 +112,26 @@ body {
 }
 
 .ml11 .text-wrapper {
-  position: relative;
   display: inline-block;
+  position: relative;
   padding-top: 0.1em;
   padding-right: 0.05em;
   padding-bottom: 0.15em;
 }
 
 .ml11 .line {
+  background-color: #fff;
+  height: 100%;
+  left: 0;
   opacity: 0;
   position: absolute;
-  left: 0;
-  height: 100%;
-  width: 3px;
-  background-color: #fff;
   transform-origin: 0 50%;
+  width: 3px;
 }
 
 .ml11 .line1 {
-  top: 0;
   left: 0;
+  top: 0;
 }
 
 .ml11 .letter {

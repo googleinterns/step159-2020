@@ -226,14 +226,13 @@
           </div>
           <div class="row">
             <div class="col">
-              <p class="lead">Want to Translate to English?</p>
+              <p class="lead">Mark to Translate to English</p>
               <input
                 type="checkbox"
                 id="translate"
                 class="form-control mb-5"
                 name="translate"
               />
-              <div class="valid-tooltip">Looks good!</div>
             </div>
           </div>
         </form>
@@ -256,6 +255,7 @@
         >
           Retrieve Your Previous Rating
         </button>
+
         <button
           onclick="clearForm()"
           id="clear-form"
@@ -280,6 +280,14 @@
           >
             <span aria-hidden="true">&times;</span>
           </button>
+        </div>
+
+        <div
+          id="submission-status-container"
+          class="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong id="submission-status-message"></strong>
         </div>
       </div>
     </div>

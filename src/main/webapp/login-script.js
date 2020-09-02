@@ -1,4 +1,4 @@
-function changeElementSignIn(privateBool) {
+function hideLandingSignIn(privateBool) {
   let classInfo = "";
   let loginBox = "";
 
@@ -25,7 +25,7 @@ function changeElementSignIn(privateBool) {
     .classList.add("bg-light");
 }
 
-function changeElementSignOut(privateBool) {
+function revealLandingSignOut(privateBool) {
   let classInfo = "";
   let loginBox = "";
 
@@ -62,7 +62,7 @@ async function signIn(googleUser) {
   const id = await loginResponse.json();
   if (id.verified) {
     // Successful sign-in.
-    changeElementSignIn(false);
+    hideLandingSignIn(false);
     const termList = await getTermList();
     const selectElement = document.getElementById("search-term");
     const optionElement = document.createElement("option");
@@ -100,7 +100,7 @@ async function signInPrivate(googleUser) {
   const id = await response.json();
   if (id.whitelist) {
     // Successful sign-in.
-    changeElementSignIn(true);
+    hideLandingSignIn(true);
     document.getElementById(
       "private-school-name"
     ).innerHTML = `Hi, ${profile.getName()}! Your email is ${profile.getEmail()}`;
@@ -153,13 +153,13 @@ async function verify() {
 function signOut() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  changeElementSignOut(false);
+  revealLandingSignOut(false);
 }
 
 function signOutPrivate() {
   const auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut();
-  changeElementSignOut(true);
+  revealLandingSignOut(true);
 }
 
 async function getTermList() {
