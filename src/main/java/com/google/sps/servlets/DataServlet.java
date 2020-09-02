@@ -122,7 +122,7 @@ public class DataServlet extends HttpServlet {
       difficulty = (long) jsonObject.getFloat("difficulty");
       grade = jsonObject.getString("grade");
       userId = jsonObject.getString("id");
-      translate = Boolean.parseBoolean(jsonObject.getString("translate"));
+      translate = jsonObject.getBoolean("translate");
     } catch (JSONException exception) {
       throw new IOException("Error parsing JSON request string");
     }

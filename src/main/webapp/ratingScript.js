@@ -19,7 +19,7 @@ async function verify() {
   url.searchParams.set("token", token);
   const response = await fetch(url, { method: "POST" });
   const userInfo = await response.json();
-  return userInfo.id;
+  return userInfo.userId;
 }
 
 async function getRatingPropertiesToStore() {
@@ -77,11 +77,7 @@ async function getLatestRating() {
   let messageRetrievalElement = document.getElementById(
     "retrieve-last-rating-message"
   );
-  let messageRetrievalElementContainer = document.getElementById(
-    "retrieve-last-rating-container"
-  );
-  messageRetrievalElementContainer.classList.remove("alert-light");
-  messageRetrievalElementContainer.classList.add("alert-secondary");
+
   messageRetrievalElement.innerHTML = "Fetching Rating...";
   const userId = await verify();
   const queryString = window.location.search;
@@ -95,8 +91,6 @@ async function getLatestRating() {
   const formInfo = await response.json();
 
   if (Object.keys(formInfo).length == 0) {
-    messageRetrievalElementContainer.classList.remove("alert-secondary");
-    messageRetrievalElementContainer.classList.add("alert-danger");
     messageRetrievalElement.innerHTML =
       "You have not submitted a rating for this term";
   } else {
@@ -108,9 +102,6 @@ async function getLatestRating() {
     document.getElementById("difficulty").value = formInfo["difficulty"];
     document.getElementById("grade").value = formInfo["grade"];
     document.getElementById("translate").value = formInfo["translation"];
-
-    messageRetrievalElementContainer.classList.remove("alert-secondary");
-    messageRetrievalElementContainer.classList.add("alert-success");
     messageRetrievalElement.innerHTML = "Your form has been populated!";
   }
 }
@@ -125,15 +116,15 @@ function isValidSubmission() {
     document.getElementById("difficulty"),
     document.getElementById("grade"),
   ];
-  
-  for (let i = 0; i < allFormFields.length; i++) {
+
+  for (let field of allFormFields) {
     // If any field is not field out properly.
-    if (!allFormFields[i].checkValidity()) {
+    if (!field.checkValidity()) {
       return false;
     }
-    // If no field was submitted the wrong way.
-    return true;
   }
+  // If no field was submitted the wrong way.
+  return true;
 }
 
 function clearForm() {

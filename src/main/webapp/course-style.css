@@ -65,6 +65,10 @@
   font-size: 16px;
 }
 
+.bold-text {
+  font-weight: bold;
+}
+
 .container-chart {
   margin-right: auto;
   margin-left: auto;
