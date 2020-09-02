@@ -48,3 +48,8 @@
 #logo {
   color: #81b8ec;
 }
+
+#logo-link {
+  border-right: 1px solid #fff;
+  margin-right: 20px;
+}

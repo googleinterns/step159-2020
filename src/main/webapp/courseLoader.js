@@ -64,6 +64,8 @@
       const hourList = [["Hours"]].concat(termDataObject.hoursList);
       const hourData = new google.visualization.arrayToDataTable(hourList);
       const hourOptions = {
+        width: 800,
+        height: 600,
         colors: ["#f1a79d"],
         title: "Hours Spent per Week",
         titleTextStyle: {
@@ -104,6 +106,7 @@
         },
         chartArea: {
           left: 120,
+          width: "80%",
         },
       };
       const hourChart = new google.visualization.Histogram(
@@ -155,10 +158,11 @@
         },
         histogram: {
           hideBucketItems: true,
-          bucketSize: 2,
+          bucketSize: 1,
         },
         chartArea: {
           left: 120,
+          width: "80%",
         },
       };
       const diffChart = new google.visualization.Histogram(
@@ -190,9 +194,10 @@
     ]);
 
     const options = {
+      chartArea: { width: "65%" },
       colors: ["#f1a79d", "#81b8ec", "#f1d19d"],
       title: "Average Term Rating Comparison",
-      height: 450,
+      height: 250,
       bars: "horizontal",
       bar: { groupWidth: "30%" },
       hAxis: { title: "Avg Term Rating" },
@@ -229,9 +234,10 @@
     ]);
 
     const options = {
+      chartArea: { width: "65%" },
       colors: ["#f1d19d", "#81b8ec", "#f1a79d"],
       title: "Average Term Perception Comparison",
-      height: 450,
+      height: 250,
       bars: "horizontal",
       bar: { groupWidth: "30%" },
       hAxis: { title: "Avg Term Perception" },
@@ -292,12 +298,12 @@
     data.addRows(createBellData(numericalGrade));
 
     const options = {
-      height: 600,
-      width: $(window).width(),
+      height: 400,
+      width: $(window).width() * 0.8,
       colors: ["#81b8ec"],
       areaOpacity: 0.75,
       lineWidth: 3,
-      chartArea: { left: 20 },
+      chartArea: { left: 50 },
       title: "Term Grade Distribution",
       legend: { position: "none" },
       titleTextStyle: {

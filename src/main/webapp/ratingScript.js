@@ -19,7 +19,7 @@ async function verify() {
   url.searchParams.set("token", token);
   const response = await fetch(url, { method: "POST" });
   const userInfo = await response.json();
-  return userInfo.id;
+  return userInfo.userId;
 }
 
 async function getRatingPropertiesToStore() {
