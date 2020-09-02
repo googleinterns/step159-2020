@@ -123,9 +123,9 @@ function validSubmission() {
     if (!field.checkValidity()) {
       return false;
     }
-    // If no field was submitted the wrong way.
-    return true;
   }
+  // If no field was submitted the wrong way.
+  return true;
 }
 
 function clearForm() {
