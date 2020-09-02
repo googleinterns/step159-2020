@@ -25,12 +25,15 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.Gson;
 import com.google.sps.data.Course;
+import com.google.sps.data.FilterPair;
 import com.google.sps.data.Term;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -59,11 +62,18 @@ public class SearchServlet extends HttpServlet {
   public JSONObject getMatchingCourses(HttpServletRequest request) {
     DatastoreService db = DatastoreServiceFactory.getDatastoreService();
     MatchResult matchResult = MatchResult.GOOD;
-    List<Filter> filters = getFilters(request, /* isFuzzy = */ false);
+    List<Filter> filters = getFilters(request, /* isFuzzy = */ false).getMain();
     List<Entity> results = getResults(filters, db);
     if (results.isEmpty()) {
-      filters = getFilters(request, /* isFuzzy = */ true);
-      results = getResults(filters, db);
+      FilterPair fuzzyFilters = getFilters(request, /* isFuzzy = */ true);
+      results = getResults(fuzzyFilters.getMain(), db);
+      List<Entity> fuzzyResults = getResults(fuzzyFilters.getFuzzy(), db);
+      List<Entity> processedResults = processResults(request, fuzzyResults);
+      for (Entity e : processedResults) {
+        if (!results.contains(e)) {
+          results.add(e);
+        }
+      }
       matchResult = MatchResult.OKAY;
     }
     if (results.isEmpty()) { // Fuzzy search didn't work.
@@ -73,8 +83,11 @@ public class SearchServlet extends HttpServlet {
   }
 
   /* Create list of filters given parameters specified in request. */
-  private List<Filter> getFilters(HttpServletRequest request, boolean fuzzy) {
+  private FilterPair getFilters(HttpServletRequest request, boolean fuzzy) {
     List<Filter> filters = new ArrayList<>();
+    List<Filter> fuzzyFilters = new ArrayList<>();
+    // ArrayList<ArrayList<Filter>> filterLists = new ArrayList<ArrayList<Filter>>();
+
     String school = request.getParameter("school-name").toLowerCase();
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("course-name").isEmpty()) {
@@ -142,6 +155,7 @@ public class SearchServlet extends HttpServlet {
         termFilter = new FilterPredicate("term", FilterOperator.EQUAL, term);
       }
       filters.add(termFilter);
+      fuzzyFilters.add(termFilter);
     }
 
     if (!request.getParameter("units").isEmpty() && !fuzzy) {
@@ -155,8 +169,7 @@ public class SearchServlet extends HttpServlet {
         filters.add(unitsFilter);
       }
     }
-
-    return filters;
+    return new FilterPair(filters, fuzzyFilters);
   }
 
   /* Combine filters, if applicable, and get results from Datastore matching this combination. */
@@ -170,7 +183,49 @@ public class SearchServlet extends HttpServlet {
       }
     }
     List<Entity> results = db.prepare(courseQuery).asList(FetchOptions.Builder.withDefaults());
+
     return results;
+  }
+
+  /* Does substring matching through regex. */
+  private List<Entity> processResults(HttpServletRequest request, List<Entity> fuzzyResults) {
+    List<Entity> processed = new ArrayList<>();
+    Boolean hasName = !request.getParameter("course-name").isEmpty();
+    Boolean hasProf = !request.getParameter("prof-name").isEmpty();
+    Pattern namePattern = Pattern.compile("/(?=a)b/"); // Always false.
+    Pattern profPattern = Pattern.compile("/(?=a)b/"); // Always false.
+
+    if (hasName) {
+      String name = request.getParameter("course-name").toLowerCase();
+      namePattern = Pattern.compile("^.*" + name + ".*$");
+    }
+
+    if (hasProf) {
+      String prof = request.getParameter("prof-name").toLowerCase();
+      profPattern = Pattern.compile("^.*" + prof + ".*$");
+    }
+    Boolean nameMatches;
+    Boolean profMatches;
+    for (Entity e : fuzzyResults) {
+      String searchName = (String) e.getProperty("search-name");
+      String searchProf = (String) e.getProperty("search-professor");
+      if (hasName) {
+        Matcher nameMatcher = namePattern.matcher(searchName);
+        nameMatches = nameMatcher.matches();
+      } else {
+        nameMatches = true;
+      }
+      if (hasProf) {
+        Matcher profMatcher = profPattern.matcher(searchProf);
+        profMatches = profMatcher.matches();
+      } else {
+        profMatches = true;
+      }
+      if (nameMatches && profMatches && (hasName || hasProf)) {
+        processed.add(e);
+      }
+    }
+    return processed;
   }
 
   /* Given list of result Entity courses, format into Course objects. */

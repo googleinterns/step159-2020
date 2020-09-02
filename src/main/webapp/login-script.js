@@ -91,7 +91,7 @@ async function signIn(googleUser) {
   }
 }
 
-async function signInPrivate(googleUser) {
+async function privateSignIn(googleUser) {
   const profile = googleUser.getBasicProfile();
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
@@ -111,7 +111,7 @@ async function signInPrivate(googleUser) {
   }
 }
 
-async function signInReports(googleUser) {
+async function reportSignIn(googleUser) {
   const profile = googleUser.getBasicProfile();
   const token = googleUser.getAuthResponse().id_token;
   const url = new URL("/login", window.location.origin);
