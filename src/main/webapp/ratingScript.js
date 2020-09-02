@@ -59,7 +59,7 @@ function addingAttributesToURL(ratingProperties) {
 }
 
 async function passRatingProperties() {
-  if (validSubmission() == true) {
+  if (isValidSubmission()) {
     document.getElementById("retrieve-last-rating-message").innerHTML = "";
     document.getElementById("submission-status-message").innerHTML = "Successful Submission!";
     const urlAndData = await getRatingPropertiesToStore();
@@ -106,7 +106,7 @@ async function getLatestRating() {
   }
 }
 
-function validSubmission() {
+function isValidSubmission() {
   const allFormFields = [
     document.getElementById("term-input"),
     document.getElementById("prof-input"),
@@ -117,7 +117,6 @@ function validSubmission() {
     document.getElementById("grade"),
   ];
 
-  );
   for (let field of allFormFields) {
     // If any field is not field out properly.
     if (!field.checkValidity()) {
