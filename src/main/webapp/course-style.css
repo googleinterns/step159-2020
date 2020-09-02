@@ -99,3 +99,7 @@
 #logo {
   color: #81b8ec;
 }
+
+#submission-status-message {
+  font-weight: bold;
+}
