@@ -65,6 +65,10 @@
   font-size: 16px;
 }
 
+.bold-text {
+  font-weight: bold;
+}
+
 .container-chart {
   margin-right: auto;
   margin-left: auto;
@@ -98,8 +102,4 @@
 
 #logo {
   color: #81b8ec;
-}
-
-#submission-status-message {
-  font-weight: bold;
 }
