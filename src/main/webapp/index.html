@@ -14,6 +14,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Arvo"
     />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <meta
       name="google-signin-client_id"
       content="12523748853-6h3fnh1kppht9s895ist2b5222ifh2u7.apps.googleusercontent.com"
@@ -99,17 +100,11 @@
           </div>
           <div class="form-row align-items-center" id="search-selectboxes">
             <div class="form-group col-md-6">
-              <label for="search-units">How many units?</label>
-              <select
-                id="search-units"
-                name="search-units"
-                class="form-control"
-              >
-                <option value="">Select units...<br /></option>
-                <option value="1">1<br /></option>
-                <option value="2">2<br /></option>
-                <option value="3">3<br /></option>
-              </select>
+                <label for="min-units" id="min-label">Min Units:</label><input type="text" id="min-units" size="2" readonly> 
+                <label for="max-units" id="max-label">Max Units:</label><input type="text" id="max-units" size="2" readonly>
+                <div id="units-slider"></div>
+                <input type="checkbox" id="no-units" name="no-units" value="">
+                <label for="no-units">I don't care about units</label><br>
             </div>
             <div class="form-group col-md-6">
               <label for="search-term">Term:</label>
@@ -170,6 +165,8 @@
       integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
     <script src="search-script.js"></script>

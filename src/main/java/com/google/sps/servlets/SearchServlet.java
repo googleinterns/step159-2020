@@ -86,8 +86,6 @@ public class SearchServlet extends HttpServlet {
   private FilterPair getFilters(HttpServletRequest request, boolean fuzzy) {
     List<Filter> filters = new ArrayList<>();
     List<Filter> fuzzyFilters = new ArrayList<>();
-    // ArrayList<ArrayList<Filter>> filterLists = new ArrayList<ArrayList<Filter>>();
-
     String school = request.getParameter("school-name").toLowerCase();
     Filter schoolFilter = new FilterPredicate("school", FilterOperator.EQUAL, school);
     if (!request.getParameter("course-name").isEmpty()) {
