@@ -147,3 +147,20 @@ body {
 #logo {
   color: #81b8ec;
 }
+
+#units-slider .ui-slider-range { 
+    background: #45a049; 
+}
+
+#unit-slider .ui-slider-handle {
+    border-color: #45a049; 
+}
+
+#min-units, #max-units {
+    background-color: transparent;
+    border: 0;
+}
+
+.faded {
+    color: gray; 
+}

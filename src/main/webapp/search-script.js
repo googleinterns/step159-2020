@@ -1,10 +1,9 @@
-function countUnits(sectionName) {
-  const unitElems = document.getElementsByName(sectionName);
+function countUnits(min, max) {
+  const minUnits = Number(min);
+  const maxUnits = Number(max);
   const units = [];
-  for (let elem of unitElems) {
-    if (elem.checked) {
-      units.push(elem.value);
-    }
+  for (let i = minUnits; i <= maxUnits; i++) {
+    units.push(i);
   }
   return units;
 }
@@ -14,14 +13,18 @@ async function showCourses() {
   const courseName = document.getElementById("search-course").value;
   const profName = document.getElementById("search-prof").value;
   const termName = document.getElementById("search-term").value;
-  const units = document.getElementById("search-units").value;
   const searchMessage = document.getElementById("search-message");
   const school = getUserSchool();
   courseResults.innerHTML = "";
   const url = new URL("/search", window.location.origin);
   url.searchParams.set("course-name", courseName);
   url.searchParams.set("prof-name", profName);
-  url.searchParams.set("units", units);
+  if (!document.getElementById("no-units").checked) {
+    const units = countUnits(document.getElementById("min-units").value, document.getElementById("max-units").value);
+    url.searchParams.set("units", units);
+  } else {
+    url.searchParams.set("units", []);
+  }
   url.searchParams.set("term", termName);
   url.searchParams.set("school-name", school);
   const response = await fetch(url);
@@ -120,3 +123,36 @@ anime
     duration: 1000,
     delay: 10000,
   });
+
+$(function () {
+  $("#units-slider").slider({
+    range: true,
+    min: 0,
+    max: 25,
+    values: [5, 20],
+    slide: function (event, ui) {
+      $("#min-units").val(ui.values[0]);
+      $("#max-units").val(ui.values[1]);
+    },
+  });
+  $("#min-units").val($("#units-slider").slider("values", 0));
+  $("#max-units").val($("#units-slider").slider("values", 1));
+});
+
+$("#no-units").change(function () {
+  const ckb_status = $("#no-units").prop("checked");
+  if (ckb_status) {
+    $("#units-slider").slider("disable");
+    $("#min-label").addClass("faded");
+    $("#max-label").addClass("faded");
+    $("#min-units").val('');
+    $("#max-units").val('');
+  } else {
+    $("#units-slider").slider("enable");
+    $("#min-label").removeClass("faded");
+    $("#max-label").removeClass("faded");
+    $("#min-units").val($("#units-slider").slider("values", 0));
+    $("#max-units").val($("#units-slider").slider("values", 1));
+
+  }
+});
