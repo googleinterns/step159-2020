@@ -164,3 +164,9 @@ body {
 .faded {
     color: gray; 
 }
+
+#logo-link {
+  border-right: 1px solid #fff;
+  margin-right: 20px;
+}
+

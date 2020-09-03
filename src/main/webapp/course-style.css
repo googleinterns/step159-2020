@@ -7,12 +7,13 @@
 
 .flex-container {
   display: flex;
-  height: 600px;
+  margin: 0 200px;
 }
 
 .flex-child-p {
   flex: 1;
   padding: 75px;
+  height: 400px;
 }
 
 .flex-child {
@@ -28,7 +29,7 @@
 }
 
 .plr-20 {
-  padding: 5rem 20rem;
+  padding: 0 20rem 5rem 20rem;
 }
 
 #form-container p {
@@ -73,19 +74,16 @@
   margin-right: auto;
   margin-left: auto;
   padding-right: 75px;
-  padding-left: 15px;
   padding-top: 75px;
-  width: 85%;
+  width: 80%;
 }
 
 .grade-chart {
-  height: 600px;
+  height: 450px;
   margin-right: auto;
   margin-left: auto;
-  padding-right: 75px;
-  padding-left: 15px;
   padding-top: 75px;
-  width: 85%;
+  width: 80%;
 }
 
 #message-rating {
@@ -102,4 +100,21 @@
 
 #logo {
   color: #81b8ec;
+}
+
+#grade-chart {
+  margin: auto;
+  padding-left: 200px;
+}
+
+.container-comment {
+  margin: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 65%;
+}
+
+#logo-link {
+  border-right: 1px solid #fff;
+  margin-right: 20px;
 }
